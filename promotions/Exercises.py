@@ -1,5 +1,5 @@
 #INTERFACE
-class exercises
+class Exercises
     def __init__(self, exercise, error = None):
         self.exercise = exercise
         self.error = error
