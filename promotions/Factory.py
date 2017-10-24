@@ -1,3 +1,6 @@
+
+# Based on http://python-3-patterns-idioms-test.readthedocs.io/en/latest/Factory.html
+
 class Exercice(object):
     # Create based on class name:
     def factory(type):
@@ -8,7 +11,7 @@ class Exercice(object):
     factory = staticmethod(factory)
 
 
-class Equation(Shape):
+class Equation(Exercice):
     def isEquivalant(self, other):
         # to complete
 
@@ -16,7 +19,7 @@ class Equation(Shape):
         # to complete
 
 
-class Inequation(Shape):
+class Inequation(Exercice):
     def isEquivalant(self, other):
         # to complete
 
@@ -24,9 +27,12 @@ class Inequation(Shape):
         # to complete
 
 
-class System(Shape):
+class System(Exercice):
     def isEquivalant(self, other):
         # to complete
 
     def isSolution(self, solution):
         # to complete
+
+
+
