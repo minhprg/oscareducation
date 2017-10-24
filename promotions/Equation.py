@@ -4,18 +4,23 @@ from sympy.solvers import solve
 from sympy import Symbol
 
 class Equation: #(Exercice):
-    def __init__(self, equation, error = None):
+    def __init__(self, equation, lettre, error = None):
         self.equation = equation
+        self.lettre = lettre
+        x = Symbol('x')
+        self.solution = solve(self.equation,x)
         self.error = error
 
     def isEquivalant(self, other):
-        pass
-
-    def isSolution(self, solution):
         x = Symbol('x')
-        return solution == solve(self.equation,x)[0]
+        return solve(other.equation,x) == self.solution
+
+    def isSolution(self, solution): #int solution
+        return solution == self.solution[0]
 
 
 #tests
-Equation = Equation('x+2-(1+2)')
-print Equation.isSolution(1)
+#Equation1 = Equation('x+2-(1+2)','a')
+#print Equation1.isSolution(1)
+#Equation2 = Equation('x-(1)','y')
+#print Equation1.isEquivalant(Equation2)
