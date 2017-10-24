@@ -3,6 +3,10 @@ import sympy
 from sympy.solvers import solve
 from sympy import Symbol
 
+
+# FAITES ATTENTION A BIEN IMPLEMENTER L'INTERFACE
+
+
 class Equation: #(Exercice):
     def __init__(self, equation, lettre, error = None):
         self.equation = equation
