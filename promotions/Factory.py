@@ -4,6 +4,7 @@ from sympy import linsolve, symbols
 from sympy.parsing.sympy_parser import parse_expr as eval
 from sympy.parsing.sympy_parser import standard_transformations as st
 from sympy.parsing.sympy_parser import implicit_multiplication_application as imp
+from sympy import Poly
 # Based on http://python-3-patterns-idioms-test.readthedocs.io/en/latest/Factory.html
 
 class Exercice(object):
@@ -23,8 +24,24 @@ class Equation: #(Exercice):
         self.x = Symbol(lettre)
         self.solution = solve(self.equa,self.x)
 
-    def isEquivalant(self, other):
-        return solve(other.equa,self.x) == self.solution
+    def isEquivalant(self, other): # self est l'equation precedente
+
+        leftOther, rightOther, coeffLeftOther, coeffRightOther = other.analyse()
+        leftPrevious, rightPrevious, coeffLeftPrevious, coeffRightPrevious = self.analyse()
+        hint = None
+
+        if(solve(other.equa,self.x) == self.solution):
+            if(not(str(leftOther).isdigit()) and coeffLeftOther[0] == 0):
+                hint = 'Aide : simplifie a gauche'
+            elif(not(str(rightOther).isdigit()) and coeffRightOther[0] == 0):
+                hint = 'Aide : simplifie a droite'
+            elif((len(coeffLeftOther) == 2 and coeffLeftOther[1] != 0 and coeffRightOther[0] == 0)):
+                hint = 'Aide : isole la variable de gauche en applicant une operation de chaque cote'
+            elif((len(coeffRightOther) == 2 and coeffRightOther[1] != 0 and coeffLeftOther[0] == 0)):
+                hint = 'Aide : isole la variable de droite en applicant une operation de chaque cote'
+            return (True,hint)
+        return (False,hint)
+
 
     def isSolution(self, solution): #int solution
         if (type(solution) == int):
@@ -32,6 +49,44 @@ class Equation: #(Exercice):
         else:
             return False
 
+    def analyse(self):
+        left = ''
+        right = ''
+
+        i = len(self.equa)-1
+        parenthese = 0
+        mid = 0
+        while(i>0):
+            if(self.equa[i] == ')'):
+                parenthese = parenthese + 1
+            elif(self.equa[i] == '('):
+                parenthese = parenthese - 1
+            elif(parenthese == 0):
+                mid = i
+                i = -1
+            i = i-1
+
+        i = 0
+        while(i<mid):
+            left = left+self.equa[i]
+            i = i+1
+        i = mid+2
+        while(i<len(self.equa)-1):
+            right = right+self.equa[i]
+            i = i+1
+
+        coeffLeft = eval(left)
+        coeffRight = eval(right)
+
+        if(not(str(coeffLeft).isdigit())):
+            coeffLeft = Poly(coeffLeft).all_coeffs()
+        else:
+            coeffLeft = [0, coeffLeft]
+        if(not(str(coeffRight).isdigit())):
+            coeffRight = Poly(coeffRight).all_coeffs()
+        else:
+            coeffRight = [0, coeffRight]
+        return left, right, coeffLeft, coeffRight
 
 
 class Inequation: #(Exercice):
@@ -40,7 +95,6 @@ class Inequation: #(Exercice):
         self.lettre = lettre
         self.equation = eval(equation,transformations=(st+(imp,)))
         self.solution = solve([[self.equation]], self.x)
-        print self.solution
 
     def isEquivalant(self, other):
         return solve([[eval(other,transformations=(st+(imp,)))]],self.x) == self.solution
@@ -80,17 +134,20 @@ class System: #(Exercice):
     def isEquivalant(self, other):
         return other.solution == self.solution
 
-    def isSolution(self, solution, var): #int solution
-
-        return linsolve([eval(x,transformations=(st+(imp,))) for x in solution], symbols(var)) == self.solution
+    def isSolution(self, solution): #int solution
+        for s in solution:
+            if(not(s in list(self.solution)[0])):
+                return False
+        return True
 
 
 
 # tests Equation
-# Equation1 = Equation('a+2-(1+2)','a')
-# print Equation1.isSolution(1)
-# Equation2 = Equation('a-(1)','a')
-# print Equation1.isEquivalant(Equation2)
+Equation1 = Equation('a+2-(1)','a')
+Equation1.analyse()
+#print Equation1.isSolution(-1)
+Equation2 = Equation('a+2-(1)','a')
+print Equation1.isEquivalant(Equation2)
 
 # tests Inequation
 # Inequation1 = Inequation('a+3>5', 'a')
@@ -99,6 +156,6 @@ class System: #(Exercice):
 
 #tests System
 #System1 = System(['2x-2', 'y+x'], "x, y") # 2x=2 y+x=0
-#print System1.isSolution(['x-3/2','y+3/2'],"x, y") # x=3/2 y=-3/2
-#System2 = System(['x-3/2', 'y+x'], "x, y") # x=5 x=-y
+#print System1.isSolution([-1, 1]) # x=-1 y=1 ou l'inverse
+#System2 = System(['x-1', 'y+x'], "x, y") # x=1 x=-y
 #print System1.isEquivalant(System2)
