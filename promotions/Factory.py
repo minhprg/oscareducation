@@ -1,3 +1,4 @@
+from __future__ import division
 from sympy.solvers import solve
 from sympy import Symbol
 from sympy import linsolve, symbols
@@ -35,12 +36,18 @@ class Equation: #(Exercice):
                 hint = 'Aide : simplifie a gauche'
             elif(not(str(rightOther).isdigit()) and coeffRightOther[0] == 0):
                 hint = 'Aide : simplifie a droite'
-            elif((len(coeffLeftOther) == 2 and coeffLeftOther[1] != 0 and coeffRightOther[0] == 0)):
+            elif(coeffLeftOther[1] != 0 and coeffRightOther[0] == 0):
                 hint = 'Aide : isole la variable de gauche en applicant une operation de chaque cote'
-            elif((len(coeffRightOther) == 2 and coeffRightOther[1] != 0 and coeffLeftOther[0] == 0)):
+            elif(coeffRightOther[1] != 0 and coeffLeftOther[0] == 0):
                 hint = 'Aide : isole la variable de droite en applicant une operation de chaque cote'
             return (True,hint)
-        return (False,hint)
+        else:
+            if(coeffLeftPrevious[0] == coeffLeftOther[0] and coeffLeftOther[1]-coeffLeftPrevious[1] != coeffRightOther[1]-coeffRightPrevious[1]):
+                hint = 'Aide : tu as fait +('+str(coeffLeftOther[1]-coeffLeftPrevious[1])+') a gauche et +('\
+                       +str(coeffRightOther[1]-coeffRightPrevious[1])+') a droite'
+            
+
+            return (False,hint)
 
 
     def isSolution(self, solution): #int solution
@@ -75,8 +82,8 @@ class Equation: #(Exercice):
             right = right+self.equa[i]
             i = i+1
 
-        coeffLeft = eval(left)
-        coeffRight = eval(right)
+        coeffLeft = eval(left,transformations=(st+(imp,)))
+        coeffRight = eval(right,transformations=(st+(imp,)))
 
         if(not(str(coeffLeft).isdigit())):
             coeffLeft = Poly(coeffLeft).all_coeffs()
@@ -143,10 +150,10 @@ class System: #(Exercice):
 
 
 # tests Equation
-Equation1 = Equation('a+2-(1)','a')
+Equation1 = Equation('3*a-2-(3)','a')
 Equation1.analyse()
 #print Equation1.isSolution(-1)
-Equation2 = Equation('a+2-(1)','a')
+Equation2 = Equation('3*a-2-(3)','a')
 print Equation1.isEquivalant(Equation2)
 
 # tests Inequation
