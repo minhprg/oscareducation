@@ -45,7 +45,27 @@ class Equation: #(Exercice):
             if(coeffLeftPrevious[0] == coeffLeftOther[0] and coeffLeftOther[1]-coeffLeftPrevious[1] != coeffRightOther[1]-coeffRightPrevious[1]):
                 hint = 'Aide : tu as fait +('+str(coeffLeftOther[1]-coeffLeftPrevious[1])+') a gauche et +('\
                        +str(coeffRightOther[1]-coeffRightPrevious[1])+') a droite'
-            
+            ratio = None
+            if coeffLeftPrevious[0] !=0 and coeffLeftOther[0] != 0 :
+                ratio = coeffLeftPrevious[0]/coeffLeftOther[0]
+            if coeffLeftPrevious[1] !=0 and coeffLeftOther[1] != 0:
+                if ratio is not None and coeffLeftPrevious[1]/coeffLeftOther[1] != ratio:
+                    hint = "Aide : tu n'as pas applique la meme division sur chaque terme"
+                    return (False,hint)
+                if ratio is None:
+                    ratio = coeffLeftPrevious[1]/coeffLeftOther[1]
+
+            if coeffRightPrevious[0] !=0 and coeffRightOther[0] != 0:
+                if ratio is not None and coeffRightPrevious[0]/coeffRightOther[0] != ratio:
+                    hint = "Aide : tu n'as pas applique la meme division sur chaque terme"
+                    return (False,hint)
+                if ratio is None:
+                    ratio = coeffRightPrevious[0]/coeffRightOther[0]
+
+            if coeffRightPrevious[1] !=0 and coeffRightOther[1] != 0:
+                if ratio is not None and coeffRightPrevious[1]/coeffRightOther[1] != ratio:
+                    hint = "Aide : tu n'as pas applique la meme division sur chaque terme"
+                    return (False,hint)
 
             return (False,hint)
 
@@ -150,10 +170,10 @@ class System: #(Exercice):
 
 
 # tests Equation
-Equation1 = Equation('3*a-2-(3)','a')
+Equation1 = Equation('4*a-8-(16)','a')
 Equation1.analyse()
 #print Equation1.isSolution(-1)
-Equation2 = Equation('3*a-2-(3)','a')
+Equation2 = Equation('1*a-4-(8)','a')
 print Equation1.isEquivalant(Equation2)
 
 # tests Inequation
