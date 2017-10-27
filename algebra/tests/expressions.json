@@ -1,0 +1,720 @@
+{
+    "expressions": [
+        {
+            "type": "Equation",
+            "two_sided": false,
+            "degree": 1,
+            "result": "positive",
+
+            "string": "3x - 2 = 0",
+            "left_operand": "3x - 2",
+            "right_operand": "0",
+            "operator": "=",
+            "solution": ["x = 0.6667"]
+        },
+        {
+            "type": "Equation",
+            "two_sided": false,
+            "degree": 1,
+            "result": "positive",
+
+            "string": "18x + 9 = 14",
+            "left_operand": "18x + 9",
+            "right_operand": "14",
+            "operator": "=",
+            "solution": ["x = 0.2778"]
+        },
+        { 
+            "type": "Equation",
+            "two_sided": false,
+            "degree": 1,
+            "result": "positive",
+
+            "string": "3x - 5 = 7",
+            "left_operand": "3x - 5",
+            "right_operand": "7",
+            "operator": "=",
+            "solution": ["x = 4"]
+        },
+        {
+            "type": "Equation",
+            "two_sided": false,
+            "degree": 1,
+            "result": "positive",
+
+            "string": "x / 3 - 1 = 6",
+            "left_operand": "x / 3 - 1",
+            "right_operand": "6",
+            "operator": "=",
+            "solution": ["x = 21"]
+        },
+        {
+            "type": "Equation",
+            "two_sided": false,
+            "degree": 1,
+            "result": "negative",
+
+            "string": "x + 8 = 0",
+            "left_operand": "x + 8",
+            "right_operand": "0",
+            "operator": "=",
+            "solution": ["x = -8"]
+        },
+        {
+            "type": "Equation",
+            "two_sided": false,
+            "degree": 1,
+            "result": "negative",
+            
+            "string": "x / 2 + 4 = 2",
+            "left_operand": "x / 2 + 4",
+            "right_operand": "2",
+            "operator": "=",
+            "solution": ["x = -1"]
+        },
+
+      	{
+            "type": "Equation",
+            "two_sided": false,
+            "degree": 1,
+          	"result": "negative",
+            
+            "string": "3x = -15",
+            "left_operand": "3x",
+            "right_operand": "-15",
+            "operator": "=",
+            "solution": ["x = -5"]
+        },
+      	{
+            "type": "Equation",
+            "two_sided": true,
+            "degree": 1,
+          	"result": "negative",
+            
+            "string": "2x - 6 = -x - 27",
+            "left_operand": "2x - 6",
+            "right_operand": "-x - 27",
+            "operator": "=",
+            "solution": ["x = -7"]
+        },
+      	{
+            "type": "Equation",
+            "two_sided": true,
+            "degree": 1,
+          	"result": "positive",
+            
+            "string": "2x + 9 = -5x + 23",
+            "left_operand": "2x + 9",
+            "right_operand": "-5x + 23",
+            "operator": "=",
+            "solution": ["x = 2"]
+        },
+      	{
+            "type": "Equation",
+            "two_sided": true,
+            "degree": 1,
+          	"result": "positive",
+            
+            "string": "2x - 6 = 3x - 11",
+            "left_operand": "2x - 6",
+            "right_operand": "3x - 11",
+            "operator": "=",
+            "solution": ["x = 5"]
+        },
+      	{
+            "type": "Equation",
+            "two_sided": true,
+            "degree": 1,
+          	"result": "positive",
+            
+            "string": "-x + 4 = 3x - 24",
+            "left_operand": "-x + 4",
+            "right_operand": "3x - 24",
+            "operator": "=",
+            "solution": ["x = 7"]
+        },
+      	{
+            "type": "Equation",
+            "two_sided": true,
+            "degree": 1,
+          	"result": "negative",
+            
+            "string": "3(x + 3) = -2x - 1",
+            "left_operand": "3(x + 3)",
+            "right_operand": "-2x - 1",
+            "operator": "=",
+            "solution": ["x = -2"]
+        },
+      	{
+            "type": "Equation",
+            "two_sided": false,
+            "degree": 1,
+          	"result": "negative",
+            
+            "string": "4x - 7 = -31",
+            "left_operand": "4x - 7",
+            "right_operand": "-31",
+            "operator": "=",
+            "solution": ["x = -6"]
+        },
+      	{
+            "type": "Equation",
+            "two_sided": false,
+            "degree": 1,
+          	"result": "negative",
+            
+            "string": "3(x - 1) = -27",
+            "left_operand": "3(x - 1)",
+            "right_operand": "-27",
+            "operator": "=",
+            "solution": ["x = -8"]
+        },
+      	{
+            "type": "Equation",
+            "two_sided": true,
+            "degree": 1,
+          	"result": "positive",
+            
+            "string": "-x - 2 = x - 10",
+            "left_operand": "-x - 2",
+            "right_operand": "x - 10",
+            "operator": "=",
+            "solution": ["x = 4"]
+        },
+      	{
+            "type": "Equation",
+            "two_sided": true,
+            "degree": 1,
+          	"result": "positive",
+            
+            "string": "3x - 5 = -4x + 2",
+            "left_operand": "3x - 5",
+            "right_operand": "-4x + 2",
+            "operator": "=",
+            "solution": ["x = 1"]
+        },
+
+      	{
+            "type": "Equation",
+            "two_sided": true,
+            "degree": 2,
+            
+            "string": "-x^2 + 7x + 8 = -2x^2 + 14x - 4",
+            "left_operand": "-x^2 + 7x + 8",
+            "right_operand": "-2x^2 + 14x - 4",
+            "operator": "=",
+            "solution": ["x = 3" , "x = 4"]
+        },
+      	{
+            "type": "Equation",
+            "two_sided": true,
+            "degree": 2,
+            
+            "string": "3x^2 + 16 = 2x^2 - 4x + 21",
+            "left_operand": "3x^2 + 16",
+            "right_operand": "2x^2 - 4x + 21",
+            "operator": "=",
+            "solution": ["x = -5" , "x = 1"]
+        },
+      	{
+            "type": "Equation",
+            "two_sided": true,
+            "degree": 2,
+            
+            "string": "-x^2 + 7x + 16 = -2x^2 - 2x + 8",
+            "left_operand": "-x^2 + 7x + 16",
+            "right_operand": "-2x^2 - 2x + 8",
+            "operator": "=",
+            "solution": ["x = -8" ,  "x = -1"]
+        },
+      	{
+            "type": "Equation",
+            "two_sided": true,
+            "degree": 2,
+            
+            "string": "3x^2 + 8x + 3 = 2x^2 + 6x + 27",
+            "left_operand": "3x^2 + 8x + 3",
+            "right_operand": "2x^2 + 6x + 27",
+            "operator": "=",
+            "solution": ["x = -6", "x = 4"]
+        },
+      	{
+            "type": "Equation",
+            "two_sided": true,
+            "degree": 2,
+            
+            "string": "-x^2 + 3x + 4 = -2x^2 - 10x - 36",
+            "left_operand": "-x^2 + 3x + 4",
+            "right_operand": "-2x^2 - 10x - 36",
+            "operator": "=",
+            "solution": ["x = -8", "x = -5"]
+        },
+      	{
+            "type": "Equation",
+            "two_sided": true,
+            "degree": 2,
+            
+            "string": "2x^2 + 3x + 6 = x^2 + 2x + 12",
+            "left_operand": "2x^2 + 3x + 6",
+            "right_operand": "x^2 + 2x + 12",
+            "operator": "=",
+            "solution": ["x = -3", "x = 2"]
+        },
+      	{
+            "type": "Equation",
+            "two_sided": true,
+            "degree": 2,
+            
+            "string": "2x^2 + 6x + 5 = x^2 + 21x - 53",
+            "left_operand": "2x^2 + 6x + 5",
+            "right_operand": "x^2 + 21x - 53",
+            "operator": "=",
+            "solution": "-"
+        },
+      	{
+            "type": "Equation",
+            "two_sided": true,
+            "degree": 2,
+            
+            "string": "-x^2 + 8x + 5 = -2x^2 + 9x + 3",
+            "left_operand": "-x^2 + 8x + 5",
+            "right_operand": "-2x^2 + 9x + 3",
+            "operator": "=",
+            "solution": "-"
+        },
+      	{
+            "type": "Equation",
+            "two_sided": true,
+            "degree": 2,
+            
+            "string": "-x^2 + 7x + 12 = -2x^2 + 10x + 52",
+            "left_operand": "-x^2 + 7x + 12",
+            "right_operand": "-2x^2 + 10x + 52",
+            "operator": "=",
+            "solution": ["x = -5", "x = 8"]
+        },
+      	{
+            "type": "Equation",
+            "two_sided": true,
+            "degree": 2,
+            
+            "string": "-x^2 + 8x + 9 = -2x^2 + 2x + 16",
+            "left_operand": "-x^2 + 8x + 9",
+            "right_operand": "-2x^2 + 2x + 1",
+            "operator": "=",
+            "solution": ["x = -7", "x = 1"]
+        },
+      	
+
+      
+        {
+            "type": "Inequation",
+            "two_sided": false,
+            "degree": 1,
+
+            "string": "x + 5 >= 3",
+            "left_operand": "x + 5",
+            "right_operand": "3",
+            "operator": ">=",
+            "solution": ["x >= 2"]
+        },
+        {
+            "type": "Inequation",
+            "two_sided": false,
+            "degree": 1,
+
+            "string": "2 * (x - 5) > 0",
+            "left_operand": "2 * (x - 5)",
+            "right_operand": "0",
+            "operator": ">",
+            "solution": ["x > 10"]
+        },
+        {
+            "type": "Inequation",
+            "two_sided": false,
+            "degree": 1,
+
+            "string": "-12x < 144",
+            "left_operand": "-12x",
+            "right_operand": "144",
+            "operator": "<",
+            "solution": ["x > -12"]
+        },
+        {
+            "type": "Inequation",
+          	"two_sided": false,
+          	"degree": 1,
+          	
+          	"string": "-4x < 30",
+          	"left_operand": "-4x",
+          	"right_operand": "144",
+          	"operator": "<",
+          	"solution": ["x < -30/4"]
+        },
+        {
+            "type": "Inequation",
+            "two_sided": true,
+            "degree": 1,
+
+            "string": "4 * (x - 1) < 3 * (x + 1)",
+            "left_operand": "4 * (x - 1)",
+            "right_operand": "3 * (x + 1)",
+            "operator": "<",
+            "solution": ["x < 7"]
+        },
+        {
+            "type": "Inequation",
+            "two_sided": true,
+            "degree": 1,
+
+            "string": "2x + 3 <= x",
+            "left_operand": "2x + 3",
+            "right_operand": "x",
+            "operator": "<=",
+            "solution": ["x <= -3"]
+        },
+        {
+            "type": "Inequation",
+            "two_sided": true,
+            "degree": 1,
+            
+            "string": "5 * (x + 2) - 3x <= 4 + 2x + 3 * (x - 1)",
+            "left_operand": "5 * (x + 2) - 3x",
+            "right_operand": "4 + 2x + 3 * (x - 1)",
+            "operator": "<=",
+            "solution": ["3 >= x"]
+        },
+        {
+          	"type": "Inequation",
+          	"two_sided": true,
+          	"degree": 1,
+          
+          	"string": "5 * (x + 3 * (1 - x) + 2) >= 7",
+          	"left_operand": "5 * (x + 3 * (1 - x) + 2)",
+            "right_operand": "7",
+          	"operator": ">=",
+          	"solution": ["x <= 5/9"]
+      	},
+        {
+          	"type": "Inequation",
+          	"two_sided": true,
+          	"degree": 2,
+          	
+          	"string": "x + x * (3 - 2 * (1 + x)) < 5 * (1 + 2 * (x - 3))  2 * x^2",
+						"left_operand": "x + x * (3 - 2 * (1 + x))",
+          	"right_operand": "5 * (1 + 2 * (x - 3)) - 2 * x^2",
+          	"operator": "<",
+          	"solution": ["x < 25/8"]
+        },
+        {
+            "type": "Inequation",
+            "two_sided": false,
+            "degree": 2,
+
+            "string": "((7-4x) / (x + 3)) < 0",
+            "left_operand": "((7-4x) / (x + 3))",
+            "right_operand": "0",
+            "operator": "<",
+            "solution": ["x <= -3" , "x >= 1.75"]
+        },
+        {
+            "type": "Inequation",
+            "two_sided": false,
+            "degree": 2,
+
+            "string": "((x+3) / (x-3)) >= 0",
+            "left_operand": "((x+3) / (x-3))",
+            "right_operand": "0",
+            "operator": ">=",
+            "solution": ["x <= -3" , "x >= 3"]
+        },
+        {
+            "type": "Inequation",
+            "two_sided": false,
+            "degree": 2,
+
+            "string": "((x) / (5-x)) >= 0",
+            "left_operand": "((x) / (5-x))",
+            "right_operand": "0",
+            "operator": ">=",
+            "solution": ["x <= 0" , "x >= 5"]
+        },
+        {
+            "type": "Inequation",
+            "two_sided": false,
+            "degree": 2,
+
+            "string": "(((1-5x) /2) + ((10-10x) / 5)) >= 1",
+            "left_operand": "(((1-5x) /2) + ((10-10x) / 5))",
+            "right_operand": "1",
+            "operator": ">=",
+            "solution": ["x <= 0.333"]
+        },
+        {
+            "type": "Inequation",
+            "two_sided": false,
+            "degree": 2,
+
+            "string": "(((1-5x) /2) - ((10-10x) / 5)) >= 1",
+            "left_operand": "(((1-5x) /2) - ((10-10x) / 5))",
+            "right_operand": "1",
+            "operator": ">=",
+            "solution": ["x <= -5"]
+        },
+        {
+            "type": "Inequation",
+            "two_sided": true,
+            "degree": 2,
+
+            "string": "((x+2) / (x+3)) <= ((x+4) / (x+5))",
+            "left_operand": "((x+2) / (x+3))",
+            "right_operand": "((x+4) / (x+5))",
+            "operator": "<=",
+            "solution": ["x <= -5" , "x >= -3"]
+        },
+        {
+            "type": "Inequation",
+            "two_sided": false,
+            "degree": 2,
+
+            "string": "(((9x -3) / 3) - ((8-16x) / 4)) >= 2",
+            "left_operand": "(((9x -3) / 3) - ((8-16x) / 4))",
+            "right_operand": "2",
+            "operator": ">=",
+            "solution": ["x <= -1"]
+        },
+        {
+            "type": "Inequation",
+            "two_sided": true,
+            "degree": 2,
+
+            "string": "x <= (3/x)",
+            "left_operand": "x",
+            "right_operand": "(3/x)",
+            "operator": "<=",
+            "solution": ["x <= - sqrt(3)" , "x >= sqrt(3)"]
+        },
+        {
+            "type": "Inequation",
+            "two_sided": false,
+            "degree": 2,
+
+            "string": "(5x^2 - 4x - 1) / (-2x^2 + x - 1) >= 2",
+            "left_operand": "(5x^2 - 4x - 1) / (-2x^2 + x - 1)",
+            "right_operand": "2",
+            "operator": ">=",
+            "solution": ["x <= 0,333"]
+        },
+        {
+            "type": "Inequation",
+            "two_sided": true,
+            "degree": 2,
+
+            "string": "((x) / (2-x)) < ((2x+10) / (x^2 + 3x - 10))",
+            "left_operand": "((x) / (2-x))",
+            "right_operand": "((2x+10) / (x^2 + 3x - 10))",
+            "operator": ">=",
+            "solution": ["x <= -5" , "x >= -2"]
+        },
+        {
+            "type": "Inequation",
+            "two_sided": false,
+            "degree": 2,
+
+            "string": "((7-4x) / (x + 3)) < 0",
+            "left_operand": "((7-4x) / (x + 3))",
+            "right_operand": "0",
+            "operator": "<",
+            "solution": ["x <= -3" , "x >= 1.75"]
+        },
+        {
+            "type": "Inequation",
+            "two_sided": false,
+            "degree": 2,
+
+            "string": "((x+3) / (x-3)) >= 0",
+            "left_operand": "((x+3) / (x-3))",
+            "right_operand": "0",
+            "operator": ">=",
+            "solution": ["x <= -3" , "x >= 3"]
+        },
+        {
+            "type": "Inequation",
+            "two_sided": false,
+            "degree": 2,
+
+            "string": "((x) / (5-x)) >= 0",
+            "left_operand": "((x) / (5-x))",
+            "right_operand": "0",
+            "operator": ">=",
+            "solution": ["x <= 0" , "x >= 5"]
+        },
+        {
+            "type": "Inequation",
+            "two_sided": false,
+            "degree": 2,
+
+            "string": "(((1-5x) /2) + ((10-10x) / 5)) >= 1",
+            "left_operand": "(((1-5x) /2) + ((10-10x) / 5))",
+            "right_operand": "1",
+            "operator": ">=",
+            "solution": ["x <= 0.333"]
+        },
+        {
+            "type": "Inequation",
+            "two_sided": false,
+            "degree": 2,
+
+            "string": "(((1-5x) /2) - ((10-10x) / 5)) >= 1",
+            "left_operand": "(((1-5x) /2) - ((10-10x) / 5))",
+            "right_operand": "1",
+            "operator": ">=",
+            "solution": ["x <= -5"]
+        },
+        {
+            "type": "Inequation",
+            "two_sided": true,
+            "degree": 2,
+
+            "string": "((x+2) / (x+3)) <= ((x+4) / (x+5))",
+            "left_operand": "((x+2) / (x+3))",
+            "right_operand": "((x+4) / (x+5))",
+            "operator": "<=",
+            "solution": ["x <= -5" , "x >= -3"]
+        },
+        {
+            "type": "Inequation",
+            "two_sided": false,
+            "degree": 2,
+
+            "string": "(((9x -3) / 3) - ((8-16x) / 4)) >= 2",
+            "left_operand": "(((9x -3) / 3) - ((8-16x) / 4))",
+            "right_operand": "2",
+            "operator": ">=",
+            "solution": ["x <= -1"]
+        },
+        {
+            "type": "Inequation",
+            "two_sided": true,
+            "degree": 2,
+
+            "string": "x <= (3/x)",
+            "left_operand": "x",
+            "right_operand": "(3/x)",
+            "operator": "<=",
+            "solution": ["x <= - sqrt(3)" , "x >= sqrt(3)"]
+        },
+        {
+            "type": "Inequation",
+            "two_sided": false,
+            "degree": 2,
+
+            "string": "(5x^2 - 4x - 1) / (-2x^2 + x - 1) >= 2",
+            "left_operand": "(5x^2 - 4x - 1) / (-2x^2 + x - 1)",
+            "right_operand": "2",
+            "operator": ">=",
+            "solution": ["x <= 0,333"]
+        },
+        {
+            "type": "Inequation",
+            "two_sided": true,
+            "degree": 2,
+
+            "string": "((x) / (2-x)) < ((2x+10) / (x^2 + 3x - 10))",
+            "left_operand": "((x) / (2-x))",
+            "right_operand": "((2x+10) / (x^2 + 3x - 10))",
+            "operator": ">=",
+            "solution": ["x <= -5" , "x >= -2"]
+        },
+        {
+            "type": "EquationSystem",
+            "two_sided": true,
+            "degree": 1,
+
+            "string": ["x - 7y = -11", "5x + 2y = -18"],
+            "operator": "=",
+            "solution": [ ["x = -4", "y = 1"] ]
+        },
+        {
+            "type": "EquationSystem",
+            "two_sided": true,
+            "degree": 1,
+
+            "string": ["-x + 2y = -13", "-4x - 4y = 56"],
+            "operator": "=",
+            "solution": [ ["x = -5", "y=-9"] ]
+        },
+        {
+            "type": "EquationSystem",
+            "two_sided": true,
+            "degree": 1,
+
+            "string": ["-x - 2y = 14", "-3x + y = -14"],
+            "operator": "=",
+            "solution": [ ["x = 2", "y = -8"] ]
+        },
+        {
+            "type": "EquationSystem",
+            "two_sided": true,
+            "degree": 1,
+
+            "string": ["2x + 4y = 34", "-2x + 4y = -2"],
+            "operator": "=",
+            "solution": [ ["x = 9", "y = 4"] ]
+        },
+        {
+            "type": "EquationSystem",
+            "two_sided": true,
+            "degree": 1,
+
+            "string": ["4x + 3y = 29", "-4x + 3y = -11"],
+            "operator": "=",
+            "solution": [ ["x = 5", "y = 3"] ]
+        },
+        {
+            "type": "EquationSystem",
+            "two_sided": true,
+            "degree": 1,
+
+            "string": ["-x + 2y = -3", "x - 2y = 3"],
+            "operator": "=",
+            "solution": [ ["x = 9", "y = 3"] ]
+        },
+        {
+            "type": "EquationSystem",
+            "two_sided": true,
+            "degree": 1,
+
+            "string": ["5x + 3y = 31", "-5x + 3y = -49"],
+            "operator": "=",
+            "solution": [ ["x = 8", "y = -3"] ]
+        },
+        {
+            "type": "EquationSystem",
+            "two_sided": true,
+            "degree": 1,
+
+            "string": ["-2x + 3y = 1", "x - 3y = -2"],
+            "operator": "=",
+            "solution": [ ["x = 1", "y = 1"] ]
+        },
+        {
+            "type": "EquationSystem",
+            "two_sided": true,
+            "degree": 1,
+
+            "string": ["2x - y = -25", "-5x - 5y = -5"],
+            "operator": "=",
+            "solution": [ ["x = -8", "y = 9"] ]
+        },
+        {
+            "type": "EquationSystem",
+            "two_sided": true,
+            "degree": 1,
+
+            "string": ["-x + 3y = -4", "x + 2y = -1"],
+            "operator": "=",
+            "solution": [ ["x = 1", "y = -1"] ]
+        }
+    ]
+}
