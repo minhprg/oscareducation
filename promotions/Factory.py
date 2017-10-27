@@ -42,9 +42,9 @@ class Equation: #(Exercice):
                 hint = 'Aide : isole la variable de gauche en applicant une operation de chaque cote'
             elif(coeffRightOther[1] != 0 and coeffLeftOther[0] == 0):
                 hint = 'Aide : isole la variable de droite en applicant une operation de chaque cote'
-            elif(coeffLeftOther[1] != 1):
+            elif(coeffLeftOther[1] != 1 and coeffRightOther[1] == 0):
                 hint = 'Aide : reduit le coefficent de la variable en applicant une operation'
-            elif (coeffRightOther[1] != 1):
+            elif (coeffRightOther[1] != 1 and coeffLeftOther[1] == 0):
                 hint = 'Aide : reduit le coefficent de la variable en applicant une operation'
             return (True,hint)
         else:
