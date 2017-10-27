@@ -58,7 +58,7 @@ class ExpressionsTest(unittest.TestCase):
         """
         for expression in self.expressions("Equation", 1, False):
             equation = Equation(expression["string"])
-            self.assertEquals(equation.solution, expression["solution"].replace(" ", ""))
+            self.assertEquals(equation.solution, expression["solution"])
 
     #2
     def test_first_degree_one_sided_negative_equation_solution(self):
@@ -67,7 +67,7 @@ class ExpressionsTest(unittest.TestCase):
         """
         for expression in self.expressions("Equation", 1, False):
             equation = Equation(expression["string"])
-            self.assertEquals(equation.solution, expression["solution"].replace(" ", ""))
+            self.assertEquals(equation.solution, expression["solution"])
 
     #3
     def test_first_degree_two_sided_positive_equation_solution(self):
@@ -76,7 +76,7 @@ class ExpressionsTest(unittest.TestCase):
         """
         for expression in self.expressions("Equation", 1, True):
             equation = Equation(expression["string"])
-            self.assertEquals(equation.solution, expression["solution"].replace(" ", ""))
+            self.assertEquals(equation.solution, expression["solution"])
 
     #4
     def test_first_degree_two_sided_negative_equation_solution(self):
@@ -85,7 +85,7 @@ class ExpressionsTest(unittest.TestCase):
         """
         for expression in self.expressions("Equation", 1, True):
             equation = Equation(expression["string"])
-            self.assertEquals(equation.solution, expression["solution"].replace(" ", ""))
+            self.assertEquals(equation.solution, expression["solution"])
 
     #5
     def test_second_degree_one_sided_equation_solution(self):
@@ -94,7 +94,7 @@ class ExpressionsTest(unittest.TestCase):
         """
         for expression in self.expressions("Equation", 2, False):
             equation = Equation(expression["string"])
-            self.assertEquals(equation.solution, expression["solution"].replace(" ", ""))
+            self.assertEquals(equation.solution, expression["solution"])
 
     #6
     def test_second_degree_two_sided_equation_solution(self):
@@ -103,7 +103,7 @@ class ExpressionsTest(unittest.TestCase):
         """
         for expression in self.expressions("Equation", 2, True):
             equation = Equation(expression["string"])
-            self.assertEquals(equation.solution, expression["solution"].replace(" ", ""))
+            self.assertEquals(equation.solution, expression["solution"])
 
     # TOTAL = 6
 
@@ -116,7 +116,7 @@ class ExpressionsTest(unittest.TestCase):
         """
         for expression in self.expressions("Inequation", 1, False):
             inequation = Equation(expression["string"])
-            self.assertEquals(inequation.solution, expression["solution"].replace(" ", ""))
+            self.assertEquals(inequation.solution, expression["solution"])
 
     #2
     def test_first_degree_two_sided_inequation_solution(self):
@@ -125,7 +125,7 @@ class ExpressionsTest(unittest.TestCase):
         """
         for expression in self.expressions("Inequation", 1, True):
             inequation = Inequation(expression["string"])
-            self.assertEquals(inequation.solution, expression["solution"].replace(" ", ""))
+            self.assertEquals(inequation.solution, expression["solution"])
 
     #3
     def test_second_degree_one_sided_inequation_solution(self):
@@ -134,7 +134,7 @@ class ExpressionsTest(unittest.TestCase):
         """
         for expression in self.expressions("Inequation", 2, False):
             inequation = Inequation(expression["string"])
-            self.assertEquals(inequation.solution, expression["solution"].replace(" ", ""))
+            self.assertEquals(inequation.solution, expression["solution"])
 
     #4
     def test_second_degree_two_sided_inequation_solution(self):
@@ -143,7 +143,7 @@ class ExpressionsTest(unittest.TestCase):
         """
         for expression in self.expressions("Inequation", 2, True):
             inequation = Inequation(expression["string"])
-            self.assertEquals(inequation.solution, expression["solution"].replace(" ", ""))
+            self.assertEquals(inequation.solution, expression["solution"])
     
     # TOTAL = 6 + 4
 
@@ -156,7 +156,7 @@ class ExpressionsTest(unittest.TestCase):
         """
         for expression in self.expressions("EquationSystem", 1, False):
             equation_system = EquationSystem(expression["string"])
-            self.assertEqual(equation_system.solution, expression["solution"].replace(" ", ""))
+            self.assertEqual(equation_system.solution, expression["solution"])
     
     #2
     def test_first_degree_two_sided_equation_system_solution(self):
@@ -165,7 +165,7 @@ class ExpressionsTest(unittest.TestCase):
         """
         for expression in self.expressions("EquationSystem", 1, True):
             equation_system = EquationSystem(expression["string"])
-            self.assertEqual(equation_system.solution, expression["solution"].replace(" ", ""))
+            self.assertEqual(equation_system.solution, expression["solution"])
 
     #3
     def test_second_degree_one_sided_equation_system_solution(self):
@@ -174,7 +174,7 @@ class ExpressionsTest(unittest.TestCase):
         """
         for expression in self.expressions("EquationSystem", 2, False):
             equation_system = EquationSystem(expression["string"])
-            self.assertEqual(equation_system.solution, expression["solution"].replace(" ", ""))
+            self.assertEqual(equation_system.solution, expression["solution"])
 
     #4
     def test_second_degree_two_sided_equation_system_solution(self):
@@ -183,7 +183,7 @@ class ExpressionsTest(unittest.TestCase):
         """
         for expression in self.expressions("EquationSystem", 2, True):
             equation_system = EquationSystem(expression["string"])
-            self.assertEqual(equation_system.solution, expression["solution"].replace(" ", ""))
+            self.assertEqual(equation_system.solution, expression["solution"])
 
     # TOTAL = 6 + 4 + 4
 

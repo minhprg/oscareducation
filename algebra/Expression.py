@@ -56,7 +56,8 @@ class Expression:
                 0 if character.start() == len(expression) else 1
             )]
 
-            if operator.match(before) and operator.match(after):
+            if (operator.match(before) or 0 == character.start()) \
+            and (operator.match(after) or character.start() == len(expression)):
                 continue
             if not operator.match(before):
                 targets.append(character.start() - 1)
