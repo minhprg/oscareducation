@@ -191,12 +191,13 @@ for line in iter(sys.stdin.readline,''):
             print "Vous pouvez maintenant entrer les etapes de resolution"
         #print line
         else:
+            print handler.parse(unicode(line.strip(), "utf-8"))
             Equation2 = Equation(handler.parse(unicode(line.strip(),"utf-8")),'a')
             temp = Equation1.isEquivalant(Equation2)
             print temp
             if temp[0] and temp[1] is None:
                 break
-    except Exception:
+    except IOError:
         print "L'expression de l'equation n'est pas bonne (parse error)"
 
 
