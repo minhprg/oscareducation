@@ -36,9 +36,9 @@ class Equation: #(Exercice):
         print coeffLeftOther
         print coeffRightOther
         if(solve(other.equa,self.x) == self.solution):
-            if(not(str(leftOther).isdigit()) and coeffLeftOther[0] == 0):
+            if(not(str(leftOther).lstrip("-").isdigit()) and coeffLeftOther[0] == 0):
                 hint = 'Aide : simplifie a gauche'
-            elif(not(str(rightOther).isdigit()) and coeffRightOther[0] == 0):
+            elif(not(str(rightOther).lstrip("-").isdigit()) and coeffRightOther[0] == 0):
                 hint = 'Aide : simplifie a droite'
             elif(coeffLeftOther[1] != 0 and coeffRightOther[0] == 0):
                 hint = 'Aide : isole la variable de gauche en applicant une operation de chaque cote'
@@ -113,11 +113,11 @@ class Equation: #(Exercice):
         coeffLeft = eval(left,transformations=(st+(imp,)))
         coeffRight = eval(right,transformations=(st+(imp,)))
 
-        if(not(str(coeffLeft).isdigit())):
+        if(not(str(coeffLeft).lstrip("-").isdigit())):
             coeffLeft = Poly(coeffLeft).all_coeffs()
         else:
             coeffLeft = [0, coeffLeft]
-        if(not(str(coeffRight).isdigit())):
+        if(not(str(coeffRight).lstrip("-").isdigit())):
             coeffRight = Poly(coeffRight).all_coeffs()
         else:
             coeffRight = [0, coeffRight]
@@ -142,7 +142,7 @@ class Inequation: #(Exercice):
         boolCondition = 0
         i = 0
         while(i<len(solution)): # ca marche tg
-            if(solution[i].isdigit() and boolNbr==0):
+            if(solution[i].lstrip("-").isdigit() and boolNbr==0):
                 nbr = nbr+solution[i]
             elif(solution[i].islower() and boolLettre==0):
                 boolLettre = 1
@@ -188,7 +188,9 @@ print "Rentrez l'equation a resoudre"
 for line in iter(sys.stdin.readline,''):
     try:
         if Equation1 == None:
-            Equation1 = Equation(handler.parse(unicode(line.strip(),"utf-8")),'a')
+            string = handler.parse(unicode(line.strip(),"utf-8"))
+            print string
+            Equation1 = Equation(string,"a")
             Equation1.analyse()
             print "Vous pouvez maintenant entrer les etapes de resolution"
         #print line
