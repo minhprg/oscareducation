@@ -26,7 +26,6 @@ class InputHandler:
         else:
             bool1 = False
             bool2 = False
-
         if bool1 and bool2:
             inputString = s[0]+"-("+s[1]+")"
             inputString = inputString.replace("^", "**")
@@ -39,7 +38,7 @@ class InputHandler:
             return True #no parse error
 
         if nbPar < 0:
-            return False;
+            return False
         if len(listChar) > 1:
             if listChar[0].isnumeric():
                 if listChar[1].isalnum():
@@ -72,7 +71,7 @@ class InputHandler:
                 else:
                     return False
             elif listChar[0] == "(":
-                if listChar[1].isnumeric() or listChar[1] == "(" or listChar[1] == "-":
+                if listChar[1].isalnum() or listChar[1] == "(" or listChar[1] == "-":
                     del listChar[0]
                     return self.checkParseError(listChar, nbPar+1)
                 else:

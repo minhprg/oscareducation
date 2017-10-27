@@ -33,8 +33,6 @@ class Equation: #(Exercice):
         leftOther, rightOther, coeffLeftOther, coeffRightOther = other.analyse()
         leftPrevious, rightPrevious, coeffLeftPrevious, coeffRightPrevious = self.analyse()
         hint = None
-        print coeffLeftOther
-        print coeffRightOther
         if(solve(other.equa,self.x) == self.solution):
             if(not(str(leftOther).isdigit()) and coeffLeftOther[0] == 0):
                 hint = 'Aide : simplifie a gauche'
@@ -194,9 +192,7 @@ for line in iter(sys.stdin.readline,''):
         #print line
         else:
             string = handler.parse(unicode(line.strip(),"utf-8"))
-            print string
             Equation2 = Equation(string,'a')
-            print handler.parse(unicode(line.strip(), "utf-8"))
             temp = Equation1.isEquivalant(Equation2)
             print temp
             if temp[0] and temp[1] is None:
