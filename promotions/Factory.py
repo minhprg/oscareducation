@@ -1,7 +1,7 @@
 from __future__ import division
 from sympy.solvers import solve
 from sympy import Symbol
-from sympy import linsolve, symbols
+from sympy import symbols
 from sympy.parsing.sympy_parser import parse_expr as eval
 from sympy.parsing.sympy_parser import standard_transformations as st
 from sympy.parsing.sympy_parser import implicit_multiplication_application as imp
@@ -42,6 +42,10 @@ class Equation: #(Exercice):
                 hint = 'Aide : isole la variable de gauche en applicant une operation de chaque cote'
             elif(coeffRightOther[1] != 0 and coeffLeftOther[0] == 0):
                 hint = 'Aide : isole la variable de droite en applicant une operation de chaque cote'
+            elif(coeffLeftOther[1] != 1):
+                hint = 'Aide : reduit le coefficent de la variable en applicant une operation'
+            elif (coeffRightOther[1] != 1):
+                hint = 'Aide : reduit le coefficent de la variable en applicant une operation'
             return (True,hint)
         else:
             if(coeffLeftPrevious[0] == coeffLeftOther[0] and coeffLeftOther[1]-coeffLeftPrevious[1] != coeffRightOther[1]-coeffRightPrevious[1]):
@@ -177,8 +181,8 @@ handler = InputHandler.InputHandler()
 #Equation1.analyse()
 #Equation1 = Equation(handler.parse(eq1),'a')
 Equation1 = None
-print "rentrez l'equation a resoudre"
-#print Equation1.isSolution(-1)
+#print "rentrez l'equation a resoudre"
+print Equation1.isSolution(-1)
 for line in iter(sys.stdin.readline,''):
     if Equation1 == None:
         Equation1 = Equation(handler.parse(unicode(line.strip(),"utf-8")),'a')
@@ -192,7 +196,6 @@ for line in iter(sys.stdin.readline,''):
         if temp[0] and temp[1] is None:
             break
 #        print "tu n'as pas ecris une equation correcte"
-
 
 
 # tests Inequation
