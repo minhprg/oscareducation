@@ -6,19 +6,22 @@ class InputHandler:
 
     def parse(self,inputString):
         inputString = inputString.replace(" ", "")
-        print(inputString)
         s = inputString.split("=")
         if len(s) == 2:
             listChar1 = list(s[0])
             listChar2 = list(s[1])
-            if listChar1[0].isalnum() or listChar1[0] == "(":
-                bool1 = self.checkParseError(listChar1)
+            if len(listChar1) > 0 and len(listChar2) > 0:
+                if listChar1[0].isalnum() or listChar1[0] == "(":
+                    bool1 = self.checkParseError(listChar1)
+                else:
+                    bool1 = False
+
+                if listChar2[0].isalnum() or listChar2[0] == "(":
+                    bool2 = self.checkParseError(listChar2)
+                else:
+                    bool2 = False
             else:
                 bool1 = False
-
-            if listChar2[0].isalnum() or listChar2[0] == "(":
-                bool2 = self.checkParseError(listChar2)
-            else:
                 bool2 = False
         else:
             bool1 = False
@@ -27,9 +30,9 @@ class InputHandler:
         if bool1 and bool2:
             inputString = s[0]+"-("+s[1]+")"
             inputString = inputString.replace("^", "**")
-            return inputString#appler exercice avec inputString correctement parser
+            return inputString #appler exercice avec inputString correctement parser
         else:
-            return "ah nan fuck"#print parse error
+            return "L'equation n'est pas bien exprimee"#print parse error
 
     def checkParseError(self,listChar, nbPar = 0):
         if not listChar and nbPar == 0:
@@ -92,8 +95,3 @@ class InputHandler:
             else:
                 return False
 
-##Tests##
-if __name__ == "__main__":
-    handler = InputHandler()
-    s = handler.parse(u"5^x+2 = 3+4")
-    print(s)
