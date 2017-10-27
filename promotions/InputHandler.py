@@ -10,14 +10,18 @@ class InputHandler:
         if len(s) == 2:
             listChar1 = list(s[0])
             listChar2 = list(s[1])
-            if listChar1[0].isalnum() or listChar1[0] == "(":
-                bool1 = self.checkParseError(listChar1)
+            if len(listChar1) > 0 and len(listChar2) > 0:
+                if listChar1[0].isalnum() or listChar1[0] == "(":
+                    bool1 = self.checkParseError(listChar1)
+                else:
+                    bool1 = False
+
+                if listChar2[0].isalnum() or listChar2[0] == "(":
+                    bool2 = self.checkParseError(listChar2)
+                else:
+                    bool2 = False
             else:
                 bool1 = False
-
-            if listChar2[0].isalnum() or listChar2[0] == "(":
-                bool2 = self.checkParseError(listChar2)
-            else:
                 bool2 = False
         else:
             bool1 = False
