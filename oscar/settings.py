@@ -23,7 +23,7 @@ DEBUG = True
 DEBUG_PROPAGATE_EXCEPTIONS = False
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1"]
 
 LOGIN_REDIRECT_URL = "/"
 
@@ -60,6 +60,7 @@ INSTALLED_APPS = (
     'users',
     'resources',
     'end_test_poll',
+    'algebraic',
 
 ) + ADDITIONAL_APPS
 
