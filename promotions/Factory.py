@@ -173,17 +173,24 @@ class System: #(Exercice):
 
 # tests Equation
 handler = InputHandler.InputHandler()
-eq1 = u'4*a-8 = 2*a +16'
-Equation1 = Equation(handler.parse(eq1),'a')
-Equation1.analyse()
+#eq1 = u'4*a-8 = 2*a +16'
+#Equation1.analyse()
+#Equation1 = Equation(handler.parse(eq1),'a')
+Equation1 = None
+print "rentrez l'equation a resoudre"
 #print Equation1.isSolution(-1)
 for line in iter(sys.stdin.readline,''):
+    if Equation1 == None:
+        Equation1 = Equation(handler.parse(unicode(line.strip(),"utf-8")),'a')
+        Equation1.analyse()
+        print "vous pouvez maintenant entrer les etapes de resolution"
     #print line
-    Equation2 = Equation(handler.parse(unicode(line.strip(),"utf-8")),'a')
-    temp = Equation1.isEquivalant(Equation2)
-    print temp
-    if temp[0] and temp[1] is None:
-        break
+    else:
+        Equation2 = Equation(handler.parse(unicode(line.strip(),"utf-8")),'a')
+        temp = Equation1.isEquivalant(Equation2)
+        print temp
+        if temp[0] and temp[1] is None:
+            break
 #        print "tu n'as pas ecris une equation correcte"
 
 
