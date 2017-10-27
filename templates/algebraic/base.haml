@@ -1,0 +1,16 @@
+-extends "algebraic/layout.haml"
+-block content
+  .well
+    %ul.nav.nav-tabs
+      %li
+        %a{ :href => "{% url 'algebraic:list' %}", :title => "Lister exercice" }
+          %i.fa.fa-list
+          Liste
+      %li
+        %a{ :href => "{% url 'algebraic:exercice_creation' %}", :title => "Créer exercice" }
+          Création exercice
+      %li
+        %a{ :href => "{% url 'algebraic:assessment_creation' %}", :title => "créer évaluation" }
+          Création évaluation
+    -block algebraic_content
+-block javascript
