@@ -195,17 +195,14 @@ for line in iter(sys.stdin.readline,''):
         else:
             string = handler.parse(unicode(line.strip(),"utf-8"))
             print string
-            print 1
             Equation2 = Equation(string,'a')
-            print 2
+            print handler.parse(unicode(line.strip(), "utf-8"))
             temp = Equation1.isEquivalant(Equation2)
-            print 3
             print temp
             if temp[0] and temp[1] is None:
                 break
     except Exception as e:
         traceback.print_exc()
-
         print "L'expression de l'equation n'est pas bonne (parse error)"
 
 

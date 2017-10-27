@@ -11,12 +11,12 @@ class InputHandler:
             listChar1 = list(s[0])
             listChar2 = list(s[1])
             if len(listChar1) > 0 and len(listChar2) > 0:
-                if listChar1[0].isalnum() or listChar1[0] == "(":
+                if listChar1[0].isalnum() or listChar1[0] == "(" or listChar1[0] == "-":
                     bool1 = self.checkParseError(listChar1)
                 else:
                     bool1 = False
 
-                if listChar2[0].isalnum() or listChar2[0] == "(":
+                if listChar2[0].isalnum() or listChar2[0] == "(" or listChar2[0] == "-":
                     bool2 = self.checkParseError(listChar2)
                 else:
                     bool2 = False
@@ -72,7 +72,7 @@ class InputHandler:
                 else:
                     return False
             elif listChar[0] == "(":
-                if listChar[1].isnumeric() or listChar[1] == "(":
+                if listChar[1].isnumeric() or listChar[1] == "(" or listChar[1] == "-":
                     del listChar[0]
                     return self.checkParseError(listChar, nbPar+1)
                 else:
