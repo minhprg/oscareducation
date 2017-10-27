@@ -33,8 +33,6 @@ class Equation: #(Exercice):
         leftPrevious, rightPrevious, coeffLeftPrevious, coeffRightPrevious = self.analyse()
         hint = None
 
-        print coeffLeftOther
-        print coeffRightOther
         if(solve(other.equa,self.x) == self.solution):
             if(not(str(leftOther).isdigit()) and coeffLeftOther[0] == 0):
                 hint = 'Aide : simplifie a gauche'
