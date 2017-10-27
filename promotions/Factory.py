@@ -38,6 +38,8 @@ class Equation: #(Exercice):
                 hint = 'Aide : simplifie a gauche'
             elif(not(str(rightOther).lstrip("-").isdigit()) and coeffRightOther[0] == 0):
                 hint = 'Aide : simplifie a droite'
+            elif(coeffLeftOther[0]!=0 and coeffRightOther[0]!=0):
+                hint = 'Aide : isole la variable a gauche en applicant une operation de chaque cote'
             elif(coeffLeftOther[1] != 0 and coeffRightOther[0] == 0):
                 hint = 'Aide : isole la variable de gauche en applicant une operation de chaque cote'
             elif(coeffRightOther[1] != 0 and coeffLeftOther[0] == 0):
