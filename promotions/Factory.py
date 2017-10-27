@@ -8,6 +8,7 @@ from sympy.parsing.sympy_parser import implicit_multiplication_application as im
 from sympy import Poly
 import InputHandler
 import sys
+import traceback
 # Based on http://python-3-patterns-idioms-test.readthedocs.io/en/latest/Factory.html
 
 class Exercice(object):
@@ -32,7 +33,8 @@ class Equation: #(Exercice):
         leftOther, rightOther, coeffLeftOther, coeffRightOther = other.analyse()
         leftPrevious, rightPrevious, coeffLeftPrevious, coeffRightPrevious = self.analyse()
         hint = None
-
+        print coeffLeftOther
+        print coeffRightOther
         if(solve(other.equa,self.x) == self.solution):
             if(not(str(leftOther).isdigit()) and coeffLeftOther[0] == 0):
                 hint = 'Aide : simplifie a gauche'
@@ -191,12 +193,19 @@ for line in iter(sys.stdin.readline,''):
             print "Vous pouvez maintenant entrer les etapes de resolution"
         #print line
         else:
-            Equation2 = Equation(handler.parse(unicode(line.strip(),"utf-8")),'a')
+            string = handler.parse(unicode(line.strip(),"utf-8"))
+            print string
+            print 1
+            Equation2 = Equation(string,'a')
+            print 2
             temp = Equation1.isEquivalant(Equation2)
+            print 3
             print temp
             if temp[0] and temp[1] is None:
                 break
-    except Exception:
+    except Exception as e:
+        traceback.print_exc()
+
         print "L'expression de l'equation n'est pas bonne (parse error)"
 
 
