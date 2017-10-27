@@ -6,6 +6,8 @@ from sympy.parsing.sympy_parser import parse_expr as eval
 from sympy.parsing.sympy_parser import standard_transformations as st
 from sympy.parsing.sympy_parser import implicit_multiplication_application as imp
 from sympy import Poly
+import InputHandler
+import sys
 # Based on http://python-3-patterns-idioms-test.readthedocs.io/en/latest/Factory.html
 
 class Exercice(object):
@@ -170,11 +172,21 @@ class System: #(Exercice):
 
 
 # tests Equation
-Equation1 = Equation('4*a-8-(16)','a')
+handler = InputHandler.InputHandler()
+eq1 = u'4*a-8 = 2*a +16'
+Equation1 = Equation(handler.parse(eq1),'a')
 Equation1.analyse()
 #print Equation1.isSolution(-1)
-Equation2 = Equation('1*a-4-(8)','a')
-print Equation1.isEquivalant(Equation2)
+for line in iter(sys.stdin.readline,''):
+    #print line
+    Equation2 = Equation(handler.parse(unicode(line.strip(),"utf-8")),'a')
+    temp = Equation1.isEquivalant(Equation2)
+    print temp
+    if temp[0] and temp[1] is None:
+        break
+#        print "tu n'as pas ecris une equation correcte"
+
+
 
 # tests Inequation
 # Inequation1 = Inequation('a+3>5', 'a')

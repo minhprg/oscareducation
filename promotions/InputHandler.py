@@ -93,6 +93,7 @@ class InputHandler:
                 return False
 
 ##Tests##
-handler = InputHandler()
-s = handler.parse(u"5^x+2 = 3+4")
-print(s)
+if __name__ == "__main__":
+    handler = InputHandler()
+    s = handler.parse(u"5^x+2 = 3+4")
+    print(s)
