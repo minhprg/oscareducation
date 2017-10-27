@@ -6,7 +6,6 @@ class InputHandler:
 
     def parse(self,inputString):
         inputString = inputString.replace(" ", "")
-        print(inputString)
         s = inputString.split("=")
         if len(s) == 2:
             listChar1 = list(s[0])
@@ -27,9 +26,9 @@ class InputHandler:
         if bool1 and bool2:
             inputString = s[0]+"-("+s[1]+")"
             inputString = inputString.replace("^", "**")
-            return inputString#appler exercice avec inputString correctement parser
+            return inputString #appler exercice avec inputString correctement parser
         else:
-            return "ah nan fuck"#print parse error
+            return "L'equation n'est pas bien exprimee"#print parse error
 
     def checkParseError(self,listChar, nbPar = 0):
         if not listChar and nbPar == 0:
@@ -92,7 +91,3 @@ class InputHandler:
             else:
                 return False
 
-##Tests##
-handler = InputHandler()
-s = handler.parse(u"5^x+2 = 3+4")
-print(s)
