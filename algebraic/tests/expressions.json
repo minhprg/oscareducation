@@ -70,7 +70,7 @@
             "left_operand": "x / 2 + 4",
             "right_operand": "2",
             "operator": "=",
-            "solution": ["-1"]
+            "solution": ["-4"]
         },
 
       	{
@@ -83,7 +83,7 @@
             "left_operand": "3x",
             "right_operand": "-15",
             "operator": "=",
-            "solution": ["-5"]
+            "solution": ["5"]
         },
       	{
             "type": "Equation",

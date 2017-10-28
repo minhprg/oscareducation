@@ -2,7 +2,7 @@
 
 import sys
 import re as reg
-from sympy import symbols, sympify, solveset, degree, solve_poly_inequality, Poly
+from sympy import symbols, sympify, solve, degree, solve_poly_inequality, Poly
 from abc import ABCMeta
 
 
@@ -34,14 +34,14 @@ class Expression(object):
         lo = self._sanitize(lo)
         ro = self._sanitize(ro)
         try:
-            self._left_operand = sympify(lo)
-            self._right_operand = sympify(ro)
+            locals = {}
+            for sym in self._symbols: locals[str(sym)] = sym
+            self._left_operand = sympify(lo, locals=locals)
+            self._right_operand = sympify(ro, locals=locals)
         except Exception as e:
             raise ExpressionError('Invalid expression syntax, expression: ' +
                                   expression + "\nLeft operand: " + lo +
                                   "\nRIght operand: " + ro)
-            print(lo)
-            print(ro)
 
         lod = degree(self._left_operand)  if self._has_symbol(lo) else 0
         rod = degree(self._right_operand) if self._has_symbol(ro) else 0
@@ -56,6 +56,10 @@ class Expression(object):
         return self._solution == other._solution
 
     # --------------------------------------------------------- Static methods
+
+    @staticmethod
+    def generate(two_sided, degree):
+        raise NotImplementedError("Call to abstract method")
 
     @staticmethod
     def _symbols_of(expression):
@@ -161,12 +165,18 @@ class Equation(Expression):
     def __init__(self, expression):
         Expression.__init__(self, expression, '=')
 
+    def __float__(self):
+        pass
+
+    def __int__(self):
+        return int(self.__float__())
+
     def resolve(self):
         """return value of the solution of the equation in a String"""
         solutions = []
         for symbol in self._symbols:
             expr = self._left_operand - self._right_operand
-            solutions.append(str(solveset(expr, symbol)).strip("{").strip("}"))
+            solutions.append(solve(expr, symbol))
 
         return solutions
 
@@ -190,10 +200,11 @@ class Inequation(Expression):
     def resolve(self):
         """ return value of the solution of the inequation in a String"""
         results = []
-        expr = self._left_operand - self._right_operand
-
         for sym in self._symbols:
-            result = solve_poly_inequality(Poly(expr, sym), self._operator)
+            a = Poly(self._left_operand, sym)
+            b = Poly(self._right_operand, sym)
+            expr = eval("Poly(a" + self._operator + "b)")
+            result = solve_poly_inequality(expr, self._operator)
 
             results.append(result)
 
@@ -201,7 +212,7 @@ class Inequation(Expression):
 
     def is_inequation(self):
         """return true if this is a correct inequation"""
-        return self.operator in ('<','>','<=','>=') and verifEncode(self.leftOperand) and verifEncode(self.rightOperand)
+        return self._operator in ('<','>','<=','>=')
 
 
 #---------------------------------------------
@@ -239,11 +250,11 @@ def compare_expr(expressionLeft, expressionRight):
     str_Right = expressionRight
     exprLeft = sympify(str_Left)
     exprRight = sympify(str_Right)
-    return str(solveset(Eq(exprLeft, exprRight)))
+    return str(solve(Eq(exprLeft, exprRight)))
 
 
 def simplification_oneSide_equation(expression):
     x, y, z = symbols("x y z")
     str_expr = expression
     expr = sympify(str_expr)
-    return str(simplify(expr))
+    return str(sympify(expr))

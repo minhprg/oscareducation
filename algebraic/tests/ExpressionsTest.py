@@ -3,6 +3,7 @@
 import os
 import unittest2 as unittest
 import json
+from fractions import Fraction
 
 from ..engine import Equation, Inequation, EquationSystem 
 
@@ -46,61 +47,58 @@ class ExpressionsTest(unittest.TestCase):
         f = lambda x: x["type"] == type and x["degree"] == degree and x["two_sided"] == two_sided
         for z in filter(f, self.pool): yield z
 
+    def format(self, thing):
+        return ["%.4f" % float(Fraction(s).limit_denominator(4)) for s in thing]
+
 # =============================================================================== EQUATIONS CHECKS
 
     #1
-    def test_first_degree_one_sided_positive_equation_solution(self):
+    def test_first_degree_one_sided_equation_solution(self):
         """
         TODO
         """
         for expression in self.expressions("Equation", 1, False):
             equation = Equation(expression["string"])
-            self.assertEquals(equation.solution, expression["solution"])
+            self.assertEquals(
+                self.format(equation.solution), 
+                self.format(expression["solution"])
+            )
 
     #2
-    def test_first_degree_one_sided_negative_equation_solution(self):
+    def test_first_degree_two_sided_equation_solution(self):
         """
         TODO
         """
-        for expression in self.expressions("Equation", 1, False):
+        for expression in self.expressions("Equation", 1, True):
             equation = Equation(expression["string"])
-            self.assertEquals(equation.solution, expression["solution"])
+            self.assertEquals(
+                self.format(equation.solution),
+                self.format(expression["solution"])
+            )
 
     #3
-    def test_first_degree_two_sided_positive_equation_solution(self):
-        """
-        TODO
-        """
-        for expression in self.expressions("Equation", 1, True):
-            equation = Equation(expression["string"])
-            self.assertEquals(equation.solution, expression["solution"])
-
-    #4
-    def test_first_degree_two_sided_negative_equation_solution(self):
-        """
-        TODO
-        """
-        for expression in self.expressions("Equation", 1, True):
-            equation = Equation(expression["string"])
-            self.assertEquals(equation.solution, expression["solution"])
-
-    #5
     def test_second_degree_one_sided_equation_solution(self):
         """
         TODO
         """
         for expression in self.expressions("Equation", 2, False):
             equation = Equation(expression["string"])
-            self.assertEquals(equation.solution, expression["solution"])
+            self.assertEquals(
+                [self.format(s) for s in equation.solution],
+                [self.format(s) for s in expression["solution"]]
+            )
 
-    #6
+    #4
     def test_second_degree_two_sided_equation_solution(self):
         """
         TODO
         """
         for expression in self.expressions("Equation", 2, True):
             equation = Equation(expression["string"])
-            self.assertEquals(equation.solution, expression["solution"])
+            self.assertEquals(
+                [self.format(s) for s in equation.solution],
+                [self.format(s) for s in expression["solution"]]
+            )
 
     # TOTAL = 6
 
