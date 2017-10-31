@@ -1,0 +1,14 @@
+###Intermediate implementation of prototype 1###
+
+It doesn't work on the site yet, only in command line.
+Make sure you have sympy installed, otherwise it won't work.
+
+The way to use it is:
+
+    - Run Factory.py and enter the equation to solve.
+    - You can then enter the steps of the resolution one by one (press enter between each step)
+
+It is still a little buggy so you may find some bugs but don't worry, we are aware of them (well at least most of them).
+It works only for integers (at the moment).
+
+The code is in this zip file and also at this adress : https://github.com/algerlache/oscareducation/tree/dev/promotions (you will need Factory.py and InputHandler.py to make it run)
