@@ -1,54 +1,47 @@
 # encoding: utf-8
 
-import os
-import sys
 import json
-import traceback
-import base64
+from collections import namedtuple
+import os
 import random
-from django.core.files.storage import default_storage
+import sys
 import time
-from django.core.files.base import ContentFile
-from urlparse import urljoin
-from itertools import izip
-
-import yaml
-import ruamel.yaml
-import mechanize
-import yamlordereddictloader
-import pandas as pd
-
-from ruamel.yaml.comments import CommentedMap
-
+import traceback
 from base64 import b64decode
 from collections import OrderedDict
+from itertools import izip
 
+import pandas as pd
+import ruamel.yaml
+import yaml
+import yamlordereddictloader
 from django.conf import settings
-from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
-from django.core.exceptions import PermissionDenied
-from django.shortcuts import render, get_object_or_404, resolve_url
-from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.models import User
 from django.contrib.auth.views import redirect_to_login
-from django.views.decorators.http import require_POST
+from django.core.exceptions import PermissionDenied
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.db.models import Count, Q
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
+from django.http import JsonResponse
+from django.shortcuts import render, get_object_or_404, resolve_url
+from django.views.decorators.http import require_POST
+from ruamel.yaml.comments import CommentedMap
 
-from skills.models import Skill, StudentSkill, CodeR, Section, Relations, CodeR_relations
-from resources.models import KhanAcademy, Sesamath, Resource
 from examinations.models import Test, TestStudent, BaseTest, TestExercice, Context, List_question, Question, Answer, \
     TestFromClass
-from users.models import Student
 from examinations.validate import validate_exercice_yaml_structure
-
-from .models import Lesson, Stage
-from .forms import LessonForm, StudentAddForm, SyntheseForm, KhanAcademyForm, StudentUpdateForm, LessonUpdateForm, \
+from resources.models import KhanAcademy, Sesamath, Resource
+from skills.models import Skill, StudentSkill, CodeR, Section, Relations, CodeR_relations
+from users.models import Student
+from .forms import LessonForm, StudentAddForm, KhanAcademyForm, StudentUpdateForm, LessonUpdateForm, \
     TestUpdateForm, SesamathForm, ResourceForm, CSVForm
-from .utils import generate_random_password, user_is_professor, force_encoding
-import csv
-from django.http import JsonResponse
+from .models import Lesson, Stage
+from .utils import generate_random_password, user_is_professor
 
 
 @user_is_professor
@@ -571,10 +564,14 @@ def lesson_test_list(request, pk):
     :return: 
     """
     lesson = get_object_or_404(Lesson, pk=pk)
-
+    resources = Resource.objects.filter(added_by_id=request.user.id, section='scanresource')
+    for i in resources:
+        print i.content
     return render(request, "professor/lesson/test/list.haml", {
         "lesson": lesson,
+        "all_resources": resources,
         "all_tests": lesson.basetest_set.order_by('-created_at'),
+
     })
 
 
