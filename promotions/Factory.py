@@ -7,6 +7,7 @@ from sympy.parsing.sympy_parser import parse_expr as eval
 from sympy.parsing.sympy_parser import standard_transformations as st
 from sympy.parsing.sympy_parser import implicit_multiplication_application as imp
 from sympy import Poly
+import copy
 import InputHandler
 from sympy import linsolve
 import sys
@@ -248,19 +249,150 @@ class Inequation: #(Exercice):
 
 class System: #(Exercice):
     def __init__(self, sys, var):
+        self.equa = sys
         self.sys = [eval(x,transformations=(st+(imp,))) for x in sys]
         self.var = symbols(var)
         self.solution = linsolve(self.sys, self.var)
+        var = var.replace(" ","").replace(",","")
+        self.variables = []
+        i = 0
+        while(i<len(var)):
+            self.variables.append(var[i])
+            i = i+1
 
     def isEquivalant(self, other):
-        return other.solution == self.solution
+
+        leftOther, rightOther, coeffLeftOther, coeffRightOther = other.analyse()
+        leftPrevious, rightPrevious, coeffLeftPrevious, coeffRightPrevious = self.analyse()
+        hint = None
+
+        if (other.solution == self.solution):
+            hint = 'Aide : continue comme ca!'
+            for k in range(len(self.sys)):
+                if (not(str(leftOther[k]).lstrip("-").replace("/", "").isdigit()) and coeffLeftOther[k][0] == 0 and coeffLeftOther[k][1] == 0):
+                    hint = "Aide : simplifie a gauche pour l'equation "+str(k+1)
+                    return (True, hint)
+                elif (not(str(rightOther[k]).lstrip("-").replace("/", "").isdigit()) and coeffRightOther[k][0] == 0 and coeffRightOther[k][1] == 0):
+                    hint = "Aide : simplifie a droite pour l'equation "+str(k+1)
+                    return (True, hint)
+                elif ((coeffLeftOther[k][0] != 0 and coeffRightOther[k][0] != 0) or (coeffLeftOther[k][1] != 0 and coeffRightOther[k][1] != 0)):
+                    hint = "Aide : isole la variable a gauche en applicant une operation de chaque cote pour l'equation "+str(k+1)
+                    return (True, hint)
+                elif ((coeffLeftOther[k][1] != 0 and coeffRightOther[k][0] == 0) or (coeffLeftOther[k][2] != 0 and coeffRightOther[k][0] == 0)):
+                    hint = "Aide : isole la variable de gauche en applicant une operation de chaque cote pour l'equation "+str(k+1)
+                    return (True, hint)
+                elif ((coeffRightOther[k][1] != 0 and coeffLeftOther[k][0] == 0) or (coeffRightOther[k][2] != 0 and coeffLeftOther[k][0] == 0)):
+                    hint = "Aide : isole la variable de droite en applicant une operation de chaque cote pour l'equation "+str(k+1)
+                    return (True, hint)
+                elif ((coeffLeftOther[k][0] != 1 and coeffRightOther[k][0] == 0) and (coeffLeftOther[k][1] != 1 and coeffRightOther[k][1] == 0)):
+                    hint = "Aide : reduit le coefficent de la variable en applicant une operation pour l'equation "+str(k+1)
+                    return (True, hint)
+                elif ((coeffRightOther[k][0] != 1 and coeffLeftOther[k][0] == 0) and (coeffRightOther[k][1] != 1 and coeffLeftOther[k][1] == 0)):
+                    hint = "Aide : reduit le coefficent de la variable en applicant une operation pour l'equation "+str(k+1)
+                    return (True, hint)
+            return (True, hint)
+        else:
+            for k in range(len(self.sys)):
+                if (coeffLeftPrevious[k][0] == coeffLeftOther[k][0] and coeffLeftPrevious[k][1] == coeffLeftOther[k][1]
+                    and coeffLeftOther[k][2] - coeffLeftPrevious[k][2] != coeffRightOther[k][2] - coeffRightPrevious[k][2]):
+                    hint = 'Aide : tu as fait +(' + str(coeffLeftOther[k][2] - coeffLeftPrevious[k][2]) + ') a gauche et +(' \
+                        + str(coeffRightOther[k][2] - coeffRightPrevious[k][2]) + ") a droite pour l'equation "+str(k+1)
+                    return (False, hint)
+                ratio = None
+                if coeffLeftPrevious[k][0] != 0 and coeffLeftOther[k][0] != 0:
+                    ratio = coeffLeftPrevious[k][0] / coeffLeftOther[k][0]
+                if coeffLeftPrevious[k][1] != 0 and coeffLeftOther[k][1] != 0:
+                    if ratio is not None and coeffLeftPrevious[k][1] / coeffLeftOther[k][1] != ratio:
+                        hint = "Aide : tu n'as pas applique la meme division sur chaque terme pour l'equation "+str(k+1)
+                        return (False, hint)
+                    if ratio is None:
+                        ratio = coeffLeftPrevious[k][1] / coeffLeftOther[k][1]
+                if coeffLeftPrevious[k][2] != 0 and coeffLeftOther[k][2] != 0:
+                    if ratio is not None and coeffLeftPrevious[k][2] / coeffLeftOther[k][2] != ratio:
+                        hint = "Aide : tu n'as pas applique la meme division sur chaque terme pour l'equation "+str(k+1)
+                        return (False, hint)
+                    if ratio is None:
+                        ratio = coeffLeftPrevious[k][2] / coeffLeftOther[k][2]
+
+                if coeffRightPrevious[k][0] != 0 and coeffRightOther[k][0] != 0:
+                    if ratio is not None and coeffRightPrevious[k][0] / coeffRightOther[k][0] != ratio:
+                        hint = "Aide : tu n'as pas applique la meme division sur chaque terme pour l'equation "+str(k+1)
+                        return (False, hint)
+                    if ratio is None:
+                        ratio = coeffRightPrevious[k][0] / coeffRightOther[k][0]
+                if coeffRightPrevious[k][1] != 0 and coeffRightOther[k][1] != 0:
+                    if ratio is not None and coeffRightPrevious[k][1] / coeffRightOther[k][1] != ratio:
+                        hint = "Aide : tu n'as pas applique la meme division sur chaque terme pour l'equation "+str(k+1)
+                        return (False, hint)
+                if coeffRightPrevious[k][2] != 0 and coeffRightOther[k][2] != 0:
+                    if ratio is not None and coeffRightPrevious[k][2] / coeffRightOther[k][2] != ratio:
+                        hint = "Aide : tu n'as pas applique la meme division sur chaque terme pour l'equation "+str(k+1)
+                        return (False, hint)
+
+            return (False, hint)
 
     def isSolution(self, solution): #int solution
-        for s in solution:
-            if(not(s in list(self.solution)[0])):
+        if(len(solution) != len(list(self.solution)[0])):
+            return False
+        for s in list(self.solution)[0]:
+            if(not(s in solution)):
                 return False
         return True
 
+    def analyse(self):
+        left = ['']*len(self.sys)
+        right = ['']*len(self.sys)
+        left_crypt = [''] * len(self.sys)
+        right_crypt = [''] * len(self.sys)
+        coeffLeft = ['']*len(self.sys)
+        coeffRight = ['']*len(self.sys)
+
+        k = 0
+        while (k<len(self.sys)):
+            i = len(self.equa[k])-1
+            parenthese = 0
+            mid = 0
+            while(i>0):
+                if(self.equa[k][i] == ')'):
+                    parenthese = parenthese + 1
+                elif(self.equa[k][i] == '('):
+                    parenthese = parenthese - 1
+                elif(parenthese == 0):
+                    mid = i
+                    i = -1
+                i = i-1
+
+            i = 0
+            while(i<mid):
+                left[k] = left[k]+self.equa[k][i]
+                i = i+1
+            i = mid+2
+            while(i<len(self.equa[k])-1):
+                right[k] = right[k]+self.equa[k][i]
+                i = i+1
+
+            left_crypt = copy.copy(left)
+            right_crypt = copy.copy(right)
+            left_crypt[k] += '+5231598745' # parce que on veut un tableau [x y 1] et pas juste [x] ou ...
+            right_crypt[k] += '+5231598745'
+            for v in self.variables:
+                left_crypt[k] += '+'+v+'*5231598745'
+                right_crypt[k] += '+'+v+'*5231598745'
+
+            coeffLeft[k] = eval(left_crypt[k],transformations=(st+(imp,)))
+            coeffRight[k] = eval(right_crypt[k],transformations=(st+(imp,)))
+
+            coeffLeft[k] = Poly(coeffLeft[k]).coeffs()
+            coeffRight[k] = Poly(coeffRight[k]).coeffs()
+
+            for i in range(0,len(coeffLeft[k])):
+                coeffLeft[k][i] -= 5231598745
+            for i in range(0, len(coeffRight[k])):
+                coeffRight[k][i] -= 5231598745
+
+            k = k+1
+
+        return left, right, coeffLeft, coeffRight
 
 
 # tests Equation
@@ -301,7 +433,7 @@ class System: #(Exercice):
 
 
 #tests System
-System1 = System(['2x-2', 'y+x'], "x, y") # 2x=2 y+x=0
-print System1.isSolution([-1, 1]) # x=-1 y=1 ou l'inverse
-System2 = System(['x-1', 'y+x'], "x, y") # x=1 x=-y
+System1 = System(['2*x-(2)', 'y+x-(0)'], "x,y") # 2x=2 y+x=0
+#print System1.isSolution([-1, 1]) # x=-1 y=1 ou l'inverse
+System2 = System(['x-(1)', 'y-(-1)'], "x,y") # x=1 x=-y
 print System1.isEquivalant(System2)
