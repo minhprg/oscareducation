@@ -48,9 +48,9 @@ class Equation: #(Exercice):
             elif(coeffRightOther[1] != 0 and coeffLeftOther[0] == 0):
                 hint = 'Aide : isole la variable de droite en applicant une operation de chaque cote'
             elif(coeffLeftOther[0] != 1 and coeffRightOther[0] == 0):
-                hint = 'Aide : reduit le coefficent de la variable en applicant une operation'
+                hint = 'Aide : reduit le coefficent de la variable en applicant une operation de chaque cote'
             elif (coeffRightOther[0] != 1 and coeffLeftOther[0] == 0):
-                hint = 'Aide : reduit le coefficent de la variable en applicant une operation'
+                hint = 'Aide : reduit le coefficent de la variable en applicant une operation de chaque cote'
             return (True,hint)
         else:
             if(coeffLeftPrevious[0] == coeffLeftOther[0] and coeffLeftOther[1]-coeffLeftPrevious[1] != coeffRightOther[1]-coeffRightPrevious[1]):
@@ -267,7 +267,6 @@ class System: #(Exercice):
         hint = None
 
         if (other.solution == self.solution):
-            hint = 'Aide : continue comme ca!'
             for k in range(len(self.sys)):
                 if (not(str(leftOther[k]).lstrip("-").replace("/", "").isdigit()) and coeffLeftOther[k][0] == 0 and coeffLeftOther[k][1] == 0):
                     hint = "Aide : simplifie a gauche pour l'equation "+str(k+1)
@@ -278,18 +277,25 @@ class System: #(Exercice):
                 elif ((coeffLeftOther[k][0] != 0 and coeffRightOther[k][0] != 0) or (coeffLeftOther[k][1] != 0 and coeffRightOther[k][1] != 0)):
                     hint = "Aide : isole la variable a gauche en applicant une operation de chaque cote pour l'equation "+str(k+1)
                     return (True, hint)
-                elif ((coeffLeftOther[k][1] != 0 and coeffRightOther[k][0] == 0) or (coeffLeftOther[k][2] != 0 and coeffRightOther[k][0] == 0)):
-                    hint = "Aide : isole la variable de gauche en applicant une operation de chaque cote pour l'equation "+str(k+1)
+                elif (coeffLeftOther[k][2] != 0 and coeffRightOther[k][0] == 0 and coeffRightOther[k][1] == 0):
+                    hint = "Aide : isole la variable(s) de gauche en applicant une operation de chaque cote pour l'equation "+str(k+1)
                     return (True, hint)
-                elif ((coeffRightOther[k][1] != 0 and coeffLeftOther[k][0] == 0) or (coeffRightOther[k][2] != 0 and coeffLeftOther[k][0] == 0)):
-                    hint = "Aide : isole la variable de droite en applicant une operation de chaque cote pour l'equation "+str(k+1)
+                elif (coeffRightOther[k][2] != 0 and coeffLeftOther[k][0] == 0 and coeffLeftOther[k][1] == 0):
+                    hint = "Aide : isole la variable(s) de droite en applicant une operation de chaque cote pour l'equation "+str(k+1)
                     return (True, hint)
-                elif ((coeffLeftOther[k][0] != 1 and coeffRightOther[k][0] == 0) and (coeffLeftOther[k][1] != 1 and coeffRightOther[k][1] == 0)):
-                    hint = "Aide : reduit le coefficent de la variable en applicant une operation pour l'equation "+str(k+1)
+                elif ((coeffLeftOther[k][0] != 0 and coeffLeftOther[k][1] != 0) or (coeffRightOther[k][0] != 0 and coeffRightOther[k][1] != 0)):
+                    hint = "Aide : isole les variables de chaque cote de l'equation "+str(k+1)
+                    return (True,hint)
+                elif ((coeffLeftOther[k][0] != 1 and coeffLeftOther[k][0] != 0 and coeffRightOther[k][0] == 0 and coeffRightOther[k][1] == 0 and coeffLeftOther[k][1] == 0)
+                      or (coeffLeftOther[k][1] != 1 and coeffLeftOther[k][1] != 0 and coeffRightOther[k][1] == 0 and coeffRightOther[k][0] == 0 and coeffLeftOther[k][0] == 0)):
+                    hint = "Aide : reduit le coefficent de la variable de gauche en applicant une operation de chaque cote pour l'equation "+str(k+1)
                     return (True, hint)
-                elif ((coeffRightOther[k][0] != 1 and coeffLeftOther[k][0] == 0) and (coeffRightOther[k][1] != 1 and coeffLeftOther[k][1] == 0)):
-                    hint = "Aide : reduit le coefficent de la variable en applicant une operation pour l'equation "+str(k+1)
+                elif ((coeffRightOther[k][0] != 1 and coeffRightOther[k][0] != 0 and coeffLeftOther[k][0] == 0 and coeffLeftOther[k][1] == 0 and coeffRightOther[k][1] == 0)
+                      or (coeffRightOther[k][1] != 1 and coeffRightOther[k][1] != 0 and coeffLeftOther[k][1] == 0) and coeffLeftOther[k][0] == 0 and coeffRightOther[k][0] == 0):
+                    hint = "Aide : reduit le coefficent de la variable de droite en applicant une operation de chaque cote pour l'equation "+str(k+1)
                     return (True, hint)
+                elif ((coeffLeftOther[k][0] != 0 and coeffRightOther[k][1] != 0) or (coeffLeftOther[k][1] != 0 and coeffRightOther[k][0] != 0)):
+                    hint = "Aide : remplace la variable d'une equation dans une autre equation"
             return (True, hint)
         else:
             for k in range(len(self.sys)):
@@ -433,7 +439,7 @@ class System: #(Exercice):
 
 
 #tests System
-System1 = System(['2*x-(2)', 'y+x-(0)'], "x,y") # 2x=2 y+x=0
-#print System1.isSolution([-1, 1]) # x=-1 y=1 ou l'inverse
-System2 = System(['x-(1)', 'y-(-1)'], "x,y") # x=1 x=-y
+System1 = System(['5*x-(2+3*y)','2*x+y-(x)'], "x,y") # 2x=2 y+x=0
+print System1.isSolution([-1, 1]) # x=-1 y=1 ou l'inverse
+System2 = System(['x-(2/8)','-2/8-(y)'], "x,y") # x=1 x=-y
 print System1.isEquivalant(System2)
