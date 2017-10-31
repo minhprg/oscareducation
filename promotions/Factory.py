@@ -14,14 +14,11 @@ import sys
 import traceback
 # Based on http://python-3-patterns-idioms-test.readthedocs.io/en/latest/Factory.html
 
-class Exercice(object):
-    # Create based on class name:
-    def factory(type):
-        #return eval(type + "()")
-        if type == "Equation": return Equation()
-        if type == "Inequation": return Inequation()
-        if type == "System": return System()
-    factory = staticmethod(factory)
+def factory(type,question,letter):
+    #return eval(type + "()")
+    if type == "algebraicEquation": return Equation(question,letter)
+    if type == "algebraicInequation": return Inequation(question,letter)
+    if type == "algebraicSystem": return System(question,letter)
 
 
 class Equation: #(Exercice):
