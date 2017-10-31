@@ -1406,6 +1406,12 @@ def exercice_validation_form_validate_exercice(request):
                 "type": question["type"],
                 "answers": "",
             }
+        elif question["type"].startswith("algebraic"):
+            questions[question["instructions"]] = {
+                "type": question["type"],
+                "answers": question["answers"],
+
+            }
 
         else:
             answers = OrderedDict()
@@ -1547,6 +1553,12 @@ def exercice_validation_form_submit(request, pk=None):
                     "type": question["type"],
                     "answers": "",
                 }
+            elif question["type"].startswith("algebraic"):
+                new_question_answers = {
+                    "type": question["type"],
+                    "answers": question["answers"],
+
+                }
 
             else:
                 answers = CommentedMap()
@@ -1680,8 +1692,6 @@ def exercice_update_json(request, pk):
         if question_type == "graph":
             answers = question.get_answer()["answers"]
         elif question_type == "professor":
-            answers = ""
-        elif isinstance(question.get_answer()["answers"], list):
             answers = [{"text": key, "correct": True} for key in question.get_answer()["answers"]]
         else:  # assuming dict
             answers = [{"text": key, "correct": value} for key, value in question.get_answer()["answers"].items()]

@@ -25,8 +25,8 @@ def validate_exercice_yaml_structure(exercice):
         if "type" not in data:
             return (u"chaque question doit avoir un type, or la question '%s' n'a pas de type" % (question)).encode("Utf-8")
 
-        if data["type"] not in ("radio", "text", "checkbox", "math", "math-simple", "math-advanced", "graph", "professor"):
-            return (u"la question '%s' possède un type invalide: '%s'\nLes types valides sont : 'text', 'checkbox', 'math', 'math-simple', 'math-advanced', 'graph' et 'radio' " % (question, data["type"])).encode("Utf-8")
+        if data["type"] not in ("radio", "text", "checkbox", "math", "math-simple", "math-advanced", "graph", "professor","algebraicEquation","algebraicInequation","algebraicSystem"):
+            return (u"la question '%s' possède un type invalide: '%s'\nLes types valides sont : 'text', 'checkbox', 'math', 'math-simple', 'math-advanced','algebraicEquation', 'algebraicInequation', 'algebraicSystem', 'graph' et 'radio' " % (question, data["type"])).encode("Utf-8")
 
         if "answers" not in data:
             return (u"chaque question doit avoir une section 'answers' contenant les réponses, or la question '%s' ne contient pas cette section" % (question)).encode("Utf-8")
