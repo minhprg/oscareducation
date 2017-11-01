@@ -29,11 +29,15 @@
 
   .ligneorange
 
-  .container-fluid.boxclassetitle
-    .pull-right
-      %a{href: "{% url 'professor:lesson_test_add' lesson.pk %}"}
-        %img.icon{src: "{% static 'img/icons/add.png' %}", data-toggle: "tooltip", data-placement: "top", title: "ajouter un test"}
-
+    .container-fluid.boxclassetitle
+        .pull-right
+          %form.form{action: "", method: "post", name: "copy", enctype: "multipart/form-data"}
+            -csrf_token
+            %input{type: "file", name: "copy", multiple : "multiple"}
+            %button.btn.btn-primary{type: "submit"}
+              Importer des élèves
+            %a{href: "{% url 'professor:lesson_test_add' lesson.pk %}"}
+            %img.icon{src: "{% static 'img/icons/add.png' %}", data-toggle: "tooltip", data-placement: "top", title: "ajouter un test"}
 
   .ligneorangefine
 
