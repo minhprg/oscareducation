@@ -9,9 +9,21 @@ class InputHandler:
         elif self.type == "algebraicInequation":
             return self.parseIneq(inputString)
         elif self.type == "algebraicSystem":
-            return self.parseSys(inputString)
+            return self.parseSys(inputString) #tuple of strings
         else:
             return "Type not found"
+
+    def parseSys(self, inputStrings):
+        eq1 = self.parseEq(inputStrings[0])
+        eq2 = self.parseEq(inputStrings[1])
+        if eq1 == "Trop ou pas de variables" or eq1 == "L'equation n'est pas bien exprimee" or eq2 == "Trop ou pas de variables" or eq2 == "L'equation n'est pas bien exprimee":
+            raise ValueError
+        elif len(eq1[1]) == 2:
+            return ([eq1[0], eq2[0]], eq1[1][0]+","+eq1[1][1])
+        elif len(eq2[1]) == 2:
+            return ([eq1[0], eq2[0]], eq2[1][0]+","+eq2[1][1])
+        else:
+            return ValueError
 
     def parseEq(self,inputString):
         inputString = inputString.replace(" ", "")
@@ -40,17 +52,20 @@ class InputHandler:
             inputString = s[0]+"-("+s[1]+")"
             inputString = inputString.replace("^", "**")
             return (inputString, variables[0]) #appler exercice avec inputString correctement parser
-        elif len(variables) > 1 and bool1 and bool2:
-            return "Trop de variables"
+        elif len(variables) > 1 and bool1 and bool2 and self.type == "algebraicEquation":
+            raise ValueError
+        elif len(variables) == 2 and bool1 and bool2 and self.type == "algebraicSystem":
+            inputString = s[0] + "-(" + s[1] + ")"
+            inputString = inputString.replace("^", "**")
+            return (inputString, variables)
         else:
-            return "L'equation n'est pas bien exprimee" #print parse error
+            raise ValueError #print parse error
 
     def findVariables(self, inputString):
         variables = []
         for elem in list(inputString):
             if elem.isalpha() and elem not in variables:
                 variables.append(elem)
-        print variables
         return variables
 
     def parseIneq(self,inputString):
@@ -66,9 +81,9 @@ class InputHandler:
             inputString = inputString.replace("^", "**")
             return (inputString, variables[0]) #appler exercice avec inputString correctement parser
         elif (len(variables) > 1 or len(variables) == 0) and bool:
-            return "Trop ou pas de variable(s)"
+            raise ValueError
         else:
-            return "L'inequation n'est pas bien exprimee" #print parse error
+            return ValueError #print parse error
 
     def checkParseError(self,listChar, nbPar = 0):
         if not listChar and nbPar == 0:
@@ -215,7 +230,3 @@ class InputHandler:
                 return True
             else:
                 return False
-
-handler = InputHandler("algebraicInequation")
-parsed = handler.parse(u"(2*a-3)>=-5")
-print parsed
