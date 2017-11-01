@@ -149,5 +149,8 @@ class TestExpression(unittest.TestCase):
         self.assertTrue(equiv2[0] and equiv2[1] is None)
         self.assertFalse(equiv3[0])
 
+class TestInputHandler(unittest.TestCase):
+    pass
+
 if __name__ == '__main__':
     unittest.main()
