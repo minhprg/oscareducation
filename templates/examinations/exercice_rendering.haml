@@ -19,6 +19,17 @@
               %textarea.keyboard
               %span.mathquill{data-keyboard-type: "{{ answer.type }}"}
               %input.form-control.hidden-math-form{id: "{{ forloop.counter0 }}", name: "{{ forloop.counter0 }}", type: "text", autocomplete: "off"}
+
+          -elif answer.type == "algebraicEquation" or question.type == "algebraicInequation"
+            %br
+            =answer.answers
+            %input.form-control{id: "{{ forloop.counter0 }}", name: "{{ forloop.counter0 }}", type: "text", autocomplete: "off"}
+          -elif answer.type == "algebraicSystem"
+            %br
+            -for equation in answer.answers
+              =equation
+              %br
+            %input.form-control{id: "{{ forloop.counter0 }}", name: "{{ forloop.counter0 }}", type: "text", autocomplete: "off"}
           -elif answer.type == "radio"
             -with name=forloop.counter0
               -for option in answer.answers

@@ -1407,11 +1407,16 @@ def exercice_validation_form_validate_exercice(request):
                 "answers": "",
             }
         elif question["type"].startswith("algebraic"):
-            questions[question["instructions"]] = {
-                "type": question["type"],
-                "answers": question["answers"],
-
-            }
+            if "System" in question["type"]:
+                 questions[question["instructions"]] = {
+                    "type": question["type"],
+                    "answers": [question["eq1"], question["eq2"]],
+                }
+            else:
+                questions[question["instructions"]] = {
+                    "type": question["type"],
+                    "answers": question["eq1"],
+                }
 
         else:
             answers = OrderedDict()
@@ -1554,11 +1559,19 @@ def exercice_validation_form_submit(request, pk=None):
                     "answers": "",
                 }
             elif question["type"].startswith("algebraic"):
-                new_question_answers = {
-                    "type": question["type"],
-                    "answers": question["answers"],
+                if "System" in question["type"]:
+                    new_question_answers = {
+                        "type": question["type"],
+                        "answers": [question["eq1"], question["eq2"]],
 
-                }
+                    }
+
+                else:
+                    new_question_answers = {
+                        "type": question["type"],
+                        "answers": question["eq1"],
+
+                    }
 
             else:
                 answers = CommentedMap()

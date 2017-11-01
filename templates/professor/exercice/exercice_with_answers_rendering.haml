@@ -16,6 +16,14 @@
             %li \({{answer}}\)
             -if user.is_superuser
               Code latex: <code>{{ answer }}</code> (visible que par les admins)
+    -elif answer.type == "algebraicEquation" or question.type == "algebraicInequation"
+      %br
+      =answer.answers
+    -elif answer.type == "algebraicSystem"
+      %br
+      -for equation in answer.answers
+        =equation
+        %br
     -elif answer.type == "radio"
       -with name=forloop.counter0
         -for option, valid in answer.answers.items
