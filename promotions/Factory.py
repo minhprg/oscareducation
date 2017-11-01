@@ -40,7 +40,7 @@ class Equation: #(Exercice):
             elif(not(str(rightOther).lstrip("-").replace("/","").isdigit()) and coeffRightOther[0] == 0):
                 hint = 'Aide : simplifie a droite'
             elif(coeffLeftOther[0]!=0 and coeffRightOther[0]!=0):
-                hint = 'Aide : isole la variable a gauche en applicant une operation de chaque cote'
+                hint = 'Aide : isole la variable en applicant une operation de chaque cote'
             elif(coeffLeftOther[1] != 0 and coeffRightOther[0] == 0):
                 hint = 'Aide : isole la variable de gauche en applicant une operation de chaque cote'
             elif(coeffRightOther[1] != 0 and coeffLeftOther[0] == 0):
@@ -146,15 +146,15 @@ class Inequation: #(Exercice):
             elif (not (str(rightOther).lstrip("-").replace("/", "").isdigit()) and coeffRightOther[0] == 0):
                 hint = 'Aide : simplifie a droite'
             elif (coeffLeftOther[0] != 0 and coeffRightOther[0] != 0):
-                hint = 'Aide : isole la variable a gauche en applicant une operation de chaque cote'
+                hint = 'Aide : isole la variable en applicant une operation de chaque cote'
             elif (coeffLeftOther[1] != 0 and coeffRightOther[0] == 0):
                 hint = 'Aide : isole la variable de gauche en applicant une operation de chaque cote'
             elif (coeffRightOther[1] != 0 and coeffLeftOther[0] == 0):
                 hint = 'Aide : isole la variable de droite en applicant une operation de chaque cote'
             elif (coeffLeftOther[0] != 1 and coeffRightOther[0] == 0):
-                hint = 'Aide : reduit le coefficent de la variable en applicant une operation'
+                hint = 'Aide : reduit le coefficent de la variable en applicant une operation de chaque cote'
             elif (coeffRightOther[0] != 1 and coeffLeftOther[0] == 0):
-                hint = 'Aide : reduit le coefficent de la variable en applicant une operation'
+                hint = 'Aide : reduit le coefficent de la variable en applicant une operation de chaque cote'
             return (True, hint)
         else:
             if (coeffLeftPrevious[0] == coeffLeftOther[0] and coeffLeftOther[1] - coeffLeftPrevious[1] !=
@@ -165,24 +165,30 @@ class Inequation: #(Exercice):
             ratio = None
             if coeffLeftPrevious[0] != 0 and coeffLeftOther[0] != 0:
                 ratio = coeffLeftPrevious[0] / coeffLeftOther[0]
+            elif (coeffLeftPrevious[0] != 0 and coeffLeftOther[0] == 0) or (coeffLeftPrevious[0] == 0 and coeffLeftOther[0] != 0):
+                return (False, "Aide : le signe d'equivalence n'est pas dans la bon sens")
             if coeffLeftPrevious[1] != 0 and coeffLeftOther[1] != 0:
                 if ratio is not None and coeffLeftPrevious[1] / coeffLeftOther[1] != ratio:
                     hint = "Aide : tu n'as pas applique la meme division sur chaque terme"
                     return (False, hint)
                 if ratio is None:
                     ratio = coeffLeftPrevious[1] / coeffLeftOther[1]
+            elif (coeffLeftPrevious[1] != 0 and coeffLeftOther[1] == 0) or (coeffLeftPrevious[1] == 0 and coeffLeftOther[1] != 0):
+                return (False, "Aide : le signe d'equivalence n'est pas dans la bon sens")
             if coeffRightPrevious[0] != 0 and coeffRightOther[0] != 0:
                 if ratio is not None and coeffRightPrevious[0] / coeffRightOther[0] != ratio:
                     hint = "Aide : tu n'as pas applique la meme division sur chaque terme"
                     return (False, hint)
                 if ratio is None:
                     ratio = coeffRightPrevious[0] / coeffRightOther[0]
+            elif (coeffRightPrevious[0] != 0 and coeffRightOther[0] == 0) or (coeffRightPrevious[0] == 0 and coeffRightOther[0] != 0):
+                return (False, "Aide : le signe d'equivalence n'est pas dans la bon sens")
             if coeffRightPrevious[1] != 0 and coeffRightOther[1] != 0:
                 if ratio is not None and coeffRightPrevious[1] / coeffRightOther[1] != ratio:
                     hint = "Aide : tu n'as pas applique la meme division sur chaque terme"
                     return (False, hint)
-            if conditionOther != conditionPrevious:
-                hint = "Aide : le signe d'equivalence n'est pas dans la bon sens"
+            else :
+                return (False, "Aide : le signe d'equivalence n'est pas dans la bon sens")
             return (False, hint)
 
 
@@ -273,7 +279,7 @@ class System: #(Exercice):
                     hint = "Aide : simplifie a droite pour l'equation "+str(k+1)
                     return (True, hint)
                 elif ((coeffLeftOther[k][0] != 0 and coeffRightOther[k][0] != 0) or (coeffLeftOther[k][1] != 0 and coeffRightOther[k][1] != 0)):
-                    hint = "Aide : isole la variable a gauche en applicant une operation de chaque cote pour l'equation "+str(k+1)
+                    hint = "Aide : isole la variable en applicant une operation de chaque cote pour l'equation "+str(k+1)
                     return (True, hint)
                 elif (coeffLeftOther[k][2] != 0 and coeffRightOther[k][0] == 0 and coeffRightOther[k][1] == 0):
                     hint = "Aide : isole la variable(s) de gauche en applicant une operation de chaque cote pour l'equation "+str(k+1)
@@ -407,7 +413,7 @@ class Expression:
     def isEquivalant(self, other):
         hint = None
 
-        if (self.solution == other.solution and str(other.equa).isdigit()):
+        if (self.solution == other.solution and str(other.equa).lstrip("-").replace("/","").isdigit()):
             return (True, hint)
         elif(self.solution == other.solution):
             hint = "Aide : continue!"
