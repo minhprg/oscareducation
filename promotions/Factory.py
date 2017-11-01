@@ -19,6 +19,7 @@ def factory(type,question,letter):
     if type == "algebraicEquation": return Equation(question,letter)
     if type == "algebraicInequation": return Inequation(question,letter)
     if type == "algebraicSystem": return System(question,letter)
+    if type == "algebraicExpression":return Expression(question)
 
 
 class Equation: #(Exercice):
@@ -398,6 +399,25 @@ class System: #(Exercice):
         return left, right, coeffLeft, coeffRight
 
 
+class Expression:
+    def __init__(self, equa):
+        self.equa = equa
+        self.solution = eval(equa,transformations=(st+(imp,)))
+
+    def isEquivalant(self, other):
+        hint = None
+
+        if (self.solution == other.solution and str(other.equa).isdigit()):
+            return (True, hint)
+        elif(self.solution == other.solution):
+            hint = "Aide : continue!"
+            return (True, hint)
+        else:
+            hint = "Aide : attention a la priorite des operations! D'abord les () puis x ou / et + ou -"
+            return (False, hint)
+
+
+
 # tests Equation
 #handler = InputHandler.InputHandler()
 #eq1 = u'4*a-8 = 2*a +16'
@@ -436,7 +456,13 @@ class System: #(Exercice):
 
 
 #tests System
-System1 = System(['5*x-(2+3*y)','2*x+y-(x)'], "x,y") # 2x=2 y+x=0
-print System1.isSolution([-1, 1]) # x=-1 y=1 ou l'inverse
-System2 = System(['x-(2/8)','-2/8-(y)'], "x,y") # x=1 x=-y
-print System1.isEquivalant(System2)
+#System1 = System(['5*x-(2+3*y)','2*x+y-(x)'], "x,y") # 2x=2 y+x=0
+#print System1.isSolution([-1, 1]) # x=-1 y=1 ou l'inverse
+#System2 = System(['x-(2/8)','-2/8-(y)'], "x,y") # x=1 x=-y
+#print System1.isEquivalant(System2)
+
+
+#tests Expression
+#Expression1 = Expression('(3+5)*2')
+#Expression2 = Expression('(8)*2')
+#print Expression1.isEquivalant(Expression2)
