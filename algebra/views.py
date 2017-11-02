@@ -46,10 +46,8 @@ class ExerciceCreation(View):
 
 		if request.content_type is "application/json":
 			return HttpResponse(status=415)
-		elif request.content_type is "text/html":
-			return TemplateResponse(request, "algebra/exercice_creation.haml")
 		else:
-			return HttpResponse(status=415)
+			return TemplateResponse(request, "algebra/exercice_creation.haml")
 
 	def post(self, request):
 		
