@@ -23,10 +23,10 @@
                 =option
       -elif question.type == "algebraicEquation" or question.type == "algebraicInequation"
         %br
-        =question.answers
+        =question.answers.equations
       -elif question.type == "algebraicSystem"
         %br
-        -for equation in question.answers
+        -for equation in question.answers.equations
           =equation
           %br
 

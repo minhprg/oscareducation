@@ -1,5 +1,6 @@
 # encoding: utf-8
 import promotions.InputHandler as InputHandler
+import promotions.Factory as Factory
 
 
 def validate_exercice_yaml_structure(exercice):
@@ -68,12 +69,14 @@ def validate_exercice_yaml_structure(exercice):
                 return(u"une question de type checkbox doit avoir au moins une réponse de correcte, or la question '%s' n'a pas de réponse correcte possible" % (question)).encode("Utf-8")
         elif data["type"] in ("algebraicEquation","algebraicInequation", "algebraicSystem"):
             ih = InputHandler.InputHandler(data["type"])
-            if isinstance(data["answers"], list):
-                ans = tuple([unicode(x )for x in data["answers"]])
+            if isinstance(data["answers"]["equations"], list):
+                ans = tuple([unicode(x )for x in data["answers"]["equations"]])
             else:
-                ans = unicode(data["answers"])
+                ans = unicode(data["answers"]["equations"])
             try:
                 ih.parse(ans)
+
+
             except Exception:
                 return u"Une réponse de type algebraic doit être écrite sous la forme de 'a*x + b = c'"
 

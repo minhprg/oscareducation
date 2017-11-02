@@ -18,10 +18,10 @@
               Code latex: <code>{{ answer }}</code> (visible que par les admins)
     -elif answer.type == "algebraicEquation" or question.type == "algebraicInequation"
       %br
-      =answer.answers
+      =answer.answers.equations
     -elif answer.type == "algebraicSystem"
       %br
-      -for equation in answer.answers
+      -for equation in answer.answers.equations
         =equation
         %br
     -elif answer.type == "radio"

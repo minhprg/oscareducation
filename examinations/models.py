@@ -228,10 +228,13 @@ class Question(models.Model):
             # all algebraic exercise starts with that and are corrected using the factory method.
             handler = InputHandler(evaluation_type)
             try:
-
-                (eq1, letter) = handler.parse(raw_correct_answers["answers"])
+                (eq1, letter) = handler.parse(unicode(raw_correct_answers["answers"]["equations"]))
                 eq_to_solve = algebraic_factory(evaluation_type, eq1, letter)  # equation that needs to be solved
-                (eq2, letter) = handler.parse(response)
+                if "System" in evaluation_type:
+                    (eq2, letter2) = handler.parse([unicode(x) for x in response])
+                else:
+                    (eq2, letter2) = handler.parse(unicode(response[0]))
+
                 answer_from_student = algebraic_factory(evaluation_type, eq2, letter)
                 test_solution = eq_to_solve.isEquivalant(answer_from_student)  # return (bool,str)
 

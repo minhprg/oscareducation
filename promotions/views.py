@@ -49,6 +49,8 @@ from .forms import LessonForm, StudentAddForm, SyntheseForm, KhanAcademyForm, St
 from .utils import generate_random_password, user_is_professor, force_encoding
 import csv
 from django.http import JsonResponse
+from promotions.InputHandler import InputHandler
+from promotions.Factory import factory
 
 
 @user_is_professor
@@ -1410,12 +1412,12 @@ def exercice_validation_form_validate_exercice(request):
             if "System" in question["type"]:
                  questions[question["instructions"]] = {
                     "type": question["type"],
-                    "answers": [question["eq1"], question["eq2"]],
+                    "answers": {"sol":"","equations":[question["eq1"], question["eq2"]]},
                 }
             else:
                 questions[question["instructions"]] = {
                     "type": question["type"],
-                    "answers": question["eq1"],
+                    "answers": {"sol":"", "equations":question["eq1"]},
                 }
 
         else:
@@ -1560,18 +1562,33 @@ def exercice_validation_form_submit(request, pk=None):
                 }
             elif question["type"].startswith("algebraic"):
                 if "System" in question["type"]:
+                    ih = InputHandler(question["type"])
+                    eq,letter = ih.parse((unicode(question["eq1"]),unicode(question["eq2"])))
+                    equation = factory(question["type"],eq,letter)
+                    sol = equation.solution
+                    solText = ""
+                    for index,elem in enumerate(sol):
+                        solText += letter[index]+"="+str(elem)+"\n"
                     new_question_answers = {
                         "type": question["type"],
-                        "answers": [question["eq1"], question["eq2"]],
+                        "answers": {"sol":solText,
+                                    "equations":[question["eq1"], question["eq2"]]},
 
                     }
 
                 else:
+                    ih = InputHandler(question["type"])
+                    eq,letter = ih.parse(unicode(question["eq1"]))
+                    equation = factory(question["type"],eq,letter)
+                    sol = equation.solution
+                    for elem in sol:
+                        sol = letter+"="+str(elem)
                     new_question_answers = {
                         "type": question["type"],
-                        "answers": question["eq1"],
+                        "answers": {"sol":sol,
+                                    "equations":question["eq1"],
 
-                    }
+                    }}
 
             else:
                 answers = CommentedMap()
