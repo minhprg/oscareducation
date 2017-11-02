@@ -15,6 +15,7 @@ import pandas as pd
 import ruamel.yaml
 import yaml
 import yamlordereddictloader
+from PIL import Image
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
@@ -39,7 +40,7 @@ from resources.models import KhanAcademy, Sesamath, Resource
 from skills.models import Skill, StudentSkill, CodeR, Section, Relations, CodeR_relations
 from users.models import Student
 from .forms import LessonForm, StudentAddForm, KhanAcademyForm, StudentUpdateForm, LessonUpdateForm, \
-    TestUpdateForm, SesamathForm, ResourceForm, CSVForm
+    TestUpdateForm, SesamathForm, ResourceForm, CSVForm, ImportCopyForm
 from .models import Lesson, Stage
 from .utils import generate_random_password, user_is_professor
 
@@ -565,16 +566,41 @@ def lesson_test_list(request, pk):
     :param pk: primary key of a Lesson 
     :return: 
     """
-    lesson = get_object_or_404(Lesson, pk=pk)
-    resources = Resource.objects.filter(added_by_id=request.user.id, section='scanresource')
-    for i in resources:
-        print i.content
-    return render(request, "professor/lesson/test/list.haml", {
-        "lesson": lesson,
-        "all_resources": resources,
-        "all_tests": lesson.basetest_set.order_by('-created_at'),
 
-    })
+    print("TEST")
+    if request.method == "POST":
+        print("POST")
+        if 'copy' in request.FILES:
+            print("FILES")
+            form = ImportCopyForm(request.POST, request.FILES)
+            if form.is_valid():
+                copy = request.FILES.getlist('copy')
+                if not os.path.exists(settings.MEDIA_ROOT):
+                    os.makedirs(settings.MEDIA_ROOT)
+                for c in copy:
+                    img = Image.open(c)
+                    name = img.crop((796, 64, 1176, 107))
+                    name.save(settings.MEDIA_ROOT + "/name.png")
+
+                    """
+                    name = img.crop((796, 64, 1176, 107))
+                    if not os.path.exists(settings.MEDIA_ROOT):
+                        os.makedirs(settings.MEDIA_ROOT)
+                    name.save(settings.MEDIA_ROOT+"/name.png")
+                    """
+
+                lesson = get_object_or_404(Lesson, pk=pk)
+                return render(request, "professor/lesson/test/add.haml", {
+                    "lesson": lesson,
+                })
+    else:
+        lesson = get_object_or_404(Lesson, pk=pk)
+
+        return render(request, "professor/lesson/test/list.haml", {
+            "lesson": lesson,
+            "all_tests": lesson.basetest_set.order_by('-created_at'),
+        })
+
 
 
 @user_is_professor
