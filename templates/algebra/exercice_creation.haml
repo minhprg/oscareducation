@@ -15,8 +15,20 @@
       Créer exercice
 
 -block algebra_content
-  .formgroup
+  %form.formgroup
     .well
+      .row
+        .col-md-4
+          %label{:for => 'exercice_level'} Choose level
+        .col-md-4{:align => "center"}
+          .btn-group.btn-group-lg
+            %select.form-control{:id => 'exercice_level', :name => 'exercice_level'}
+              %option 1
+              %option 2
+              %option 3
+              %option 4
+              %option 5
+      %hr
       .row
         .col-md-4
           %label{:for => 'var'} Choose variable
@@ -68,22 +80,22 @@
       %hr
       .row
         .col-md-5
-          %input.form-control{:id => "leftSide"}/
+          %input.form-control{:id => "leftSide", :name => 'leftSide'}/
           %br/
         .col-md-2{:align => "center"}
           .btn-group.btn-group-lg
-            %select.form-control{:id => "signe"}
+            %select.form-control{:id => "signe", :name => 'signe'}
               %option =
               %option >
               %option <
         .col-md-5
-          %input.form-control{:id => "rightSide"}/
+          %input.form-control{:id => "rightSide", :name => 'rightSide'}/
           %br/
       %hr
       .row
         .col-md-4
           %label{:for => 'solution'} Solution:
         .col-md-4
-          %input.form-control{:id => "solution"}
+          %input.form-control{:id => "solution", :name => 'solution'}
           %br/
-    %button.btn.btn-primary{:type => "button", :id=> "concat"} Check
+    %button.btn.btn-primary{:type => "submit", :id=> "concat"} Check
