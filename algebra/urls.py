@@ -1,8 +1,8 @@
 from django.conf.urls import url
-from . import views
+from algebra.views import List, ExerciceCreation, AssessmentCreation
 
 urlpatterns = [
-    url(r'^$', views.list, name='list'),
-    url(r'^exercice/creation$', views.exercice_creation, name='exercice_creation'),
-    url(r'^assessment/creation$', views.assessment_creation, name='assessment_creation'),
+    url(r'^$', List.as_view(), name='list'),
+    url(r'^exercice/creation$', ExerciceCreation.as_view(), name='exercice_creation'),
+    url(r'^assessment/creation$', AssessmentCreation.as_view(), name='assessment_creation'),
 ]
