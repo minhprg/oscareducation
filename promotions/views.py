@@ -1567,8 +1567,9 @@ def exercice_validation_form_submit(request, pk=None):
                     equation = factory(question["type"],eq,letter)
                     sol = equation.solution
                     solText = ""
-                    for index,elem in enumerate(sol):
-                        solText += letter[index]+"="+str(elem)+"\n"
+                    for elem in sol:
+                        for index, val in enumerate(elem):
+                            solText += letter.split(",")[index]+"="+str(val)+(", " if index == 0 else "")
                     new_question_answers = {
                         "type": question["type"],
                         "answers": {"sol":solText,
