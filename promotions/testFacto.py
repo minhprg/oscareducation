@@ -1,5 +1,6 @@
 import unittest
 from Factory import *
+from InputHandler import *
 
 
 class TestEquation(unittest.TestCase):
@@ -150,7 +151,13 @@ class TestExpression(unittest.TestCase):
         self.assertFalse(equiv3[0])
 
 class TestInputHandler(unittest.TestCase):
-    pass
+    def test_parse(self):
+        handler1 = InputHandler("algebraicEquation")
+        self.assertTrue(handler1.parse(u'2x+3=5')==(u'2x+3-(5)', u'x'))
+        handler2 = InputHandler("algebraicInequation")
+        self.assertTrue(handler2.parse(u'2*x<6')==(u'2*x<6', u'x'))
+        handler3 = InputHandler("algebraicSystem")
+        self.assertTrue(handler3.parse((u'2x+y=5',u'3y=8^2'))==([u'2x+y-(5)', u'3y-(8**2)'], u'x,y'))
 
 if __name__ == '__main__':
     unittest.main()
