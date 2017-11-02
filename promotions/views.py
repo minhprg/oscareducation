@@ -44,6 +44,8 @@ from .models import Lesson, Stage
 from .utils import generate_random_password, user_is_professor
 
 
+
+
 @user_is_professor
 def dashboard(request):
     """
@@ -612,7 +614,6 @@ def lesson_test_update(request, lesson_pk, pk):
             return HttpResponseRedirect(reverse("professor:lesson_test_online_detail", args=(lesson.pk, test.pk,)))
         else:
             return HttpResponseRedirect(reverse("professor:lesson_test_from_class_detail", args=(lesson.pk, test.pk,)))
-
     return render(request, "professor/lesson/test/update.haml", {
         "lesson": lesson,
         "test": test,

@@ -64,31 +64,6 @@
   .boxclasse.container-fluid
     -if all_tests.exists or all_resources.exists
       %table.table
-        -for scan in all_resources
-          %tr
-            %td{width: "30px"}
-              =scan.created_at|date:"d/m/Y"
-            %td{width: "8px"}
-              %small Scan
-            %td
-              %a{href: ""}
-                =scan.content.title
-            %td
-              %span.status.alert.alert-danger
-                Clôturé
-            %td.align-right
-              %form.inline{action: ""}
-                -csrf_token
-                %button.hidden-button{}
-                  -if basetest.test.running
-                    %img.icon{src: "{% static 'img/icons/not-available.png' %}"}
-                  -else
-                    %img.icon{src: "{% static 'img/icons/accessible.png' %}"}
-              %a{href: ""}
-                %img.icon{src: "{% static 'img/icons/modify.png' %}", data-toggle: "tooltip", data-placement: "top", title: "Modifier"}
-              %a{href: ""}
-                %img.icon{src: "{% static 'img/icons/delete.png' %}", data-toggle: "tooltip", data-placement: "top", title: "Supprimer"}
-
         -for basetest in all_tests
           %tr
             %td{width: "30px"}

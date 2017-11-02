@@ -600,3 +600,46 @@ class TestSkillFromClass(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     """The offline test date of creation"""
+
+class TestFromScan(BaseTest):
+    """[FR] Test hors-ligne
+
+        This test is done in class, not with Oscar.
+        Its purpose is to encode the results online.
+
+    """
+
+    def get_skills_with_encoded_values(self):
+        result = []
+
+        students = self.lesson.students.all()
+        skills = self.skills.all()
+        encoded_values = {(x.student, x.skill): x for x in
+                          self.testskillfromscan_set.all().select_related("skill", "student").order_by("id")}
+        for student in students:
+            result.append((student, [(skill, encoded_values.get((student, skill))) for skill in skills]))
+
+        return result
+
+class TestSkillFromScan(models.Model):
+    """[FR] Compétence de test hors-ligne
+
+        This is the link between a TestFromClass
+        and its Skill(s)
+
+    """
+    test = models.ForeignKey("TestFromScan")
+    """The offline Test"""
+    skill = models.ForeignKey("skills.Skill")
+    """A Skill tested by the offline Test"""
+    student = models.ForeignKey("users.Student")
+    """The student that passed the offline Test"""
+    result = models.CharField(max_length=10, choices=(
+        ("good", "acquise"),
+        ("bad", "non acquise"),
+        ("unknown", "inconnu"),
+    ))
+    """The Skill result for the Student with the offline Test"""
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    """The offline test date of creation"""
