@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import sys
+import random
 import re as reg
-from sympy import symbols, sympify, solve, degree, solve_poly_inequality, Poly
+from datetime import datetime
 from abc import ABCMeta
 
+from sympy import symbols, sympify, degree, S
+from algebra.models import AlgebraicExercice
 
 class ExpressionError(Exception):
     pass
@@ -23,12 +25,16 @@ class Expression(object):
     """
 
     __metaclass__ = ABCMeta
+    __children__ = set()
+
+    class Solution(object):
+        pass
 
     # ---------------------------------------------------------- Magic methods
 
-    def __init__(self, expression, operator=None):
-        self._expression_string = expression
+    def __init__(self, expression, operator=None, domain=S.Reals):
         self._symbols = [symbols(sym) for sym in self._symbols_of(expression)]
+        self._domain = domain
 
         lo, self._operator, ro = self._split(expression, operator)
         lo = self._sanitize(lo)
@@ -50,7 +56,11 @@ class Expression(object):
         self._solution = self.resolve()
 
     def __str__(self):
-        return self._expression_string
+        return self._pretty(
+            str(self._left_operand).strip(' ') + ' ' +
+            self._operator + ' ' +
+            str(self._right_operand).strip(' ')
+        )
 
     def __eq__(self, other):
         return self._solution == other._solution
@@ -58,8 +68,13 @@ class Expression(object):
     # --------------------------------------------------------- Static methods
 
     @staticmethod
+    def register(cls):
+        Expression.__children__.add(cls)
+
+    @staticmethod
     def generate(two_sided, degree):
-        raise NotImplementedError("Call to abstract method")
+        r = random.randint(0, len(Expression.children))
+        return Expression.children[r].generate()        
 
     @staticmethod
     def _symbols_of(expression):
@@ -102,21 +117,19 @@ class Expression(object):
 
     @staticmethod
     def _pretty(expression):
-        expr = expression.replace('*', '')
-        operator = reg.compile('[+*^/%=-]')
+        expr = expression.replace('**', '^')
+        expr = expr.replace('*', '')
+        operator = reg.compile('[+*/%=1-9-]')
 
         chars = set([(op.start(), op.group()) for op in operator.finditer(expr)])
         for c in chars:
-            replacement = ''
-            if expr[c[0] - 1] != ' ' and c[0] != 0:
-                replacement += ' '
-            replacement += c[1]
-            if expr[c[0] + 1] != ' ' and c[0] != len(expr) - 1:
+            replacement = c[1]
+            if c[0] != len(expr) - 1 and expr[c[0] + 1] != ' ':
                 replacement += ' '
 
             expr = expr.replace(c[1], replacement)
 
-        return expr
+        return expr.strip(' ')
 
     @staticmethod
     def _split(expression, operator=None):
@@ -149,112 +162,28 @@ class Expression(object):
     def degree(self):
         return int(self._degree)
 
-# ============================================================================
-# ================================  Equation =================================
-# ============================================================================
+    @property
+    def symbols(self):
+        return self._symbols
 
+    @property
+    def domain(self):
+        return self._domain
 
-class Equation(Expression):
-    """
-    Class for the expressions of the category Equation
-    An Equation object can be created with the args :
-        - expr (the equation in a String),
-        - sym (the variable of  the equation, the default value is x)
-    """
+    @domain.setter
+    def domain(self, dom):
+        self._domain = dom
 
-    def __init__(self, expression):
-        Expression.__init__(self, expression, '=')
-
-    def __float__(self):
-        pass
-
-    def __int__(self):
-        return int(self.__float__())
-
-    def resolve(self):
-        """return value of the solution of the equation in a String"""
-        solutions = []
-        for symbol in self._symbols:
-            expr = self._left_operand - self._right_operand
-            solutions.append(solve(expr, symbol))
-
-        return solutions
-
-    def is_equation(self):
-        """return true if this is a correct inequation"""
-        return self._operator == '='
-
+    @property
+    def model(self):
+        created = datetime.now()
+        return AlgebraicExercice(
+            expression=str(self),
+            expression_type=self._db_type,
+            created=created,
+            updated=created,
+            solution=str(self.solution),
+            level=-1
+        )
 
 # ============================================================================
-# ================================ Inequation ================================
-# ============================================================================
-
-
-class Inequation(Expression):
-    """Class for the expressions of the category Inequation
-    An Inequation object can be created with the args : 
-        - expr (the inequation in a String), 
-        - sym (the variable of  the inequation, the default value is x)"""
-
-    
-    def resolve(self):
-        """ return value of the solution of the inequation in a String"""
-        results = []
-        for sym in self._symbols:
-            a = Poly(self._left_operand, sym)
-            b = Poly(self._right_operand, sym)
-            expr = eval("Poly(a" + self._operator + "b)")
-            result = solve_poly_inequality(expr, self._operator)
-
-            results.append(result)
-
-        return results
-
-    def is_inequation(self):
-        """return true if this is a correct inequation"""
-        return self._operator in ('<','>','<=','>=')
-
-
-#---------------------------------------------
-#--- Equation System
-#---------------------------------------------
-    
-class EquationSystem(Expression):
-    """Class for the expressions of the category System of two Equations
-    An EquationSystem object can be created with the args : 
-        - expr (An array of two Strings with the equations), 
-        - sym (the variables of  the expression, the default values are x and y)"""
-
-    def __init__(self, expr, sym = 'x y'):
-        self.equation1 = Equation(expr[0])
-        self.equation2 = Equation(expr[1])
-        self.x, self.y = symbols(sym)
-        self._solution = self.resolve
-
-    # TO DO
-    def resolve(self):
-        pass
-
-
-
-
-#---------------------------------------------
-#--- complementary functions
-#---------------------------------------------
-
-
-# compare un systeme de deux equation et dit si elle sont egales
-def compare_expr(expressionLeft, expressionRight):
-    x, y, z = symbols("x y z")
-    str_Left = expressionLeft
-    str_Right = expressionRight
-    exprLeft = sympify(str_Left)
-    exprRight = sympify(str_Right)
-    return str(solve(Eq(exprLeft, exprRight)))
-
-
-def simplification_oneSide_equation(expression):
-    x, y, z = symbols("x y z")
-    str_expr = expression
-    expr = sympify(str_expr)
-    return str(sympify(expr))

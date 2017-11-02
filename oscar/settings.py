@@ -23,7 +23,7 @@ DEBUG = True
 DEBUG_PROPAGATE_EXCEPTIONS = False
 
 
-ALLOWED_HOSTS = ["127.0.0.1"]
+ALLOWED_HOSTS = ["127.0.0.1", "0.0.0.0", "localhost"]
 
 LOGIN_REDIRECT_URL = "/"
 
@@ -60,7 +60,7 @@ INSTALLED_APPS = (
     'users',
     'resources',
     'end_test_poll',
-    'algebraic',
+    'algebra',
 
 ) + ADDITIONAL_APPS
 
@@ -112,7 +112,7 @@ DATABASES = {
         'NAME': 'oscar',
         'USER': 'oscar',
         'PASSWORD': 'oscar',
-        'HOST': 'localhost',
+        'HOST': '10.0.0.20',
         'PORT': '5432',
     }
 }
@@ -179,7 +179,7 @@ if "STATIC_ROOT" not in globals():
 
 CRISPY_FAIL_SILENTLY = not DEBUG
 
-INTERNAL_IPS = ('127.0.0.1',)
+INTERNAL_IPS = ('127.0.0.1', '0.0.0.0',)
 
 # Email settings
 #DEFAULT_FROM_EMAIL = 'noreply@louvainfo.be'

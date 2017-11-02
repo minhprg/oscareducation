@@ -10,7 +10,7 @@
             "left_operand": "3x - 2",
             "right_operand": "0",
             "operator": "=",
-            "solution": ["0.6667"]
+            "solution": ["2/3"]
         },
         {
             "type": "Equation",
@@ -22,7 +22,7 @@
             "left_operand": "18x + 9",
             "right_operand": "14",
             "operator": "=",
-            "solution": ["0.2778"]
+            "solution": ["5/18"]
         },
         { 
             "type": "Equation",
@@ -401,18 +401,18 @@
           	"degree": 2,
           	
           	"string": "x + x * (3 - 2 * (1 + x)) < 5 * (1 + 2 * (x - 3)) + 2 * x^2",
-						"left_operand": "x + x * (3 - 2 * (1 + x))",
+            "left_operand": "x + x * (3 - 2 * (1 + x))",
           	"right_operand": "5 * (1 + 2 * (x - 3)) - 2 * x^2",
           	"operator": "<",
-          	"solution": ["x < 25/8"]
+          	"solution": [["x < -1 + sqrt(29) / 2", "x < -1 - sqrt(29) / 2"]]
         },
         {
             "type": "Inequation",
             "two_sided": false,
             "degree": 2,
 
-            "string": "((7-4x) / (x + 3)) < 0",
-            "left_operand": "((7-4x) / (x + 3))",
+            "string": "(7-4x) / (x + 3) < 0",
+            "left_operand": "(7-4x) / (x + 3)",
             "right_operand": "0",
             "operator": "<",
             "solution": ["x <= -3" , "x >= 1.75"]

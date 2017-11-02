@@ -7,10 +7,10 @@ from django.template.response import TemplateResponse
 
 # Create your views here.
 def list(request):
-    return TemplateResponse(request, "algebraic/list.haml")
+    return TemplateResponse(request, "algebra/list.haml")
 
 def exercice_creation(request):
-    return TemplateResponse(request, "algebraic/exercice_creation.haml")
+    return TemplateResponse(request, "algebra/exercice_creation.haml")
 
 def assessment_creation(request):
-    return TemplateResponse(request, "algebraic/assessment_creation.haml")
+    return TemplateResponse(request, "algebra/assessment_creation.haml")
