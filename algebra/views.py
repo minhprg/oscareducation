@@ -17,6 +17,11 @@ class List(View):
 
 	def get(self, request):
 		return TemplateResponse(request, "algebra/list.haml")
+    
+class TrainingSession(View):
+
+	def get(self, request):
+		return TemplateResponse(request, "algebra/training_session_student.haml")
 
 
 class ExerciceCreation(View):
