@@ -5,15 +5,15 @@
     %li
       %a{href: "{% url 'professor:dashboard' %}"} Oscar
     %li
-      %a{href: "{% url 'professor:lesson_detail' object.lesson.id %}"}
+      %a{href: "{% url 'professor:lesson_detail' lesson.id %}"}
         Classe
-        =object.lesson.name
+        =lesson.name
     %li.active
       Évaluation libre
 
 
 -block content
-  %h3 Évaluation libre <i>{{ object.name }}</i>  pour la classe <a href="{% url 'professor:lesson_detail' object.lesson.pk %}">{{ object.lesson.name }}</a>
+  %h3 Évaluation libre <i>{{ test.name }}</i>  pour la classe <a href="{% url 'professor:lesson_detail' lesson.pk %}">{{ lesson.name }}</a>
   %hr
 
   .ligneorange
@@ -23,49 +23,35 @@
       %td.center{width: "20px"}
         %a.btn.btn-primary{href: "{% url 'professor:lesson_test_list' lesson.pk %}"}
           Retour aux tests
-
     .pull-right
       %td.center{width: "20px"}
-        %a.btn.btn-primary{href: "{% url 'professor:lesson_test_from_class_fill' lesson.pk object.pk %}"}
+        %a.btn.btn-primary{href: "{% url 'professor:lesson_test_from_scan_fill' lesson.pk test.pk %}"}
           Encoder
       %td.center{width: "20px"}
-        %a.btn.btn-default{href: "{% url 'professor:lesson_test_from_class_modify' lesson.pk object.pk %}"}
+        %a.btn.btn-default{href: "{% url 'professor:lesson_test_from_scan_modify' lesson.pk test.pk %}"}
           Modifier
       %td.center{width: "20px"}
-        %a.btn.btn-danger{href: "{% url 'professor:lesson_test_delete' lesson.pk object.pk %}"}
+        %a.btn.btn-danger{href: "{% url 'professor:lesson_test_delete' lesson.pk test.pk %}"}
           Effacer
 
+  .ligneorangefine
+  .container-fluid.boxclassetitle
+    %td.center{width: "20px"}
+      %form.form{action: "", method: "post", name: "copy", enctype: "multipart/form-data"}
+        -csrf_token
+        %input{type: "file", name: "copy", multiple : "multiple"}
+        %br/
+        %button.btn.btn-primary{type: "submit"}
+          Importer des copies
   .ligneorangefine
 
   .boxclasse.container-fluid
     %h5 Compétences sélectionnées
     %ul.heatmap-list
-      -for skill in resource.skills
+      -for skill in test.skills.all
         %li
-          =skill.id
-  /
-    %h5 Résultats par élèves
+          %a.btn.btn-default.skill{type: "button", href: "{% url 'professor:lesson_skill_detail' test.lesson.pk skill.code %}"}
+            %abbr{title: "{{ skill.name }}", style: "cursor: default; border: none"}= skill.code
 
-    -if object.testskillfromclass_set.exists
-      %table.table.table-bordered
-        %thead
-          %th{width: "20%"}
-            Élève / Compétences
-          -for i in object.skills.all
-            %th.center
-              =i.code
-              %br
-              =i.name
-        -for student, skills in object.get_skills_with_encoded_values
-          %tr
-            %td
-              %a{href: "{% url 'professor:lesson_student_detail' lesson.pk student.pk %}"}
-                =student
-            -for skill, encoded_value in skills
-              %td{class: "{% if encoded_value.result == 'good' %}success{% elif encoded_value.result == 'bad' %}warning{% endif %}"}
+          =skill.name
 
-    -else
-      %p Vous n'avez pas encore encodé cette évaluation libre.
-      %p
-        %a{href: "{% url 'professor:lesson_test_from_class_fill' lesson.pk object.pk %}"}
-          Le faire maintenant.

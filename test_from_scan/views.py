@@ -1,23 +1,24 @@
 # encoding: utf-8
 
 import json
-
+import qrtools
 from datetime import datetime
-
+from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.views.decorators.http import require_POST
 from django.http import HttpResponseRedirect, HttpResponse
 from django.db import transaction
-
+from PIL import Image
 from skills.models import Skill, StudentSkill, SkillHistory
 from examinations.models import TestFromScan, TestSkillFromScan
 
+import os
 from promotions.models import Lesson
 from users.models import Student
-from promotions.utils import user_is_professor
-
+from promotions.utils import user_is_professor, insertion_sort_file
+from .forms import ImportCopyForm
 
 
 @user_is_professor
@@ -28,6 +29,56 @@ def lesson_test_from_scan_add(request, pk):
         "lesson": lesson,
         "stages": lesson.stages_in_unchronological_order(),
     })
+
+
+@user_is_professor
+def lesson_test_from_scan_detail(request, lesson_pk, pk):
+
+    lesson = get_object_or_404(Lesson, pk=lesson_pk)
+    test = get_object_or_404(TestFromScan, pk=pk)
+    print(test.content['a'][0]['y'][0])
+    if request.method == "POST":
+        print("POST")
+        if 'copy' in request.FILES:
+            print("FILES")
+            form = ImportCopyForm(request.POST, request.FILES)
+            if form.is_valid():
+                copy = request.FILES.getlist('copy')
+                if not os.path.exists(settings.MEDIA_ROOT):
+                    os.makedirs(settings.MEDIA_ROOT)
+                insertion_sort_file(copy)
+
+                i = 1
+
+                for c in copy:
+
+                    img = Image.open(c)
+
+                    qr = qrtools.QR()
+                    qr.decode(c)
+
+
+                    if int(qr.data)==1:
+                        print("Page number 1 \n")
+                        name = img.crop((797, 145, 1176, 189))
+                        name.save(settings.SCAN_ROOT + "/name"+str(i)+".png")
+
+                    for answer in test.content['a'][int(qr.data)-1]['y']:
+                        print(answer)
+                        img2 = img.crop((64, answer, 1175, answer+409))
+                        img2.save(settings.SCAN_ROOT +"/crop" + str(i) + ".png")
+                        i += 1
+
+
+                return render(request, "professor/lesson/test/from-scan/detail.haml", {
+                    "lesson": lesson,
+                    "test":test,
+                })
+    else:
+        return render(request, "professor/lesson/test/from-scan/detail.haml", {
+            "lesson": lesson,
+            "test":test,
+        })
 
 
 @user_is_professor

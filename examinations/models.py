@@ -608,11 +608,12 @@ class TestFromScan(BaseTest):
         Its purpose is to encode the results online.
 
     """
-
+    content = JSONField()
     def get_skills_with_encoded_values(self):
         result = []
 
         students = self.lesson.students.all()
+
         skills = self.skills.all()
         encoded_values = {(x.student, x.skill): x for x in
                           self.testskillfromscan_set.all().select_related("skill", "student").order_by("id")}
@@ -640,6 +641,7 @@ class TestSkillFromScan(models.Model):
         ("unknown", "inconnu"),
     ))
     """The Skill result for the Student with the offline Test"""
+
 
     created_at = models.DateTimeField(auto_now_add=True)
     """The offline test date of creation"""

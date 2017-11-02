@@ -35,7 +35,7 @@
             -csrf_token
             %input{type: "file", name: "copy", multiple : "multiple"}
             %button.btn.btn-primary{type: "submit"}
-              Importer des élèves
+              Importer des copies
             %a{href: "{% url 'professor:lesson_test_add' lesson.pk %}"}
             %img.icon{src: "{% static 'img/icons/add.png' %}", data-toggle: "tooltip", data-placement: "top", title: "ajouter un test"}
 
@@ -106,7 +106,7 @@
                 %a{href: "{% url 'professor:lesson_test_delete' lesson.pk basetest.pk %}"}
                   %img.icon{src: "{% static 'img/icons/delete.png' %}", data-toggle: "tooltip", data-placement: "top", title: "Supprimer"}
 
-            -else
+            -elif basetest.testfromclass
               %td{width: "8px"}
                 %small Papier
               %td
@@ -125,6 +125,28 @@
                   %a{href: "{% url 'professor:lesson_test_from_class_fill' lesson.pk basetest.pk %}"}
                     %img.icon{src: "{% static 'img/icons/encode.png' %}", data-toggle: "tooltip", data-placement: "top", title: "Encoder"}
                 %a{href: "{% url 'professor:lesson_test_from_class_modify' lesson.pk basetest.pk %}"}
+                  %img.icon{src: "{% static 'img/icons/modify.png' %}", data-toggle: "tooltip", data-placement: "top", title: "Modifier"}
+                %a{href: "{% url 'professor:lesson_test_delete' lesson.pk basetest.pk %}"}
+                  %img.icon{src: "{% static 'img/icons/delete.png' %}", data-toggle: "tooltip", data-placement: "top", title: "Supprimer"}
+            -else
+              %td{width: "8px"}
+                %small Scan
+              %td
+                %a{href: "{% url 'professor:lesson_test_from_scan_detail' lesson.pk basetest.pk %}"}
+                  =basetest.name
+              %td
+                -if not basetest.testfromscan.testskillfromclass_set.exists
+                  %span.status.alert.alert-info
+                    Pas encore encodé
+                -else
+                  %span.status.alert.alert-info
+                    Encodé
+
+              %td.align-right
+                -if not basetest.testfromscan.testskillfromscan_set.exists
+                  %a{href: "{% url 'professor:lesson_test_from_scan_fill' lesson.pk basetest.pk %}"}
+                    %img.icon{src: "{% static 'img/icons/encode.png' %}", data-toggle: "tooltip", data-placement: "top", title: "Encoder"}
+                %a{href: "{% url 'professor:lesson_test_from_scan_modify' lesson.pk basetest.pk %}"}
                   %img.icon{src: "{% static 'img/icons/modify.png' %}", data-toggle: "tooltip", data-placement: "top", title: "Modifier"}
                 %a{href: "{% url 'professor:lesson_test_delete' lesson.pk basetest.pk %}"}
                   %img.icon{src: "{% static 'img/icons/delete.png' %}", data-toggle: "tooltip", data-placement: "top", title: "Supprimer"}

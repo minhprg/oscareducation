@@ -15,7 +15,6 @@ import pandas as pd
 import ruamel.yaml
 import yaml
 import yamlordereddictloader
-from PIL import Image
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
@@ -567,39 +566,12 @@ def lesson_test_list(request, pk):
     :return: 
     """
 
-    print("TEST")
-    if request.method == "POST":
-        print("POST")
-        if 'copy' in request.FILES:
-            print("FILES")
-            form = ImportCopyForm(request.POST, request.FILES)
-            if form.is_valid():
-                copy = request.FILES.getlist('copy')
-                if not os.path.exists(settings.MEDIA_ROOT):
-                    os.makedirs(settings.MEDIA_ROOT)
-                for c in copy:
-                    img = Image.open(c)
-                    name = img.crop((796, 64, 1176, 107))
-                    name.save(settings.MEDIA_ROOT + "/name.png")
+    lesson = get_object_or_404(Lesson, pk=pk)
 
-                    """
-                    name = img.crop((796, 64, 1176, 107))
-                    if not os.path.exists(settings.MEDIA_ROOT):
-                        os.makedirs(settings.MEDIA_ROOT)
-                    name.save(settings.MEDIA_ROOT+"/name.png")
-                    """
-
-                lesson = get_object_or_404(Lesson, pk=pk)
-                return render(request, "professor/lesson/test/add.haml", {
-                    "lesson": lesson,
-                })
-    else:
-        lesson = get_object_or_404(Lesson, pk=pk)
-
-        return render(request, "professor/lesson/test/list.haml", {
-            "lesson": lesson,
-            "all_tests": lesson.basetest_set.order_by('-created_at'),
-        })
+    return render(request, "professor/lesson/test/list.haml", {
+        "lesson": lesson,
+        "all_tests": lesson.basetest_set.order_by('-created_at'),
+    })
 
 
 
