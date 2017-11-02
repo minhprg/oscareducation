@@ -1,4 +1,4 @@
--extends "algebraic/base.haml"
+-extends "algebra/base.haml"
 -block bootstrap3_title
   Créer exercice
 -block breadcrumb
@@ -9,12 +9,12 @@
       %a{ :href => "{% url 'home' %}", :title => "Home" }
         Home
     %li
-      %a{ :href => "{% url 'algebraic:list' %}", :title => "Liste exercice" }
-        Algebraic
+      %a{ :href => "{% url 'algebra:list' %}", :title => "Liste exercice" }
+        Algebra
     %li.active
       Créer exercice
 
--block algebraic_content
+-block algebra_content
   .formgroup
     .well
       .row

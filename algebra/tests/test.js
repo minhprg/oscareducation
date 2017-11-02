@@ -1,8 +1,10 @@
+// var casper = require('casper').create();
+
 casper.start('http://127.0.0.1:8000/accounts/usernamelogin/');
 
 casper.then(function() {
     this.fill('form#login-form', {
-        'username':    'simon'
+        'username': 'PeterParker'
     }, true);
 });
 
@@ -12,12 +14,14 @@ casper.then(function() {
 
 casper.then(function() {
     this.fill('form#login-form', {
-        'password':    'simon'
+        'password': 'sjS3bejvep$'
     }, true);
 });
 
 casper.then(function() {
-    this.test.assertEquals(this.getCurrentUrl(), "http://127.0.0.1:8000/professor/dashboard/");
+    setTimeout( function() {
+        this.test.assertEquals(this.getCurrentUrl(), "http://127.0.0.1:8000/professor/dashboard/");
+    }, 1000);
 });
 
 casper.then(function() {
@@ -30,6 +34,7 @@ casper.run();
 casper.then(function() {
     console.log('clicked ok2, new location is ' + this.getCurrentUrl());
 });
+
 casper.then(function() {
         this.test.assertEquals(this.getCurrentUrl(), "http://127.0.0.1:8000/professor/education/");
 });

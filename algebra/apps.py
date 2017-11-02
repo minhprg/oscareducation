@@ -5,4 +5,4 @@ from django.apps import AppConfig
 
 
 class AlgebraicConfig(AppConfig):
-    name = 'algebraic'
+    name = 'algebra'
