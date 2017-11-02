@@ -37,6 +37,7 @@ class ExpressionsTest(unittest.TestCase):
         TODO
         """
         for expression_def in self.pool:
+            if (expression_def["type"] == "EquationSystem"): continue
             expression = globals()[expression_def["type"]](expression_def["string"])
             self.assertEqual(expression._operator, expression_def["operator"])
 
@@ -48,7 +49,10 @@ class ExpressionsTest(unittest.TestCase):
         for z in filter(f, self.pool): yield z
 
     def format(self, thing):
-        return ["%.4f" % float(Fraction(s).limit_denominator(4)) for s in thing]
+    	for s in thing:
+    		# s= nsimplify(s, tolerance=1e-4)
+    		print(type(s))
+        return ["%.4f" % float(Fraction(str(s)).limit_denominator(4)) for s in thing]
 
 # =============================================================================== EQUATIONS CHECKS
 
@@ -60,8 +64,8 @@ class ExpressionsTest(unittest.TestCase):
         for expression in self.expressions("Equation", 1, False):
             equation = Equation(expression["string"])
             self.assertEquals(
-                self.format(equation.solution), 
-                self.format(expression["solution"])
+                [self.format(s) for s in equation.solution], 
+                [self.format(s) for s in expression["solution"]]
             )
 
     #2
@@ -72,8 +76,8 @@ class ExpressionsTest(unittest.TestCase):
         for expression in self.expressions("Equation", 1, True):
             equation = Equation(expression["string"])
             self.assertEquals(
-                self.format(equation.solution),
-                self.format(expression["solution"])
+              [self.format(s) for s in equation.solution], 
+              [self.format(s) for s in expression["solution"]]
             )
 
     #3
