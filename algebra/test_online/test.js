@@ -1,39 +1,79 @@
 casper.start('http://127.0.0.1:8000/accounts/usernamelogin/');
 
+
+//introduce the username
 casper.then(function() {
     this.fill('form#login-form', {
         'username':    'simon'
     }, true);
-    console.log('clicked 1 ');
 })
+//wait for the chargement of the page
 .wait(1000, function() {
-        this.echo("I've waited for a second.");
     })
 .then(function() {
         this.test.assertEquals(this.getCurrentUrl(), "http://127.0.0.1:8000/accounts/passwordlogin/");
 })
+//introduce the password
 .then(function() {
     this.fill('form#login-form', {
         'password':    'simon'
     }, true);
-    console.log('clicked 2 ');
 })
+//wait for the chargement of the page
 .wait(1000, function() {
-        this.echo("I've waited for a second.");
     })
+//verif if the user is login
 .then(function() {
         this.test.assertEquals(this.getCurrentUrl(), "http://127.0.0.1:8000/professor/dashboard/");
 })
+//click on the button on the page
 .then(function() {
-    // Click on 1st result link
     this.click('img[class="buttonimg"]');
-    console.log('clicked 3 ');
+})
+
+
+//open the page for create algrebraic expression
+.thenOpen('http://127.0.0.1:8000/algebra/exercice/creation')
+//test of a valid submission
+.then(function() {
+    this.fill('form.formgroup', {
+	'exercice_level' : '1',
+        'leftSide':    'x^2',
+	'rightSide' :  '2*x',
+	'solution' : 'x^2-2*x=0'
+    }, true);
+})
+.then(function(){
+    this.test.assertHttpStatus(200, 'Check server returned 200 => the expression is correct');
+})
+
+//test the submission of an invalid form
+.then(function() {
+    this.fill('form.formgroup', {
+	'exercice_level' : '1',
+        'leftSide':    'xdfdf2',
+	'rightSide' :  '2***x',
+	'solution' : 'x^2-2*x=0'
+    }, true);
+})
+.then(function(){
+    this.test.assertHttpStatus(422, 'Check server returned 422 => bad format');
+})
+
+//test the submission of a invalid solution
+.then(function() {
+    this.fill('form.formgroup', {
+	'exercice_level' : '1',
+        'leftSide':    'x^2',
+	'rightSide' :  '2*x',
+	'solution' : 'x^2-3*x=0'
+    }, true);
+})
+.then(function(){
+    this.test.assertHttpStatus(422, 'Check server returned 422 => bad solution');
 })
 .run();
 
-casper.then(function() {
-    console.log('clicked ok2, new location is ' + this.getCurrentUrl());
-});
-casper.then(function() {
-        this.test.assertEquals(this.getCurrentUrl(), "http://127.0.0.1:8000/professor/education/");
-});
+// this.echo(this.currentHTTPStatus);
+
+
