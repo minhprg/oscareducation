@@ -23,7 +23,7 @@ class InputHandler:
         elif len(eq2[1]) == 2:
             return ([eq1[0], eq2[0]], eq2[1][0]+","+eq2[1][1])
         else:
-            return ValueError
+            raise ValueError
 
     def parseEq(self,inputString):
         inputString = inputString.replace(" ", "")
