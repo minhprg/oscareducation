@@ -22,17 +22,19 @@ $(document).ready(function(){
       case "=":
       exerciceType = "Equation";
       break;
-      case "<",">":
+      case "<":
+      case ">":
       exerciceType = "Inequation";
       break;
     }
 
     var exerciceToSend = {
       expression: $("#leftSide").val()+$("#signe").val()+$("#rightSide").val(),
-      type: "Equation" ,
+      type: exerciceType ,
       solution: $("#solution").val() ,
       level: $("#exercice_level").val(),
     };
+    console.log(JSON.stringify(exerciceToSend)+$("#signe").val());
 
     var request=$.ajax({
       url: '/algebra/exercice/creation',
