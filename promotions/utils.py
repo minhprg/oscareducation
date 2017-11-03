@@ -32,7 +32,6 @@ def force_encoding(string):
     return string.decode("latin")
 
 
-
 def insertion_sort_file(filelist):
     i=0
     j=0

@@ -12,7 +12,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.db import transaction
 from PIL import Image
 from skills.models import Skill, StudentSkill, SkillHistory
-from examinations.models import TestFromScan, TestSkillFromScan
+from examinations.models import TestFromScan, TestSkillFromScan, TestAnswerFromScan, TestQuestionFromScan
 
 import os
 from promotions.models import Lesson
@@ -36,20 +36,26 @@ def lesson_test_from_scan_detail(request, lesson_pk, pk):
 
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
     test = get_object_or_404(TestFromScan, pk=pk)
-    print(test.content['a'][0]['y'][0])
+    answers = TestAnswerFromScan.objects.all().filter(test_id=pk)
+    questions = TestQuestionFromScan.objects.all().filter(test_id=pk).order_by('question_num')
+
     if request.method == "POST":
         print("POST")
         if 'copy' in request.FILES:
-            print("FILES")
             form = ImportCopyForm(request.POST, request.FILES)
             if form.is_valid():
                 copy = request.FILES.getlist('copy')
-                if not os.path.exists(settings.MEDIA_ROOT):
-                    os.makedirs(settings.MEDIA_ROOT)
+                if not os.path.isdir(settings.STATIC_ROOT +"/tests/"+pk):
+                    os.makedirs(settings.STATIC_ROOT +"/tests/"+pk)
+
                 insertion_sort_file(copy)
 
-                i = 1
-
+                last_answer = TestAnswerFromScan.objects.order_by('-id')
+                if (len(last_answer) == 0):
+                    i = 1
+                else:
+                    i = last_answer[0].id
+                count_question = 0
                 for c in copy:
 
                     img = Image.open(c)
@@ -57,27 +63,35 @@ def lesson_test_from_scan_detail(request, lesson_pk, pk):
                     qr = qrtools.QR()
                     qr.decode(c)
 
-
                     if int(qr.data)==1:
                         print("Page number 1 \n")
                         name = img.crop((797, 145, 1176, 189))
-                        name.save(settings.SCAN_ROOT + "/name"+str(i)+".png")
+                        name.save(settings.STATIC_ROOT +"/tests/"+ pk + "/name"+str(i)+".png")
+                        count_question = 0
 
-                    for answer in test.content['a'][int(qr.data)-1]['y']:
-                        print(answer)
-                        img2 = img.crop((64, answer, 1175, answer+409))
-                        img2.save(settings.SCAN_ROOT +"/crop" + str(i) + ".png")
+                    for answ in test.content['a'][int(qr.data)-1]['y']:
+                        answer = TestAnswerFromScan(test_id=pk, question_id=questions[count_question].id, reference='/tests/'+pk+'/crop'+str(i)+'.png')
+                        answer.save()
+                        img2 = img.crop((64, answ, 1175, answ+409))
+                        img2.save(settings.STATIC_ROOT +"/tests/"+ pk + "/crop" + str(i) + ".png")
                         i += 1
+                        count_question +=1
+
 
 
                 return render(request, "professor/lesson/test/from-scan/detail.haml", {
                     "lesson": lesson,
                     "test":test,
+                    "answers": answers,
+                    "questions":questions,
                 })
     else:
+
         return render(request, "professor/lesson/test/from-scan/detail.haml", {
             "lesson": lesson,
             "test":test,
+            "answers":answers,
+            "questions": questions,
         })
 
 

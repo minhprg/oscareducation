@@ -645,3 +645,36 @@ class TestSkillFromScan(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     """The offline test date of creation"""
+
+class TestAnswerFromScan(models.Model):
+    """[FR] Compétence de test hors-ligne
+
+        This is the link between a TestFromClass
+        and its Skill(s)
+
+    """
+    test = models.ForeignKey("TestFromScan")
+    question = models.ForeignKey("TestQuestionFromScan")
+    """A Skill tested by the offline Test"""
+    created_at = models.DateTimeField(auto_now_add=True)
+    student = models.ForeignKey("users.Student")
+    """The student that passed the offline Test"""
+    """The offline test date of creation"""
+    reference = models.CharField(max_length=50)
+
+class TestQuestionFromScan(models.Model):
+    """[FR] Compétence de test hors-ligne
+
+        This is the link between a TestFromClass
+        and its Skill(s)
+
+    """
+
+    test = models.ForeignKey("TestFromScan")
+    """A Skill tested by the offline Test"""
+    question_num = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    """The student that passed the offline Test"""
+    """The offline test date of creation"""
+    contexte = models.CharField(max_length=250)
+

@@ -23,16 +23,6 @@
       %td.center{width: "20px"}
         %a.btn.btn-primary{href: "{% url 'professor:lesson_test_list' lesson.pk %}"}
           Retour aux tests
-    .pull-right
-      %td.center{width: "20px"}
-        %a.btn.btn-primary{href: "{% url 'professor:lesson_test_from_scan_fill' lesson.pk test.pk %}"}
-          Encoder
-      %td.center{width: "20px"}
-        %a.btn.btn-default{href: "{% url 'professor:lesson_test_from_scan_modify' lesson.pk test.pk %}"}
-          Modifier
-      %td.center{width: "20px"}
-        %a.btn.btn-danger{href: "{% url 'professor:lesson_test_delete' lesson.pk test.pk %}"}
-          Effacer
 
   .ligneorangefine
   .container-fluid.boxclassetitle
@@ -54,4 +44,22 @@
             %abbr{title: "{{ skill.name }}", style: "cursor: default; border: none"}= skill.code
 
           =skill.name
+  .ligneorangefine
+
+  .boxclasse.container-fluid
+    %h5 Questions
+    %ul.heatmap-list
+      -for answer in answers
+        %li.sld
+
+          -for question in questions
+            -if question.id == answer.question_id
+              =question.question_num
+              )
+              =question.contexte
+          {% load static %}
+          %img.img-responsive{src : "{% static answer.reference %} "}
+
+
+
 
