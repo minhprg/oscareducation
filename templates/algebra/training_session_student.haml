@@ -1,0 +1,63 @@
+/ TEMPLATE VISU QUESTION
+-extends "algebra/base.haml"
+-block bootstrap3_title
+  Training session
+-block breadcrumb
+
+-block algebra_content
+.p-5.gradient-overlay.bg-danger
+  .container
+    .row
+      .p-3.align-self-center.col-md-8
+        .card
+          .card-block.p-5
+            %h1 Question:
+            %h3 Expression
+      .p-3.align-self-center.col-md-4
+        .card
+          .card-block.p-5
+            %h1 Score
+            %h3 Success : 8/10
+            %h3 Progress :
+            .progress.pi-draggable{:draggable => "true"}
+              .progress-bar.progress-bar-striped{"aria-valuemax" => "100", "aria-valuemin" => "0", "aria-valuenow" => "80", :role => "progressbar", :style => "width: 80%"} 80%
+    .container
+      .row
+        .align-self-center.col-md-8
+          .card
+            .container.card-block.p-3
+              .row
+                .align-self-center.col-md-8
+                  %input.form-control{:name => "termWithVariable", :placeholder => "Step 1"}/
+                  %input.form-control{:name => "termWithVariable", :placeholder => "Step 2"}/
+                  %input.form-control{:name => "termWithVariable", :placeholder => "Step 3"}/
+                  %input.form-control{:name => "termWithVariable", :placeholder => "Step 4"}/
+                .p-3.align-self-center.col-md-4
+                  %input.form-control{:name => "termWithVariable", :placeholder => "Hint step 1"}/
+                  %input.form-control{:name => "termWithVariable", :placeholder => "Hint step 2"}/
+                  %input.form-control{:name => "termWithVariable", :placeholder => "Hint step 3"}/
+                  %input.form-control{:name => "termWithVariable", :placeholder => "Hint step 4"}/
+              %hr/
+              .row
+                .col-md-3
+                  %a.btn.btn-dark.btn-block{:href => "#"} Clear
+                .col-md-3
+                  %a.btn.btn-danger.btn-block{:href => "#"} Previous
+                .col-md-3
+                  %a.btn.btn-success.btn-block{:href => "#"} Next
+                .col-md-3
+                  %a.btn.btn-primary.btn-block{:href => "#"} Check
+        .align-self-center.col-md-4
+          .card
+            .card-block.p-5
+              %h2 Quiz navigation
+              %a.btn.btn-success{:href => "#"} Check
+              %a.btn.btn-success{:href => "#"} Check
+              %a.btn.btn-success{:href => "#"} Check
+              %a.btn.btn-success{:href => "#"} Check
+              %a.btn.btn-success{:href => "#"} Check
+              %a.btn.btn-success{:href => "#"} Check
+              %a.btn.btn-success{:href => "#"} Check
+              %a.btn.btn-success{:href => "#"} Check
+              %a.btn.btn-primary{:href => "#"} Check
+              %a.btn.btn-primary{:href => "#"} Check
