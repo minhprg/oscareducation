@@ -20,24 +20,24 @@ class List(View):
 
 
 class ExerciceCreation(View):
-	
+
 	def _parse(self, json):
-		
+
 		if not all(k in json.keys() for k in ("expression",
 			"type", "solution", "level")):
 			raise ValueError()
-		if json["expression"] not in globals().keys():
+		if json["type"] not in globals().keys():
 			raise ValueError()
-		
+
 		expr = globals()[json["type"].title().replace(" ", "")](
 			json["expression"]
 		)
 
-		solution = globals[json["type"].title().replace(" ", "")](
+		solution = globals()[json["type"].title().replace(" ", "")](
 			json["solution"]
 		)
 
-		if (expr != solution):
+		if (expr.solution != solution.solution):
 			raise ExpressionError()
 
 		return expr, solution
@@ -50,32 +50,32 @@ class ExerciceCreation(View):
 			return TemplateResponse(request, "algebra/exercice_creation.haml")
 
 	def post(self, request):
-		
-		if request.content_type is not "application/json":
+
+		if request.content_type != "application/json":
 			return HttpResponse(status=415)
 
 		try:
-			
+
 			expr, solution = self._parse(json.loads(request.body))
-			expr.model.save()
-			
+			# expr.model.save()
+
 			return JsonResponse({
 				'status': True,
-				'message': "Ok"	
+				'message': "Ok"
 			}, status=200)
 
 		except ValueError as e:
-			
-			return JsonResponse({
-				'status': False, 
-				'message': 'Malformed or incomplete request body'
-			}, status=422)
-		
-		except ExpressionError as e:
-			
+
 			return JsonResponse({
 				'status': False,
-				'message': 'Malformed algebrraic expression or solution'	
+				'message': 'Malformed or incomplete request body'
+			}, status=422)
+
+		except ExpressionError as e:
+
+			return JsonResponse({
+				'status': False,
+				'message': 'Malformed algebraic expression or solution'
 			}, status=422)
 
 
