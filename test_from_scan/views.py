@@ -15,11 +15,56 @@ from skills.models import Skill, StudentSkill, SkillHistory
 from examinations.models import TestFromScan, TestSkillFromScan, TestAnswerFromScan, TestQuestionFromScan
 
 import os
-from promotions.models import Lesson
+from promotions.models import Lesson, Students
 from users.models import Student
-from promotions.utils import user_is_professor, insertion_sort_file
+from promotions.utils import user_is_professor, insertion_sort_file, all_different
 from .forms import ImportCopyForm
 
+@user_is_professor
+def lesson_test_from_scan_match(request, lesson_pk, pk):
+
+    lesson = get_object_or_404(Lesson, pk=lesson_pk)
+    test = get_object_or_404(TestFromScan, pk=pk)
+
+    names = TestAnswerFromScan.objects.all().filter(test_id=pk).values('reference_name','student_id').distinct()
+    answers = TestAnswerFromScan.objects.all().filter(test_id=pk).order_by('id')
+
+    nb_not_match = TestAnswerFromScan.objects.filter(student_id__isnull=True).count()
+    nb_questions = TestQuestionFromScan.objects.filter(test_id=pk).count()
+
+    flash_error = ""
+
+    if nb_not_match == 0:
+        flash_error = "Vous avez déjà associé tous les étudiants pour ce test, mais vous pouvez toujours remodifier la totalité"
+
+    if request.method == "POST":
+        print("POST")
+        form = request.POST.getlist('students')
+        if all_different(form):
+            i = 0
+            question_count = 0
+            for student in form:
+                for answer in range(i, len(answers)):
+                    print(student)
+                    TestAnswerFromScan.objects.filter(pk=answers[answer].id).update(student_id=student)
+                    i+=1
+                    question_count +=1
+                    if question_count >= nb_questions:
+                        question_count=0
+                        break
+
+        else:
+            flash_error = "Un élève ne peut pas être associé deux fois"
+        return HttpResponseRedirect('/professor/lesson/'+str(lesson_pk)+'/test/from-scan/'+str(pk)+'/match/')
+
+    return render(request, "professor/lesson/test/from-scan/match.haml", {
+        "lesson": lesson,
+        "test": test,
+        "names": names,
+        "answers": answers,
+        "flash": flash_error,
+        "nb_not_match":nb_not_match,
+    })
 
 @user_is_professor
 def lesson_test_from_scan_add(request, pk):
@@ -40,12 +85,12 @@ def lesson_test_from_scan_detail(request, lesson_pk, pk):
     questions = TestQuestionFromScan.objects.all().filter(test_id=pk).order_by('question_num')
 
     if request.method == "POST":
-        print("POST")
         if 'copy' in request.FILES:
             form = ImportCopyForm(request.POST, request.FILES)
             if form.is_valid():
-                copy = request.FILES.getlist('copy')
-                if not os.path.isdir(settings.STATIC_ROOT +"/tests/"+pk):
+                copy = request.FILES.getlist('copy', False)
+
+                if not os.path.isdir(settings.STATIC_ROOT +"/tests/"+pk) and copy:
                     os.makedirs(settings.STATIC_ROOT +"/tests/"+pk)
 
                 insertion_sort_file(copy)
@@ -66,33 +111,25 @@ def lesson_test_from_scan_detail(request, lesson_pk, pk):
                     if int(qr.data)==1:
                         print("Page number 1 \n")
                         name = img.crop((797, 145, 1176, 189))
+                        ref_name = "/tests/"+ pk + "/name"+str(i)+".png"
                         name.save(settings.STATIC_ROOT +"/tests/"+ pk + "/name"+str(i)+".png")
                         count_question = 0
 
                     for answ in test.content['a'][int(qr.data)-1]['y']:
-                        answer = TestAnswerFromScan(test_id=pk, question_id=questions[count_question].id, reference='/tests/'+pk+'/crop'+str(i)+'.png')
+                        answer = TestAnswerFromScan(test_id=pk, question_id=questions[count_question].id, reference_name=ref_name, reference='/tests/'+pk+'/crop'+str(i)+'.png')
                         answer.save()
                         img2 = img.crop((64, answ, 1175, answ+409))
                         img2.save(settings.STATIC_ROOT +"/tests/"+ pk + "/crop" + str(i) + ".png")
                         i += 1
                         count_question +=1
+        return HttpResponseRedirect('/professor/lesson/'+str(lesson_pk)+'/test/from-scan/'+str(pk)+'/')
 
-
-
-                return render(request, "professor/lesson/test/from-scan/detail.haml", {
-                    "lesson": lesson,
-                    "test":test,
-                    "answers": answers,
-                    "questions":questions,
-                })
-    else:
-
-        return render(request, "professor/lesson/test/from-scan/detail.haml", {
-            "lesson": lesson,
-            "test":test,
-            "answers":answers,
-            "questions": questions,
-        })
+    return render(request, "professor/lesson/test/from-scan/detail.haml", {
+        "lesson": lesson,
+        "test":test,
+        "answers":answers,
+        "questions": questions,
+    })
 
 
 @user_is_professor

@@ -46,3 +46,11 @@ def insertion_sort_file(filelist):
             j += 1
         (filelist[i], filelist[ind]) = (filelist[ind], filelist[i])
         i += 1
+
+def all_different(l):
+    seen = set()
+    for i in l:
+        if i in seen:
+            return False
+        seen.add(i)
+    return True

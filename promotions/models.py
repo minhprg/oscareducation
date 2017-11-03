@@ -65,3 +65,8 @@ class Lesson(models.Model):
             stages.append(stage)
 
         return stages
+
+class Students(models.Model):
+
+
+    student = models.ForeignKey("users.Student")

@@ -661,6 +661,7 @@ class TestAnswerFromScan(models.Model):
     """The student that passed the offline Test"""
     """The offline test date of creation"""
     reference = models.CharField(max_length=50)
+    reference_name = models.CharField(max_length=50)
 
 class TestQuestionFromScan(models.Model):
     """[FR] Compétence de test hors-ligne
