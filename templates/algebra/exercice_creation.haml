@@ -80,7 +80,7 @@
       %hr
       .row
         .col-md-5
-          %input.form-control{:id => "leftSide", :name => 'leftSide'}/
+          %input.form-control{:id => "leftSide", :name => 'leftSide', :value=>'2X'}
           %br/
         .col-md-2{:align => "center"}
           .btn-group.btn-group-lg
@@ -89,13 +89,18 @@
               %option >
               %option <
         .col-md-5
-          %input.form-control{:id => "rightSide", :name => 'rightSide'}/
+          %input.form-control{:id => "rightSide", :name => 'rightSide', :value=>'1'}
           %br/
       %hr
       .row
         .col-md-4
           %label{:for => 'solution'} Solution:
         .col-md-4
-          %input.form-control{:id => "solution", :name => 'solution'}
+          %input.form-control{:id => "solution", :name => 'solution', :value=>'x=5'}
           %br/
-    %button.btn.btn-primary{:type => "submit", :id=> "concat"} Check
+      .row
+        .col-md-12
+          #status
+    .row
+      .col-md-4
+          %button.btn.btn-primary{:id=> "concat"} Check
