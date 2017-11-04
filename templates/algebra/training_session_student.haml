@@ -5,59 +5,93 @@
 -block breadcrumb
 
 -block algebra_content
-.p-5.gradient-overlay.bg-danger
+.py-5.pi-draggle{:draggable => "true"}
+  .container
+    .card
+      .card-block
+        .col-md-12
+          %h1.text-center.display-3.text-primary Type
+          %h2.text-center.text-dark
+            %em Level
+/ Debut de test
+/ Contenair titre + progression DEBUT
+#s_pricing1.p-1{:draggable => "true"}
   .container
     .row
-      .p-3.align-self-center.col-md-8
+      .p-3.align-self-top.col-md-8
         .card
           .card-block.p-5
-            %h1 Question:
-            %h3 Expression
-      .p-3.align-self-center.col-md-4
+            %h1 Question :
+            %hr/
+            %h3
+              %em "Expression"
+      .p-3.align-self-top.col-md-4
         .card
-          .card-block.p-5
+          .card-block.p-4
             %h1 Score
+            %hr/
             %h3 Success : 8/10
             %h3 Progress :
             .progress.pi-draggable{:draggable => "true"}
               .progress-bar.progress-bar-striped{"aria-valuemax" => "100", "aria-valuemin" => "0", "aria-valuenow" => "80", :role => "progressbar", :style => "width: 80%"} 80%
-    .container
-      .row
-        .align-self-center.col-md-8
-          .card
-            .container.card-block.p-3
-              .row
-                .align-self-center.col-md-8
-                  %input.form-control{:name => "termWithVariable", :placeholder => "Step 1"}/
-                  %input.form-control{:name => "termWithVariable", :placeholder => "Step 2"}/
-                  %input.form-control{:name => "termWithVariable", :placeholder => "Step 3"}/
-                  %input.form-control{:name => "termWithVariable", :placeholder => "Step 4"}/
-                .p-3.align-self-center.col-md-4
-                  %input.form-control{:name => "termWithVariable", :placeholder => "Hint step 1"}/
-                  %input.form-control{:name => "termWithVariable", :placeholder => "Hint step 2"}/
-                  %input.form-control{:name => "termWithVariable", :placeholder => "Hint step 3"}/
-                  %input.form-control{:name => "termWithVariable", :placeholder => "Hint step 4"}/
-              %hr/
-              .row
-                .col-md-3
-                  %a.btn.btn-dark.btn-block{:href => "#"} Clear
-                .col-md-3
-                  %a.btn.btn-danger.btn-block{:href => "#"} Previous
-                .col-md-3
-                  %a.btn.btn-success.btn-block{:href => "#"} Next
-                .col-md-3
-                  %a.btn.btn-primary.btn-block{:href => "#"} Check
-        .align-self-center.col-md-4
-          .card
-            .card-block.p-5
-              %h2 Quiz navigation
-              %a.btn.btn-success{:href => "#"} Check
-              %a.btn.btn-success{:href => "#"} Check
-              %a.btn.btn-success{:href => "#"} Check
-              %a.btn.btn-success{:href => "#"} Check
-              %a.btn.btn-success{:href => "#"} Check
-              %a.btn.btn-success{:href => "#"} Check
-              %a.btn.btn-success{:href => "#"} Check
-              %a.btn.btn-success{:href => "#"} Check
-              %a.btn.btn-primary{:href => "#"} Check
-              %a.btn.btn-primary{:href => "#"} Check
+/ Contenair titre + progression FIN
+/ Contenair Question + nav DEBUT
+#s_pricing2.p-1{:draggable => "true"}
+  .container
+    .row
+      .p-3.align-self-top.col-md-8
+        .card
+          .card-block.p-3
+            .row
+              .align-self-center.col-md-8
+                %input.form-control{:name => "termWithVariable", :placeholder => "Step 1"}/
+                %input.form-control{:name => "termWithVariable", :placeholder => "Step 2"}/
+                %input.form-control{:name => "termWithVariable", :placeholder => "Step 3"}/
+                %input.form-control{:name => "termWithVariable", :placeholder => "Step 4"}/
+              .p-3.align-self-center.col-md-4
+                %input.form-control{:name => "termWithVariable", :placeholder => "Hint step 1"}/
+                %input.form-control{:name => "termWithVariable", :placeholder => "Hint step 2"}/
+                %input.form-control{:name => "termWithVariable", :placeholder => "Hint step 3"}/
+                %input.form-control{:name => "termWithVariable", :placeholder => "Hint step 4"}/
+            %hr/
+            .row
+              .col-md-3
+                %a.btn.btn-dark.btn-block{:href => "#"} Clear
+              .col-md-3
+                %a.btn.btn-danger.btn-block{:href => "#"} Previous
+              .col-md-3
+                %a.btn.btn-success.btn-block{:href => "#"} Next
+              .col-md-3
+                %a.btn.btn-primary.btn-block.text-white{:href => "#"} Check
+      .p-3.align-self-top.col-md-4
+        .card
+          .card-block.p-5
+            %h2 Test navigation
+            %hr/
+            .row
+              .align-self-center.col-md-6.p-1
+                %a.btn.btn-success.btn-block{:href => "#"} Q 1
+              .align-self-center.col-md-6.p-1
+                %a.btn.btn-success.btn-block{:href => "#"} Q 2
+            .row
+              .align-self-center.col-md-6.p-1
+                %a.btn.btn-success.btn-block{:href => "#"} Q 3
+              .align-self-center.col-md-6.p-1
+                %a.btn.btn-success.btn-block{:href => "#"} Q 4
+            .row
+              .align-self-center.col-md-6.p-1
+                %a.btn.btn-success.btn-block{:href => "#"} Q 5
+              .align-self-center.col-md-6.p-1
+                %a.btn.btn-success.btn-block{:href => "#"} Q 6
+            .row
+              .align-self-center.col-md-6.p-1
+                %a.btn.btn-success.btn-block{:href => "#"} Q 7
+              .align-self-center.col-md-6.p-1
+                %a.btn.btn-success.btn-block{:href => "#"} Q 8
+            .row
+              .align-self-center.col-md-6.p-1
+                %a.btn.btn-primary.text-white.btn-block{:href => "#"} Q 9
+              .align-self-center.col-md-6.p-1
+                %a.btn.btn-primary.text-white.btn-block{:href => "#"} Q 10
+/ Contenair Question + nav FIN
+
