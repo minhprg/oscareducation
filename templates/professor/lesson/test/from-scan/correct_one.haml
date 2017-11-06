@@ -1,0 +1,132 @@
+-extends "base.haml"
+
+-block breadcrumb
+  %ol.breadcrumb
+    %li
+      %a{href: "{% url 'professor:dashboard' %}"} Oscar
+    %li
+      %a{href: "{% url 'professor:lesson_detail' lesson.id %}"}
+        Classe
+        =lesson.name
+    %li.active
+      Évaluation libre
+
+
+-block content
+  %h3 Évaluation libre <i>{{ test.name }}</i>  pour la classe <a href="{% url 'professor:lesson_detail' lesson.pk %}">{{ lesson.name }}</a>
+  %hr
+
+  .ligneorange
+
+    .container-fluid.boxclassetitle
+      .pull-left
+        %td.center{width: "20px"}
+          %a.btn.btn-primary{href: "{% url 'professor:lesson_test_from_scan_detail' lesson.pk test.pk %}"}
+            Retour au test
+  .ligneorangefine
+
+
+  .container-fluid.boxclassetitle
+    %h5 Questions
+    {% load static %}
+    -if answer.is_correct
+      %img.code.green.img-responsive{src : "{% static answer.reference %} "}
+    -elif answer.is_correct == None
+      %img.code.black.img-responsive{src : "{% static answer.reference %} "}
+    -else
+      %img.code.red.img-responsive{src : "{% static answer.reference %} "}
+    %form.form{action: "", method: "post", name: "lit", enctype: "multipart/form-data"}
+      -csrf_token
+      .checkbox
+        -if answer.is_correct
+          %label
+            %input{type: "radio", value: 1, name: "correction" ,checked:"checked"}
+            %i.fa.fa-check.fa-2x
+          %label
+            %input{type: "radio", value: 0, name: "correction", autocomplete: "off"}
+            %i.fa.fa-times.fa-2x
+        -elif answer.is_correct == None
+          %label
+            %input{type: "radio", value: 1, name: "correction", autocomplete: "off"}
+            %i.fa.fa-check.fa-2x
+          %label
+            %input{type: "radio", value: 0, name: "correction", autocomplete: "off"}
+            %i.fa.fa-times.fa-2x
+        -else
+          %label
+            %input{type: "radio", value: 1, name: "correction", autocomplete: "off"}
+            %i.fa.fa-check.fa-2x
+          %label
+            %input{type: "radio", value: 0, name: "correction", checked:"checked"}
+            %i.fa.fa-times.fa-2x
+
+      %p Commentaire
+      %span
+        %textarea{name:"annotation"}=answer.annotation
+
+
+
+
+      %button.btn.btn-primary{type: "submit"}
+        Valider
+
+
+  .ligneorange
+
+
+
+
+  :css
+        .code {
+
+            border-style : solid;
+            border-color : black;
+            border-width: 3px;
+
+        }
+
+        .fa.fa-check{
+          color:green;
+        }
+
+        .fa.fa-times{
+          color:red;
+        }
+
+        input{
+          top:6px;
+        }
+
+        textarea{
+          width:100%;
+          height:100px;
+        }
+
+        .red{
+          background:red;
+          border-color : red;
+        }
+
+        .black{
+          background:black;
+          border-color : black;
+        }
+
+        .green{
+          background:green;
+          border-color : green;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

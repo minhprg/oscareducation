@@ -26,7 +26,7 @@ def lesson_test_from_scan_match(request, lesson_pk, pk):
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
     test = get_object_or_404(TestFromScan, pk=pk)
 
-    names = TestAnswerFromScan.objects.all().filter(test_id=pk).values('reference_name','student_id').distinct()
+    names = TestAnswerFromScan.objects.all().filter(test_id=pk).values('reference_name','student_id').distinct().order_by('reference_name')
     answers = TestAnswerFromScan.objects.all().filter(test_id=pk).order_by('id')
 
     nb_not_match = TestAnswerFromScan.objects.filter(student_id__isnull=True).count()
@@ -38,7 +38,6 @@ def lesson_test_from_scan_match(request, lesson_pk, pk):
         flash_error = "Vous avez déjà associé tous les étudiants pour ce test, mais vous pouvez toujours remodifier la totalité"
 
     if request.method == "POST":
-        print("POST")
         form = request.POST.getlist('students')
         if all_different(form):
             i = 0
@@ -55,6 +54,7 @@ def lesson_test_from_scan_match(request, lesson_pk, pk):
 
         else:
             flash_error = "Un élève ne peut pas être associé deux fois"
+
         return HttpResponseRedirect('/professor/lesson/'+str(lesson_pk)+'/test/from-scan/'+str(pk)+'/match/')
 
     return render(request, "professor/lesson/test/from-scan/match.haml", {
@@ -65,6 +65,31 @@ def lesson_test_from_scan_match(request, lesson_pk, pk):
         "flash": flash_error,
         "nb_not_match":nb_not_match,
     })
+
+@user_is_professor
+def lesson_test_from_scan_correct_one(request, lesson_pk, test_pk, pk):
+    lesson = get_object_or_404(Lesson, pk=lesson_pk)
+    test = get_object_or_404(TestFromScan, pk=test_pk)
+    answer = get_object_or_404(TestAnswerFromScan, pk=pk)
+
+    if answer.annotation == None:
+        answer.annotation = ""
+
+    if request.method == "POST":
+        correction = request.POST.get('correction')
+        annotation = request.POST.get('annotation')
+
+        if correction == "1" or correction == "0":
+            if not annotation:
+                annotation = None
+            TestAnswerFromScan.objects.filter(pk=pk).update(is_correct=correction, annotation=annotation)
+        return HttpResponseRedirect('/professor/lesson/' + str(lesson_pk) + '/test/from-scan/' + str(test_pk) + '/correct/' + str(pk))
+    return render(request, "professor/lesson/test/from-scan/correct_one.haml", {
+        "lesson": lesson,
+        "test": test,
+        "answer":answer,
+    })
+
 
 @user_is_professor
 def lesson_test_from_scan_add(request, pk):
@@ -81,8 +106,9 @@ def lesson_test_from_scan_detail(request, lesson_pk, pk):
 
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
     test = get_object_or_404(TestFromScan, pk=pk)
-    answers = TestAnswerFromScan.objects.all().filter(test_id=pk)
+    answers = TestAnswerFromScan.objects.all().filter(test_id=pk).order_by('id')
     questions = TestQuestionFromScan.objects.all().filter(test_id=pk).order_by('question_num')
+
 
     if request.method == "POST":
         if 'copy' in request.FILES:

@@ -27,8 +27,8 @@
   .container-fluid.boxclassetitle
     %h5 Étudiants
     %p
-      =flash
-    %form.form{action: "", method: "post", name: "copy", enctype: "multipart/form-data"}
+      =bar
+    %form.form{action: "", method: "post", name: "match", enctype: "multipart/form-data"}
       -csrf_token
 
       -if nb_not_match > 0

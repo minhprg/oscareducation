@@ -51,7 +51,15 @@
   .ligneorangefine
 
   .boxclasse.container-fluid
-    %h5 Questions
+    %span.bullet.black
+    Non corrigé
+    %span.bullet.green
+    Bonne réponse
+    %span.bullet.red
+    Mauvaise réponse
+    %h5 Réponses des étudiants
+
+
     %ul.heatmap-list
       -for answer in answers
         %li.sld
@@ -62,7 +70,58 @@
               )
               =question.contexte
           {% load static %}
-          %img.img-responsive{src : "{% static answer.reference %} "}
+          %a{href: "{% url 'professor:lesson_test_from_scan_correct_one' lesson.id test.pk answer.pk  %}"}
+            -if answer.is_correct
+              %img.code.green.img-responsive{src : "{% static answer.reference %} "}
+            -elif answer.is_correct == None
+              %img.code.black.img-responsive{src : "{% static answer.reference %} "}
+            -else
+              %img.code.red.img-responsive{src : "{% static answer.reference %} "}
+
+  :css
+        .code {
+
+            border-style : solid;
+
+            border-width: 3px;
+        }
+
+
+        .code:hover {
+          opacity: 0.5;
+          -webkit-filter: hue-rotate(240deg) saturate(3.3);
+        }
+
+
+
+        .red{
+          background:red;
+          border-color : red;
+        }
+
+        .black{
+          background:black;
+          border-color : black;
+        }
+
+        .green{
+          background:green;
+          border-color : green;
+        }
+        .bullet{
+          display:inline-block;
+          height:16px;
+          width:16px;
+          margin-left:2%;
+          font-size:0.1em;
+          border-radius:16px;
+          position: relative;
+        }
+
+
+
+
+
 
 
 

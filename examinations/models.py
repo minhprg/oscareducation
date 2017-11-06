@@ -662,6 +662,8 @@ class TestAnswerFromScan(models.Model):
     """The offline test date of creation"""
     reference = models.CharField(max_length=50)
     reference_name = models.CharField(max_length=50)
+    is_correct = models.BooleanField()
+    annotation = models.CharField(max_length=150)
 
 class TestQuestionFromScan(models.Model):
     """[FR] Compétence de test hors-ligne
