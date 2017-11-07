@@ -21,8 +21,8 @@ class List(View):
 class TrainingSession(View):
 
 	def get(self, request):
-        return TemplateResponse(request, "algebra/training_session_student_html.html")
-		#return TemplateResponse(request, "algebra/training_session_student.haml")
+        #return TemplateResponse(request, "algebra/training_session_student_html.html")
+		return TemplateResponse(request, "algebra/training_session_student.haml")
 
 
 class ExerciceCreation(View):
