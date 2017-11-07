@@ -7,7 +7,7 @@ from datetime import datetime
 from abc import ABCMeta
 
 from sympy import symbols, sympify, degree, S
-from algebra.models import AlgebraicExercice
+#from algebra.models import AlgebraicExercice
 
 class ExpressionError(Exception):
     pass
@@ -175,16 +175,16 @@ class Expression(object):
     def domain(self, dom):
         self._domain = dom
 
-    @property
-    def model(self):
-        created = datetime.now()
-        return AlgebraicExercice(
-            expression=str(self),
-            expression_type=self._db_type,
-            created=created,
-            updated=created,
-            solution=str(self.solution),
-            level=-1
-        )
+ #   @property
+ #   def model(self):
+ #       created = datetime.now()
+ #       return AlgebraicExercice(
+ #           expression=str(self),
+ #           expression_type=self._db_type,
+ #           created=created,
+ #           updated=created,
+ #           solution=str(self.solution),
+ #           level=-1
+ #       )
 
 # ============================================================================

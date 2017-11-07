@@ -5,8 +5,8 @@ import unittest2 as unittest
 import json
 from fractions import Fraction
 
-import django
-django.setup()
+#import django
+#django.setup()
 
 from ..engine import Equation, Inequation, EquationSystem 
 
