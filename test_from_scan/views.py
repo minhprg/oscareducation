@@ -13,7 +13,7 @@ from django.db import transaction
 from PIL import Image
 from skills.models import Skill, StudentSkill, SkillHistory
 from examinations.models import TestFromScan, TestSkillFromScan, TestAnswerFromScan, TestQuestionFromScan
-
+from django.contrib import messages
 import os
 from promotions.models import Lesson, Students
 from users.models import Student
@@ -31,8 +31,9 @@ def lesson_test_from_scan_match(request, lesson_pk, pk):
 
     nb_not_match = TestAnswerFromScan.objects.filter(student_id__isnull=True).count()
     nb_questions = TestQuestionFromScan.objects.filter(test_id=pk).count()
-
-    flash_error = ""
+    print("HERE \n")
+    print(request.content_params)
+    flash_error = "sdfsdfssdf"
 
     if nb_not_match == 0:
         flash_error = "Vous avez déjà associé tous les étudiants pour ce test, mais vous pouvez toujours remodifier la totalité"
@@ -51,12 +52,11 @@ def lesson_test_from_scan_match(request, lesson_pk, pk):
                     if question_count >= nb_questions:
                         question_count=0
                         break
-
+            messages.success(request, "Modifications effectuées")
         else:
-            flash_error = "Un élève ne peut pas être associé deux fois"
+            messages.error(request, "Un étudiant ne peut pas être associé deux fois")
 
         return HttpResponseRedirect('/professor/lesson/'+str(lesson_pk)+'/test/from-scan/'+str(pk)+'/match/')
-
     return render(request, "professor/lesson/test/from-scan/match.haml", {
         "lesson": lesson,
         "test": test,
@@ -68,6 +68,12 @@ def lesson_test_from_scan_match(request, lesson_pk, pk):
 
 @user_is_professor
 def lesson_test_from_scan_correct_one(request, lesson_pk, test_pk, pk):
+
+    nb_not_match = TestAnswerFromScan.objects.filter(student_id__isnull=True).count()
+    if nb_not_match > 0:
+        messages.error(request,"Associez vos élèves avant de pouvoir corriger la réponse")
+        return HttpResponseRedirect('/professor/lesson/' + str(lesson_pk) + '/test/from-scan/' + str(test_pk) + '/')
+
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
     test = get_object_or_404(TestFromScan, pk=test_pk)
     answer = get_object_or_404(TestAnswerFromScan, pk=pk)
@@ -106,12 +112,17 @@ def lesson_test_from_scan_detail(request, lesson_pk, pk):
 
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
     test = get_object_or_404(TestFromScan, pk=pk)
-    answers = TestAnswerFromScan.objects.all().filter(test_id=pk).order_by('id')
+    if request.session['sort_question'] == None or request.session['sort_question'] == -1:
+        answers = TestAnswerFromScan.objects.all().filter(test_id=pk).order_by('id')
+    else:
+        answers = TestAnswerFromScan.objects.all().filter(test_id=pk, question_id=request.session['sort_question']).order_by('id')
     questions = TestQuestionFromScan.objects.all().filter(test_id=pk).order_by('question_num')
 
-
     if request.method == "POST":
-        if 'copy' in request.FILES:
+        print(request.POST)
+        if 'questions' in request.POST:
+            request.session['sort_question'] = int(request.POST.get('questions'))
+        elif 'copy' in request.FILES:
             form = ImportCopyForm(request.POST, request.FILES)
             if form.is_valid():
                 copy = request.FILES.getlist('copy', False)
@@ -155,6 +166,7 @@ def lesson_test_from_scan_detail(request, lesson_pk, pk):
         "test":test,
         "answers":answers,
         "questions": questions,
+
     })
 
 

@@ -28,6 +28,12 @@
 
   .container-fluid.boxclassetitle
     %h5 Questions
+    -for student in lesson.students.all
+      -if student.id == answer.student_id
+        %p{style:"color:blue;text-align:right"}
+          [
+          =student
+          ]
     {% load static %}
     -if answer.is_correct
       %img.code.green.img-responsive{src : "{% static answer.reference %} "}

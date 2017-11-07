@@ -51,15 +51,36 @@
   .ligneorangefine
 
   .boxclasse.container-fluid
+    -if messages
+      -for message in messages
+        -if message.tags == 'error'
+          %h5{style:"color:red"}=message
+        -else
+          %h5{style:"color:green"}=message
     %span.bullet.black
     Non corrigé
     %span.bullet.green
     Bonne réponse
     %span.bullet.red
     Mauvaise réponse
+    %br
+    %br
+    %form.form{action: "", method: "post", name: "questions", enctype: "multipart/form-data"}
+      -csrf_token
+      %select{name : "questions"}
+        %option{value: "-1", id: "-1", selected:"selected"}
+          Toutes les questions
+        -for question in questions
+          -if request.session.sort_question == question.id
+            %option{value: "{{ question.id }}", id: "{{ question.id }}", selected:"selected"}
+              Question {{ question.question_num }}
+          -else
+            %option{value: "{{ question.id }}", id: "{{ question.id }}"}
+              Question {{ question.question_num }}
+
+      %button.btn.btn-primary{type: "submit"}
+        Trier
     %h5 Réponses des étudiants
-
-
     %ul.heatmap-list
       -for answer in answers
         %li.sld
@@ -70,6 +91,13 @@
               )
               =question.contexte
           {% load static %}
+
+          -for student in lesson.students.all
+            -if student.id == answer.student_id
+              %p{style:"color:blue;text-align:right"}
+                [
+                =student
+                ]
           %a{href: "{% url 'professor:lesson_test_from_scan_correct_one' lesson.id test.pk answer.pk  %}"}
             -if answer.is_correct
               %img.code.green.img-responsive{src : "{% static answer.reference %} "}
@@ -78,21 +106,19 @@
             -else
               %img.code.red.img-responsive{src : "{% static answer.reference %} "}
 
+
   :css
         .code {
 
             border-style : solid;
 
             border-width: 3px;
+            margin-bottom:3%;
         }
-
 
         .code:hover {
-          opacity: 0.5;
-          -webkit-filter: hue-rotate(240deg) saturate(3.3);
+          opacity:0.5;
         }
-
-
 
         .red{
           background:red;
@@ -117,7 +143,6 @@
           border-radius:16px;
           position: relative;
         }
-
 
 
 

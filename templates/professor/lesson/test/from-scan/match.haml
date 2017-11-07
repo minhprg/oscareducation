@@ -1,4 +1,8 @@
 -extends "base.haml"
+-load static
+-load compress
+  -compress js
+    %script{type: "text/javascript", src: "{% static 'js/bootstrap-notify.min.js' %}"}
 
 -block breadcrumb
   %ol.breadcrumb
@@ -24,10 +28,16 @@
         %a.btn.btn-primary{href: "{% url 'professor:lesson_test_from_scan_detail' lesson.pk test.pk %}"}
           Retour au test
   .ligneorange
+
   .container-fluid.boxclassetitle
+    -if messages
+      -for message in messages
+        -if message.tags == 'error'
+          %p{style:"color:red"}=message
+        -else
+          %p{style:"color:green"}=message
     %h5 Étudiants
-    %p
-      =bar
+
     %form.form{action: "", method: "post", name: "match", enctype: "multipart/form-data"}
       -csrf_token
 
@@ -69,7 +79,5 @@
         Associer les élèves
 
   .ligneorange
-
-
 
 
