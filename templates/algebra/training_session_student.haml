@@ -16,21 +16,23 @@
     %li.active
       Training session
 -block algebra_content
-  .py-5.pi-draggle{:draggable => "true"}
+    %form.formgroup
+      .well
+        .py-5.pi-draggle{:draggable => "true"}
           .col-md-12
             %h1.text-center.display-3.text-primary Type
             %h2.text-center.text-dark
               %em Level
 
 
-  #s_pricing1.p-1{:draggable => "true"}
-      .row
-        .p-3.align-self-top.col-md-8
+        #s_pricing1.p-1{:draggable => "true"}
+          .row
+            .p-3.align-self-top.col-md-8
               %h1 Question :
               %hr
               %h3
                 %em "Expression"
-        .p-3.align-self-top.col-md-4
+            .p-3.align-self-top.col-md-4
               %h1 Score
               %hr
               %h3 Success : 8/10
@@ -40,9 +42,9 @@
 
 
 
-  #s_pricing2.p-1{:draggable => "true"}
-     .row
-       .p-3.align-self-top.col-md-8
+        #s_pricing2.p-1{:draggable => "true"}
+          .row
+            .p-3.align-self-top.col-md-8
              .row
                .align-self-center.col-md-8
                  %input.form-control{:name => "termWithVariable", :placeholder => "Step 1"}/
@@ -64,30 +66,30 @@
                  %a.btn.btn-success.btn-block{:href => "#"} Next
                .col-md-3
                  %a.btn.btn-primary.btn-block.text-white{:href => "#"} Check
-       .p-3.align-self-top.col-md-4
-             %h2 Test navigation
-             %hr
-             .row
+            .p-3.align-self-top.col-md-4
+              %h2 Test navigation
+              %hr
+              .row
                .align-self-center.col-md-6.p-1
                  %a.btn.btn-success.btn-block{:href => "#"} Q 1
                .align-self-center.col-md-6.p-1
                  %a.btn.btn-success.btn-block{:href => "#"} Q 2
-             .row
+              .row
                .align-self-center.col-md-6.p-1
                  %a.btn.btn-success.btn-block{:href => "#"} Q 3
                .align-self-center.col-md-6.p-1
                  %a.btn.btn-success.btn-block{:href => "#"} Q 4
-             .row
+              .row
                .align-self-center.col-md-6.p-1
                  %a.btn.btn-success.btn-block{:href => "#"} Q 5
                .align-self-center.col-md-6.p-1
                  %a.btn.btn-success.btn-block{:href => "#"} Q 6
-             .row
+              .row
                .align-self-center.col-md-6.p-1
                  %a.btn.btn-success.btn-block{:href => "#"} Q 7
                .align-self-center.col-md-6.p-1
                  %a.btn.btn-success.btn-block{:href => "#"} Q 8
-             .row
+              .row
                .align-self-center.col-md-6.p-1
                  %a.btn.btn-primary.text-white.btn-block{:href => "#"} Q 9
                .align-self-center.col-md-6.p-1
