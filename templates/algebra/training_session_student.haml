@@ -17,9 +17,6 @@
       Training session
 -block algebra_content
   .py-5.pi-draggle{:draggable => "true"}
-    .container
-      .card
-        .card-block
           .col-md-12
             %h1.text-center.display-3.text-primary Type
             %h2.text-center.text-dark
@@ -27,20 +24,15 @@
 
 
   #s_pricing1.p-1{:draggable => "true"}
-    .container
       .row
         .p-3.align-self-top.col-md-8
-          .card
-            .card-block.p-5
               %h1 Question :
-              %hr/
+              %hr
               %h3
                 %em "Expression"
         .p-3.align-self-top.col-md-4
-          .card
-            .card-block.p-4
               %h1 Score
-              %hr/
+              %hr
               %h3 Success : 8/10
               %h3 Progress :
               .progress.pi-draggable{:draggable => "true"}
@@ -49,11 +41,8 @@
 
 
   #s_pricing2.p-1{:draggable => "true"}
-    .container
      .row
        .p-3.align-self-top.col-md-8
-         .card
-           .card-block.p-3
              .row
                .align-self-center.col-md-8
                  %input.form-control{:name => "termWithVariable", :placeholder => "Step 1"}/
@@ -65,7 +54,7 @@
                  %input.form-control{:name => "termWithVariable", :placeholder => "Hint step 2"}/
                  %input.form-control{:name => "termWithVariable", :placeholder => "Hint step 3"}/
                  %input.form-control{:name => "termWithVariable", :placeholder => "Hint step 4"}/
-             %hr/
+             %hr
              .row
                .col-md-3
                  %a.btn.btn-dark.btn-block{:href => "#"} Clear
@@ -79,7 +68,7 @@
          .card
            .card-block.p-5
              %h2 Test navigation
-             %hr/
+             %hr
              .row
                .align-self-center.col-md-6.p-1
                  %a.btn.btn-success.btn-block{:href => "#"} Q 1
