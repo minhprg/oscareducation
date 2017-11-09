@@ -12,72 +12,99 @@
       Évaluation libre
 
 
--block content
+
   %h3 Évaluation libre <i>{{ test.name }}</i>  pour la classe <a href="{% url 'professor:lesson_detail' lesson.pk %}">{{ lesson.name }}</a>
   %hr
-
-  .ligneorange
-
-    .container-fluid.boxclassetitle
-      .pull-left
-        %td.center{width: "20px"}
-          %a.btn.btn-primary{href: "{% url 'professor:lesson_test_from_scan_detail' lesson.pk test.pk %}"}
-            Retour au test
-  .ligneorangefine
-
-
-  .container-fluid.boxclassetitle
-    %h5 Questions
-    -for student in lesson.students.all
-      -if student.id == answer.student_id
-        %p{style:"color:blue;text-align:right"}
-          [
-          =student
-          ]
-    {% load static %}
-    -if answer.is_correct
-      %img.code.green.img-responsive{src : "{% static answer.reference %} "}
-    -elif answer.is_correct == None
-      %img.code.black.img-responsive{src : "{% static answer.reference %} "}
+  .row
+    .col-lg-1
+    -if match == 0
+      .col-lg-3
+        .panel.panel-default
+          .panel-heading
+            Avancement de la correction
+          .panel-body
+            %table.table
+              %thead
+                %th Éleves
+                %th États
+              -for st in lesson.students.all
+                %tr
+                  -for student in students
+                    -if st.id == student.student_id
+                      %td
+                        %a{href: "{% url 'professor:lesson_test_from_scan_correct_by_student' lesson.pk test.pk st.id %}"}
+                          {{st}}
+                      -if student.is_correct != None
+                        %td
+                          %span.status.alert.alert-success Corrigé
+                      -else
+                        %td
+                          %span.status.alert.alert-info Non corrigé
     -else
-      %img.code.red.img-responsive{src : "{% static answer.reference %} "}
-    %form.form{action: "", method: "post", name: "lit", enctype: "multipart/form-data"}
-      -csrf_token
-      .checkbox
+      .col-lg-2
+    .col-lg-6
+      .ligneorange
+
+        .container-fluid.boxclassetitle
+          .pull-left
+            %td.center{width: "20px"}
+              %a.btn.btn-primary{href: "{% url 'professor:lesson_test_from_scan_detail' lesson.pk test.pk %}"}
+                Retour au test
+      .ligneorangefine
+
+
+      .container-fluid.boxclassetitle
+        %h5 Questions
+        -for student in lesson.students.all
+          -if student.id == answer.student_id
+            %p{style:"color:blue;text-align:right"}
+              [
+              =student
+              ]
+        {% load static %}
         -if answer.is_correct
-          %label
-            %input{type: "radio", value: 1, name: "correction" ,checked:"checked"}
-            %i.fa.fa-check.fa-2x
-          %label
-            %input{type: "radio", value: 0, name: "correction", autocomplete: "off"}
-            %i.fa.fa-times.fa-2x
+          %img.code.green.img-responsive{src : "{% static answer.reference %} "}
         -elif answer.is_correct == None
-          %label
-            %input{type: "radio", value: 1, name: "correction", autocomplete: "off"}
-            %i.fa.fa-check.fa-2x
-          %label
-            %input{type: "radio", value: 0, name: "correction", autocomplete: "off"}
-            %i.fa.fa-times.fa-2x
+          %img.code.black.img-responsive{src : "{% static answer.reference %} "}
         -else
-          %label
-            %input{type: "radio", value: 1, name: "correction", autocomplete: "off"}
-            %i.fa.fa-check.fa-2x
-          %label
-            %input{type: "radio", value: 0, name: "correction", checked:"checked"}
-            %i.fa.fa-times.fa-2x
+          %img.code.red.img-responsive{src : "{% static answer.reference %} "}
+        %form.form{action: "", method: "post", name: "lit", enctype: "multipart/form-data"}
+          -csrf_token
+          .checkbox
+            -if answer.is_correct
+              %label
+                %input{type: "radio", value: 1, name: "correction" ,checked:"checked"}
+                %i.fa.fa-check.fa-2x
+              %label
+                %input{type: "radio", value: 0, name: "correction", autocomplete: "off"}
+                %i.fa.fa-times.fa-2x
+            -elif answer.is_correct == None
+              %label
+                %input{type: "radio", value: 1, name: "correction", autocomplete: "off"}
+                %i.fa.fa-check.fa-2x
+              %label
+                %input{type: "radio", value: 0, name: "correction", autocomplete: "off"}
+                %i.fa.fa-times.fa-2x
+            -else
+              %label
+                %input{type: "radio", value: 1, name: "correction", autocomplete: "off"}
+                %i.fa.fa-check.fa-2x
+              %label
+                %input{type: "radio", value: 0, name: "correction", checked:"checked"}
+                %i.fa.fa-times.fa-2x
 
-      %p Commentaire
-      %span
-        %textarea{name:"annotation"}=answer.annotation
+          %p Commentaire
+          %span
+            %textarea{name:"annotation"}=answer.annotation
 
 
 
 
-      %button.btn.btn-primary{type: "submit"}
-        Valider
+          %button.btn.btn-primary{type: "submit"}
+            Valider
 
 
-  .ligneorange
+      .ligneorange
 
 
 

@@ -22,6 +22,11 @@ from .forms import ImportCopyForm
 
 @user_is_professor
 def lesson_test_from_scan_match(request, lesson_pk, pk):
+    is_exist = TestAnswerFromScan.objects.filter(id__isnull=False).count()
+    nb_not_match = TestAnswerFromScan.objects.filter(student_id__isnull=True).count()
+    if is_exist == 0:
+        messages.error(request, "Importez un test avant de pouvoir associer vos élèves")
+        return HttpResponseRedirect('/professor/lesson/' + str(lesson_pk) + '/test/from-scan/' + str(pk) + '/')
 
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
     test = get_object_or_404(TestFromScan, pk=pk)
@@ -31,12 +36,6 @@ def lesson_test_from_scan_match(request, lesson_pk, pk):
 
     nb_not_match = TestAnswerFromScan.objects.filter(student_id__isnull=True).count()
     nb_questions = TestQuestionFromScan.objects.filter(test_id=pk).count()
-    print("HERE \n")
-    print(request.content_params)
-    flash_error = "sdfsdfssdf"
-
-    if nb_not_match == 0:
-        flash_error = "Vous avez déjà associé tous les étudiants pour ce test, mais vous pouvez toujours remodifier la totalité"
 
     if request.method == "POST":
         form = request.POST.getlist('students')
@@ -62,21 +61,21 @@ def lesson_test_from_scan_match(request, lesson_pk, pk):
         "test": test,
         "names": names,
         "answers": answers,
-        "flash": flash_error,
         "nb_not_match":nb_not_match,
     })
 
 @user_is_professor
 def lesson_test_from_scan_correct_one(request, lesson_pk, test_pk, pk):
-
+    is_exist = TestAnswerFromScan.objects.filter(id__isnull=False).count()
     nb_not_match = TestAnswerFromScan.objects.filter(student_id__isnull=True).count()
-    if nb_not_match > 0:
+    if nb_not_match > 0 or is_exist == 0:
         messages.error(request,"Associez vos élèves avant de pouvoir corriger la réponse")
         return HttpResponseRedirect('/professor/lesson/' + str(lesson_pk) + '/test/from-scan/' + str(test_pk) + '/')
 
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
     test = get_object_or_404(TestFromScan, pk=test_pk)
     answer = get_object_or_404(TestAnswerFromScan, pk=pk)
+    students = TestAnswerFromScan.objects.all().filter(test_id=test_pk).distinct('student_id').order_by('student_id','-is_correct')
 
     if answer.annotation == None:
         answer.annotation = ""
@@ -94,6 +93,64 @@ def lesson_test_from_scan_correct_one(request, lesson_pk, test_pk, pk):
         "lesson": lesson,
         "test": test,
         "answer":answer,
+        "students":students,
+        "match": nb_not_match,
+    })
+
+@user_is_professor
+def lesson_test_from_scan_correct_by_student(request, lesson_pk, test_pk, pk):
+    is_exist = TestAnswerFromScan.objects.filter(id__isnull=False).count()
+    nb_not_match = TestAnswerFromScan.objects.filter(student_id__isnull=True).count()
+    if nb_not_match > 0 or is_exist == 0:
+        messages.error(request,"Associez vos élèves avant de pouvoir corriger la réponse")
+        return HttpResponseRedirect('/professor/lesson/' + str(lesson_pk) + '/test/from-scan/' + str(test_pk) + '/')
+
+    lesson = get_object_or_404(Lesson, pk=lesson_pk)
+    test = get_object_or_404(TestFromScan, pk=test_pk)
+    answers = TestAnswerFromScan.objects.all().filter(student_id=pk).order_by('id')
+    questions = TestQuestionFromScan.objects.all().filter(test_id=test_pk).order_by('question_num')
+    students = TestAnswerFromScan.objects.all().filter(test_id=test_pk).distinct('student_id').order_by('student_id','-is_correct')
+
+    for answer in answers:
+        if answer.annotation == None:
+            answer.annotation = ""
+
+    if request.method == "POST":
+
+        if 'students' in request.POST:
+            return HttpResponseRedirect('/professor/lesson/' + str(lesson_pk) + '/test/from-scan/' + str(test_pk) + '/student/' + request.POST.get("students") + '/correct')
+        else:
+            form = request.POST.items()
+
+            print(form)
+            for tmp in form:
+                print(tmp)
+
+            t = {}
+            c = {}
+            for cor in form:
+                if not cor[0] == "csrfmiddlewaretoken":
+                    if 'c' in cor[0]:
+                        c[int(cor[0][1:])] = cor[1]
+                    elif 't' in cor[0]:
+                        t[int(cor[0][1:])] = cor[1]
+
+            for K,V in c.items():
+                if K in t:
+                    TestAnswerFromScan.objects.filter(pk=K).update(is_correct=V, annotation=t[K])
+                else:
+                    TestAnswerFromScan.objects.filter(pk=K).update(is_correct=V)
+
+        return HttpResponseRedirect('/professor/lesson/' + str(lesson_pk) + '/test/from-scan/' + str(test_pk) + '/student/'+pk+'/correct')
+
+    return render(request, "professor/lesson/test/from-scan/correct_by_student.haml", {
+        "lesson": lesson,
+        "test": test,
+        "answers":answers,
+        "questions":questions,
+        "students":students,
+        "stud":int(pk),
+        "match":nb_not_match,
     })
 
 
@@ -101,7 +158,7 @@ def lesson_test_from_scan_correct_one(request, lesson_pk, test_pk, pk):
 def lesson_test_from_scan_add(request, pk):
     lesson = get_object_or_404(Lesson, pk=pk)
 
-    return render(request, "professor/lesson/test/from-scan/add.haml", {
+    return render(request, "professor/lesson/test/from-scan/correct_by_student.haml", {
         "lesson": lesson,
         "stages": lesson.stages_in_unchronological_order(),
     })
@@ -109,6 +166,8 @@ def lesson_test_from_scan_add(request, pk):
 
 @user_is_professor
 def lesson_test_from_scan_detail(request, lesson_pk, pk):
+    is_exist = TestAnswerFromScan.objects.filter(id__isnull=False).count()
+    nb_not_match = TestAnswerFromScan.objects.filter(student_id__isnull=True).count()
 
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
     test = get_object_or_404(TestFromScan, pk=pk)
@@ -117,6 +176,7 @@ def lesson_test_from_scan_detail(request, lesson_pk, pk):
     else:
         answers = TestAnswerFromScan.objects.all().filter(test_id=pk, question_id=request.session['sort_question']).order_by('id')
     questions = TestQuestionFromScan.objects.all().filter(test_id=pk).order_by('question_num')
+    students = TestAnswerFromScan.objects.all().filter(test_id=pk).distinct('student_id').order_by('student_id','-is_correct')
 
     if request.method == "POST":
         print(request.POST)
@@ -166,6 +226,9 @@ def lesson_test_from_scan_detail(request, lesson_pk, pk):
         "test":test,
         "answers":answers,
         "questions": questions,
+        "students": students,
+        "match": nb_not_match,
+        "exist": is_exist
 
     })
 

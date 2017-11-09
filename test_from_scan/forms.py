@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 from django import forms
+from examinations.models import TestAnswerFromScan
 
 
 
@@ -11,4 +12,5 @@ def validate_copy_extension(value):
 class ImportCopyForm(forms.Form):
     copy = forms.ImageField(widget=forms.ClearableFileInput(attrs={'multiple': True}),
                             validators=[validate_copy_extension])
+
 
