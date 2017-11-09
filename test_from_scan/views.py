@@ -107,7 +107,13 @@ def lesson_test_from_scan_correct_by_student(request, lesson_pk, test_pk, pk):
 
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
     test = get_object_or_404(TestFromScan, pk=test_pk)
-    answers = TestAnswerFromScan.objects.all().filter(student_id=pk).order_by('id')
+    if request.session['sort_answer'] is None or request.session['sort_answer'] == 0:
+        answers = TestAnswerFromScan.objects.all().filter(student_id=pk).order_by('id')
+    elif request.session['sort_answer'] == 1:
+        answers = TestAnswerFromScan.objects.all().filter(student_id=pk,is_correct__isnull=True).order_by('id')
+    elif request.session['sort_answer'] == 2:
+        answers = TestAnswerFromScan.objects.all().filter(student_id=pk, is_correct__isnull=False).order_by('id')
+
     questions = TestQuestionFromScan.objects.all().filter(test_id=test_pk).order_by('question_num')
     students = TestAnswerFromScan.objects.all().filter(test_id=test_pk).distinct('student_id').order_by('student_id','-is_correct')
 
@@ -117,8 +123,9 @@ def lesson_test_from_scan_correct_by_student(request, lesson_pk, test_pk, pk):
 
     if request.method == "POST":
 
-        if 'students' in request.POST:
-            return HttpResponseRedirect('/professor/lesson/' + str(lesson_pk) + '/test/from-scan/' + str(test_pk) + '/student/' + request.POST.get("students") + '/correct')
+        if 'iscorrect' in request.POST:
+            request.session['sort_answer'] = int(request.POST.get('iscorrect'))
+            return HttpResponseRedirect('/professor/lesson/' + str(lesson_pk) + '/test/from-scan/' + str(test_pk) + '/student/' + str(pk) + '/correct')
         else:
             form = request.POST.items()
 

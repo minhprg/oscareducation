@@ -56,14 +56,28 @@
       .container-fluid.boxclassetitle
         %form.form{action: "", method: "post", name: "students", enctype: "multipart/form-data"}
           -csrf_token
-          %select{name : "students"}}
-            -for student in lesson.students.all
-              -if stud == student.id
-                %option{value: "{{ student.id }}", id: "{{ student.id }}", selected:"selected"}
-                  {{ student }}
-              -else
-                %option{value: "{{ student.id }}", id: "{{ student.id }}"}
-                  {{ student }}
+          %select{name : "iscorrect"}}
+            -if request.session.sort_answer == 0
+              %option{value: "0", id: "1", selected:"selected"}
+                Toutes les réponses
+              %option{value: "1", id: "2"}
+                Non corrigées
+              %option{value: "2", id: "3"}
+                Corrigées
+            -elif request.session.sort_answer == 1
+              %option{value: "0", id: "1"}
+                Toutes les réponses
+              %option{value: "1", id: "2", selected:"selected"}
+                Non corrigées
+              %option{value: "2", id: "3"}
+                Corrigées
+            -elif request.session.sort_answer == 2
+              %option{value: "0", id: "1"}
+                Toutes les réponses
+              %option{value: "1", id: "2"}
+                Non corrigées
+              %option{value: "2", id: "3", selected:"selected"}
+                Corrigées
           %button.btn.btn-primary{type: "submit"}
             Choisir
         %h5 Questions

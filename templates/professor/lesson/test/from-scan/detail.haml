@@ -108,9 +108,7 @@
 
             %button.btn.btn-primary{type: "submit"}
               Trier
-          %br
-          %a.btn.btn-primary{href: "{% url 'professor:lesson_test_from_scan_correct_by_student' lesson.pk test.pk lesson.students.all.0.id %}"}
-            Corriger par élève
+
           %h5 Réponses des étudiants
           %ul.heatmap-list
             -for answer in answers
