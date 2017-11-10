@@ -4,19 +4,25 @@ from __future__ import unicode_literals
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.template.response import TemplateResponse
+from datetime import datetime
 
 from django.views import View
 
 import json
 
 from algebra.engine import Expression, ExpressionError, Equation, Inequation, EquationSystem
+from algebra.models import AlgebraicExercice
 
 # Create your views here.
 
 class List(View):
 
 	def get(self, request):
-		return TemplateResponse(request, "algebra/list.haml")
+            expressions = AlgebraicExercice.objects.all()
+            context = {
+                'expressions': [expression.__dict__ for expression in expressions]
+            }
+            return TemplateResponse(request, "algebra/list.haml", context)
     
 class TrainingSession(View):
 
@@ -62,7 +68,16 @@ class ExerciceCreation(View):
 		try:
 
 			expr, solution = self._parse(json.loads(request.body))
-			# expr.model.save()
+			created = datetime.now()
+			db_expr = AlgebraicExercice(
+			    expression=str(expr),
+			    expression_type=expr._db_type,
+			    created=created,
+			    updated=created,
+			    solution=str(expr.solution),
+			    level=1
+			)
+			db_expr.save()
 
 			return JsonResponse({
 				'status': True,

@@ -231,16 +231,4 @@ class Expression(object):
         """ Sets the expression solution domain """
         self._domain = dom
 
-#    @property
-#    def model(self):
-#        created = datetime.now()
-#        return AlgebraicExercice(
-#            expression=str(self),
-#            expression_type=self._db_type,
-#            created=created,
-#            updated=created,
-#            solution=str(self.solution),
-#            level=-1
-#        )
-
 # ============================================================================

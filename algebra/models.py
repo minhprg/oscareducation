@@ -7,19 +7,19 @@ from django.db import models
 
 class AlgebraicExercice(models.Model):
 
-	class Meta:
+    TYPES = (
+        ('EQ', 'Equation'),
+        ('IN', 'Inequation'),
+        ('ES', 'EquationSystem')
+    )
 
-		db_table = 'algebraic_expression'
+    expression                  = models.CharField(max_length=60)
+    expression_type             = models.CharField(max_length=2, choices=TYPES)
+    created                     = models.DateField()
+    updated                     = models.DateField()
+    solution                    = models.CharField(max_length=30)
+    level                       = models.PositiveSmallIntegerField()
 
-	TYPES = (
-		('EQ', 'Equation'),
-		('IN', 'Inequation'),
-		('ES', 'EquationSystem')
-	)
+    class Meta:
+        db_table = 'algebraic_expression'
 
-	expression 		= models.CharField(max_length=60)
-	expression_type = models.CharField(max_length=2, choices=TYPES)
-	created			= models.DateField()
-	updated			= models.DateField()
-	solution		= models.CharField(max_length=30)
-	level			= models.PositiveSmallIntegerField()

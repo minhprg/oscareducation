@@ -5,15 +5,7 @@ import unittest2 as unittest
 import json
 from fractions import Fraction
 
-from django.core.exceptions import AppRegistryNotReady
-try:
-    from django.apps import apps
-    apps.check_apps_ready()
-except AppRegistryNotReady:
-    import django
-    django.setup()
-
-#from ..engine import Equation, Inequation, EquationSystem 
+from ..engine import Equation, Inequation, EquationSystem 
 
 
 class ExpressionsTest(unittest.TestCase):
