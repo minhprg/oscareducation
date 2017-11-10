@@ -7,10 +7,13 @@ from sympy import Poly, solve_poly_inequality
 # ============================================================================
 
 class Inequation(Expression):
-    """Class for the expressions of the category Inequation
-    An Inequation object can be created with the args : 
-        - expr (the inequation in a String), 
-        - sym (the variable of  the inequation, the default value is x)"""
+    """
+    Inequation representation, solves any kind of inequality. Tested for the
+    first and second degree.
+
+    :warning: The inequation does not handle unknown-composed denominator as
+    of 7 nov. 2017. A fix to the problem is currently being searched.
+    """
 
     _db_type = "IN"
 

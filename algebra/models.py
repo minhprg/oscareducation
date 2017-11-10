@@ -7,6 +7,10 @@ from django.db import models
 
 class AlgebraicExercice(models.Model):
 
+	class Meta:
+
+		db_table = 'algebraic_expression'
+
 	TYPES = (
 		('EQ', 'Equation'),
 		('IN', 'Inequation'),
