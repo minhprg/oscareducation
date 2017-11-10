@@ -1,0 +1,17 @@
+-extends "algebra/base.haml"
+-block bootstrap3_title
+  Créer évaluation
+-block breadcrumb
+  %br
+  %br
+  %ol.breadcrumb
+    %li
+      %a{ :href => "{% url 'home' %}", :title => "Home" }
+        Home
+    %li
+      %a{ :href => "{% url 'algebra:list' %}", :title => "Liste exercice" }
+        Algebra
+    %li.active
+      Créer évaluation
+-block algebra_content
+  Créer évaluation

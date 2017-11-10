@@ -1,0 +1,120 @@
+-extends "bootstrap3/bootstrap3.html"
+-load static
+-load compress
+
+-block bootstrap3_title
+  Oscar
+
+-block bootstrap3_extra_head
+  %script{type: "text/javascript", async: None, src: "//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"}
+
+  -compress js
+    %script{type: "text/javascript", src: "{% static 'js/jquery.min.js' %}"}
+    %script{type: "text/javascript", src: "{% static 'js/angular.js' %}"}
+    %script{type: "text/javascript", src: "{% static 'js/angular-cookies.js' %}"}
+    -#%script{type: "text/javascript", src: "{% static 'js/dataTable.js' %}"}
+    %script{type: "text/javascript", src: "{% static 'js/responsive-img.js' %}"}
+    %script{type: "text/javascript", src: "{% static 'js/creationExercise.js' %}"}
+
+
+  -compress css
+    %link{href: "{% static 'css/keyboard.css' %}", rel: "stylesheet"}
+    %link{href: "{% static 'css/mathquill.css' %}", rel: "stylesheet"}
+    %link{href: "{% static 'css/jquery-ui.css' %}", rel: "stylesheet"}
+    %link{href: "{% static 'css/mathquill.css' %}", rel: "stylesheet"}
+    %link{href: "{% static 'css/textAngular.css' %}", rel: "stylesheet"}
+    -#%link{href: "{% static 'css/dataTable.css' %}", rel: "stylesheet"}
+    %link{href: "{% static 'css/style.css' %}", rel: "stylesheet"}
+
+  %link{rel: "stylesheet", type: "text/css", href: "//fonts.googleapis.com/css?family=Open+Sans"}
+  %link{href: "https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css", rel: "stylesheet"}
+  %link{href: "https://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css", rel: "stylesheet", type: "text/css"}
+
+  %link{rel: "icon", type: "image/png", href: "{% static 'img/favicon.png' %}"}
+  %style
+    hr {margin-top: 20px;}
+  -block head
+
+
+-block bootstrap3_content
+  %div{class: "{% if user.professor %}fond{% endif %}"}
+    .navbar.navbar-inverse.navbar-fixed-top.navbar-bold{data-spy: "affix", data-offset-top: "1000"}
+      .navbar-inner
+        .container
+          .navbar-header
+            %button.hidden-md.hidden-lg{type: "button", class: "navbar-toggle collapsed", data-toggle: "collapse", data-target: "#toCollapse"}
+              %span.sr-only Toggle navigation
+              %span.icon-bar
+              %span.icon-bar
+              %span.icon-bar
+            -if user.professor
+              %a.brand.navbar-brand{href: "{% url 'professor:dashboard' %}"}
+                <span style="color: #F58025">O</span>scar
+            -else
+              %a.brand.navbar-brand{href: "{% url 'student_dashboard' %}"}
+            -if user.professor and not no_menu
+              .nav-global-shortcuts
+                %a.global-shortcut.home{href: "{% url 'professor:dashboard' %}", data-toggle: "tooltip", data-placement: "bottom", title: "Page d´accueil"}
+                  %img{src: "{% static 'img/icons/Home.png' %}"}
+                %a.global-shortcut{href: "https://framateam.org/oscarpilote/", target: "_blank", data-toggle: "tooltip", data-placement: "bottom", title: "Forum"}
+                  %img{src: "{% static 'img/icons/forum-white.png' %}"}
+                %a.global-shortcut{href: "{% url 'professor:main-education' %}", data-toggle: "tooltip", data-placement: "bottom", title: "Compétences et ressources"}
+                  %img{src: "{% static 'img/icons/ressource-white.png' %}"}
+          %ul.nav.navbar-nav.navbar-right.hidden-xs.hidden-sm
+            %li
+              %a.icon.logout{href: "{% url 'logout' %}"}
+                -#%img{src: "{% static 'img/icons/logout.png' %}"}
+          #toCollapse.collapse.navbar-collapse
+            %ul.nav.navbar-nav.hidden-md.hidden-lg
+              %li
+                %a.icon.logout{href: "{% url 'logout' %}"}
+                  -# %img{src: "{% static 'img/icons/logout.png' %}"}
+
+    -block breadcrumb
+
+    .container
+      -block content
+
+    .container.centralcontainer-student
+      -block content-student
+
+    #footer.hidden-xs
+      .copyright
+        %h6
+          Vous souhaitez contribuer à l’amélioration d’Oscar ?
+        %h7
+          Contactez-nous sur support@oscar.education
+
+  -# dirty fix
+  -if user.student
+    :css
+      body {
+          background-image: url(/static/img/fond-student.jpg);
+          background-attachment:fixed;
+          background-repeat: no-repeat;
+          background-size: cover;
+      }
+
+      body > div {
+          padding-bottom: 100px;
+      }
+
+
+-block bootstrap3_extra_script
+  -compress js
+    %script{type: "text/javascript", src: "{% static 'js/base.js' %}"}
+    %script{type: "text/javascript", src: "{% static 'js/jquery.keyboard.js' %}"}
+    %script{type: "text/javascript", src: "{% static 'js/jquery.mousewheel.js' %}"}
+    %script{type: "text/javascript", src: "{% static 'js/jquery.keyboard.extension-typing.js' %}"}
+    %script{type: "text/javascript", src: "{% static 'js/mathquill.js' %}"}
+    %script{type: "text/javascript", src: "{% static 'js/textAngular-rangy.min.js' %}"}
+    %script{type: "text/javascript", src: "{% static 'js/textAngular-sanitize.min.js' %}"}
+    %script{type: "text/javascript", src: "{% static 'js/textAngular.min.js' %}"}
+    %script{type: "text/javascript", src: "{% static 'js/math_keyboard.js' %}"}
+
+  %script{type: "text/javascript", src: "https://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"}
+
+  -compress js
+    %script{type: "text/javascript", src: "{% static 'js/graph_base_functions.js' %}"}
+
+  -block javascript
