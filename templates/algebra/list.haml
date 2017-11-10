@@ -24,20 +24,21 @@
         %th Edit
         %th Delete
     %tbody
-      %tr
-        %td 1
-        %td 10/10/2017
-        %td 5X + 25 = 10
-        %td
-          %input{:placeholder => "1", :type => "text"}/
-        %td -3
-        %td Equation
-        %td
-          %input{:checked => "checked", :type => "checkbox", :value => "on"}/
-        %td
-          %a.btn.btn-primary{:href => ""} Edit
-        %td
-          %a.btn.btn-primary.btn-danger{:href => ""} Delete
+      - for expression in expressions
+        %tr
+          %td #{expression.id}
+          %td #{expression.updated}
+          %td #{expression.expression}
+          %td
+            %input{:placeholder => "#{expression.level}", :type => "text"}
+          %td #{expression.solution}
+          %td #{expression.expression_type}
+          %td
+            %input{:checked => "checked", :type => "checkbox", :value => "on"}
+          %td
+            %a.btn.btn-primary{:href => ""} Edit
+          %td
+            %a.btn.btn-primary.btn-danger{:href => ""} Delete
       %tr
         %td 2
         %td 11/10/2017
