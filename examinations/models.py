@@ -600,3 +600,84 @@ class TestSkillFromClass(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     """The offline test date of creation"""
+
+class TestFromScan(BaseTest):
+    """[FR] Test hors-ligne
+
+        This test is done in class, not with Oscar.
+        Its purpose is to encode the results online.
+
+    """
+    content = JSONField()
+    def get_skills_with_encoded_values(self):
+        result = []
+
+        students = self.lesson.students.all()
+
+        skills = self.skills.all()
+        encoded_values = {(x.student, x.skill): x for x in
+                          self.testskillfromscan_set.all().select_related("skill", "student").order_by("id")}
+        for student in students:
+            result.append((student, [(skill, encoded_values.get((student, skill))) for skill in skills]))
+
+        return result
+
+class TestSkillFromScan(models.Model):
+    """[FR] Compétence de test hors-ligne
+
+        This is the link between a TestFromClass
+        and its Skill(s)
+
+    """
+    test = models.ForeignKey("TestFromScan")
+    """The offline Test"""
+    skill = models.ForeignKey("skills.Skill")
+    """A Skill tested by the offline Test"""
+    student = models.ForeignKey("users.Student")
+    """The student that passed the offline Test"""
+    result = models.CharField(max_length=10, choices=(
+        ("good", "acquise"),
+        ("bad", "non acquise"),
+        ("unknown", "inconnu"),
+    ))
+    """The Skill result for the Student with the offline Test"""
+
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    """The offline test date of creation"""
+
+class TestAnswerFromScan(models.Model):
+    """[FR] Compétence de test hors-ligne
+
+        This is the link between a TestFromClass
+        and its Skill(s)
+
+    """
+    test = models.ForeignKey("TestFromScan")
+    question = models.ForeignKey("TestQuestionFromScan")
+    """A Skill tested by the offline Test"""
+    created_at = models.DateTimeField(auto_now_add=True)
+    student = models.ForeignKey("users.Student")
+    """The student that passed the offline Test"""
+    """The offline test date of creation"""
+    reference = models.CharField(max_length=50)
+    reference_name = models.CharField(max_length=50)
+    is_correct = models.BooleanField()
+    annotation = models.CharField(max_length=150)
+
+class TestQuestionFromScan(models.Model):
+    """[FR] Compétence de test hors-ligne
+
+        This is the link between a TestFromClass
+        and its Skill(s)
+
+    """
+
+    test = models.ForeignKey("TestFromScan")
+    """A Skill tested by the offline Test"""
+    question_num = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    """The student that passed the offline Test"""
+    """The offline test date of creation"""
+    contexte = models.CharField(max_length=250)
+
