@@ -8,10 +8,9 @@ from sympy import solveset
 
 class Equation(Expression):
     """
-    Class for the expressions of the category Equation
-    An Equation object can be created with the args :
-        - expr (the equation in a String),
-        - sym (the variable of  the equation, the default value is x)
+    Simplest expression available. Solves equation(s) of any degree.
+    
+    :see: Expression
     """
 
     _db_type = "EQ"
@@ -30,12 +29,11 @@ class Equation(Expression):
     # --------------------------------------------------------- Actual methods
 
     def resolve(self):
-        """return value of the solution of the equation in a String"""
         solutions = []
         for symbol in self._symbols:
             expr = self._left_operand - self._right_operand
             solutions.append(list(solveset(expr, symbol, self._domain)))
-
+        print(solutions)
         return solutions
 
 # ============================================================================

@@ -7,10 +7,12 @@ from sympy import symbols
 # ============================================================================
     
 class EquationSystem(Expression):
-    """Class for the expressions of the category System of two Equations
-    An EquationSystem object can be created with the args : 
-        - expr (An array of two Strings with the equations), 
-        - sym (the variables of  the expression, the default values are x and y)"""
+    """
+    Equation system representation, takes an array of expressions with
+    different unknowns and resolves the system.
+
+    :see: Expression
+    """
 
     _db_type = "ES"
 
