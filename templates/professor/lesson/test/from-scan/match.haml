@@ -1,0 +1,83 @@
+-extends "base.haml"
+-load static
+-load compress
+  -compress js
+    %script{type: "text/javascript", src: "{% static 'js/bootstrap-notify.min.js' %}"}
+
+-block breadcrumb
+  %ol.breadcrumb
+    %li
+      %a{href: "{% url 'professor:dashboard' %}"} Oscar
+    %li
+      %a{href: "{% url 'professor:lesson_detail' lesson.id %}"}
+        Classe
+        =lesson.name
+    %li.active
+      Évaluation libre
+
+
+-block content
+  %h3 Évaluation libre <i>{{ test.name }}</i>  pour la classe <a href="{% url 'professor:lesson_detail' lesson.pk %}">{{ lesson.name }}</a>
+  %hr
+
+  .ligneorange
+
+  .container-fluid.boxclassetitle
+    .pull-left
+      %td.center{width: "20px"}
+        %a.btn.btn-primary{href: "{% url 'professor:lesson_test_from_scan_detail' lesson.pk test.pk %}"}
+          Retour au test
+  .ligneorange
+
+  .container-fluid.boxclassetitle
+    -if messages
+      -for message in messages
+        -if message.tags == 'error'
+          %p{style:"color:red"}=message
+        -else
+          %p{style:"color:green"}=message
+    %h5 Étudiants
+
+    %form.form{action: "", method: "post", name: "match", enctype: "multipart/form-data"}
+      -csrf_token
+
+      -if nb_not_match > 0
+        -for name in names
+          %ul.heatmap-list
+            %li.sld
+              {% load static %}
+              %img.img-responsive{src : "{% static name.reference_name %} "}
+            %li.sld
+              -if lesson.students.count
+                %select{name : "students"}
+                  -for student in lesson.students.all
+                    %option{value: "{{ student.id }}", id: "{{ student.id }}"}
+                      {{ student }}
+        .pull-left
+          %td.center{width: "20px"}
+      -else
+        -for name in names
+          %ul.heatmap-list
+            %li.sld
+              {% load static %}
+              %img.img-responsive{src : "{% static name.reference_name %} "}
+            %li.sld
+              -if lesson.students.count
+                %select{name : "students"}
+                  -for student in lesson.students.all
+                    -if  student.id == name.student_id
+                      %option{value: "{{ student.id }}", id: "{{ student.id }}", selected:"selected"}
+                        {{ student }}
+                    -else
+                      %option{value: "{{ student.id }}", id: "{{ student.id }}"}
+                        {{ student }}
+
+        .pull-left
+          %td.center{width: "20px"}
+
+      %button.btn.btn-primary{type: "submit"}
+        Associer les élèves
+
+  .ligneorange
+
+
