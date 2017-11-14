@@ -38,12 +38,15 @@ from examinations.validate import validate_exercice_yaml_structure
 from resources.models import KhanAcademy, Sesamath, Resource
 from skills.models import Skill, StudentSkill, CodeR, Section, Relations, CodeR_relations
 from users.models import Student
-from .forms import LessonForm, StudentAddForm, KhanAcademyForm, StudentUpdateForm, LessonUpdateForm, \
-    TestUpdateForm, SesamathForm, ResourceForm, CSVForm, ImportCopyForm
+from .forms import ImportCopyForm
 from .models import Lesson, Stage
-from .utils import generate_random_password, user_is_professor
-
-
+from .forms import LessonForm, StudentAddForm, SyntheseForm, KhanAcademyForm, StudentUpdateForm, LessonUpdateForm, \
+    TestUpdateForm, SesamathForm, ResourceForm, CSVForm
+from .utils import generate_random_password, user_is_professor, force_encoding
+import csv
+from django.http import JsonResponse
+from promotions.InputHandler import InputHandler
+from promotions.Factory import factory
 
 
 @user_is_professor
@@ -1402,6 +1405,17 @@ def exercice_validation_form_validate_exercice(request):
                 "type": question["type"],
                 "answers": "",
             }
+        elif question["type"].startswith("algebraic"):
+            if "System" in question["type"]:
+                 questions[question["instructions"]] = {
+                    "type": question["type"],
+                    "answers": {"sol":"","equations":[question["eq1"], question["eq2"]]},
+                }
+            else:
+                questions[question["instructions"]] = {
+                    "type": question["type"],
+                    "answers": {"sol":"", "equations":question["eq1"]},
+                }
 
         else:
             answers = OrderedDict()
@@ -1543,6 +1557,36 @@ def exercice_validation_form_submit(request, pk=None):
                     "type": question["type"],
                     "answers": "",
                 }
+            elif question["type"].startswith("algebraic"):
+                if "System" in question["type"]:
+                    ih = InputHandler(question["type"])
+                    eq,letter = ih.parse((unicode(question["eq1"]),unicode(question["eq2"])))
+                    equation = factory(question["type"],eq,letter)
+                    sol = equation.solution
+                    solText = ""
+                    for elem in sol:
+                        for index, val in enumerate(elem):
+                            solText += letter.split(",")[index]+"="+str(val)+(", " if index == 0 else "")
+                    new_question_answers = {
+                        "type": question["type"],
+                        "answers": {"sol":solText,
+                                    "equations":[question["eq1"], question["eq2"]]},
+
+                    }
+
+                else:
+                    ih = InputHandler(question["type"])
+                    eq,letter = ih.parse(unicode(question["eq1"]))
+                    equation = factory(question["type"],eq,letter)
+                    sol = equation.solution
+                    for elem in sol:
+                        sol = letter+"="+str(elem)
+                    new_question_answers = {
+                        "type": question["type"],
+                        "answers": {"sol":sol,
+                                    "equations":question["eq1"],
+
+                    }}
 
             else:
                 answers = CommentedMap()
@@ -1676,8 +1720,6 @@ def exercice_update_json(request, pk):
         if question_type == "graph":
             answers = question.get_answer()["answers"]
         elif question_type == "professor":
-            answers = ""
-        elif isinstance(question.get_answer()["answers"], list):
             answers = [{"text": key, "correct": True} for key in question.get_answer()["answers"]]
         else:  # assuming dict
             answers = [{"text": key, "correct": value} for key, value in question.get_answer()["answers"].items()]

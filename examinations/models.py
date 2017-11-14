@@ -11,6 +11,9 @@ import yaml
 import yamlordereddictloader
 import json
 import re
+from promotions.Factory import factory as algebraic_factory
+from promotions.InputHandler import InputHandler
+
 
 
 class Context(models.Model):
@@ -220,6 +223,28 @@ class Question(models.Model):
         elif evaluation_type == "professor":
             # No automatic verification to perform if corrected by a Professor
             return -1
+
+        elif evaluation_type.startswith("algebraic"):
+            # all algebraic exercise starts with that and are corrected using the factory method.
+            handler = InputHandler(evaluation_type)
+            try:
+                (eq1, letter) = handler.parse(unicode(raw_correct_answers["answers"]["equations"]))
+                eq_to_solve = algebraic_factory(evaluation_type, eq1, letter)  # equation that needs to be solved
+                if "System" in evaluation_type:
+                    (eq2, letter2) = handler.parse([unicode(x) for x in response])
+                else:
+                    (eq2, letter2) = handler.parse(unicode(response[0]))
+
+                answer_from_student = algebraic_factory(evaluation_type, eq2, letter)
+                test_solution = eq_to_solve.isEquivalant(answer_from_student)  # return (bool,str)
+
+                if test_solution[0] and test_solution[1] is None:
+                    return 1
+                else:
+                    # we still need to display the hints
+                    return 0
+            except Exception:
+                return 0
 
         # No automatic correction type found, not corrected by default
         else:

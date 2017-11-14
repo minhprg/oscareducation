@@ -87,6 +87,9 @@
                   %select.form-control{ng-model: "question.type", ng-required: "true", ng-change: "onChangeQuestionType(topIndex, question)"}
                     %option{value: ""}
                     %option{value: "text"} Réponse textuelle exacte
+                    %option{value: "algebraicEquation"} Equations algrébriques
+                    %option{value: "algebraicInequation"} Inéquations algrébriques
+                    %option{value: "algebraicSystem"} Systèmes algrébriques
                     %option{value: "math-simple"} Réponse mathématique simple
                     %option{value: "math-advanced"} Réponse mathématique avancée
                     %option{value: "radio"} Une seule réponse unique possible parmi toutes (radio)
@@ -102,8 +105,28 @@
                 .col-sm-10
                   %input.form-control{type: "text", ng-model: "question.indication", ng-required: "false"}
             %ul.list-group
-              %li.list-group-item{ng-if: "question.type != \"professor\"", ng-repeat: "answer in question.answers", ng-init: "answerIndex = $index.toString()"}
-                .form-horizontal{ng-if: "question.type != \"graph\""}
+
+              %li.list-group-item{ng-if:"question.type == \"algebraicEquation\" || question.type == \"algebraicInequation\" "}
+                .form-horizontal
+                  .form-group
+                    %label.col-sm-2.control-label{ng-if: "question.type == \"algebraicEquation\""} Equation:
+                    %label.col-sm-2.control-label{ng-if: "question.type == \"algebraicInequation\""} Inéquation:
+                    .col-sm-9
+                    %input.form-control{type: "text", ng-model: "question.eq1", ng-required: "true"}
+
+              %li.list-group-item{ng-if:"question.type == \"algebraicSystem\" "}
+                .form-horizontal
+                  .form-group
+                    %label.col-sm-2.control-label Equation 1:
+                    .col-sm-9
+                    %input.form-control{type: "text", ng-model: "question.eq1", ng-required: "true"}
+                    %span
+                    %label.col-sm-2.control-label Equation 2:
+                    .col-sm-9
+                    %input.form-control{type: "text", ng-model: "question.eq2", ng-required: "true"}
+
+              %li.list-group-item{ng-if: "question.type != \"professor\" && question.type != \"algebraicEquation\" && question.type != \"algebraicInequation\" && question.type != \"algebraicSystem\" ", ng-repeat: "answer in question.answers", ng-init: "answerIndex = $index.toString()"}
+                .form-horizontal{ng-if: "question.type != \"graph\"  "}
                   .form-group
                     %label.col-sm-2.control-label Réponse possible :
                     .col-sm-9
@@ -143,7 +166,7 @@
                         .input-group-addon Y
                         %input.form-control{type: "number", ng-required: "true", placeholder: "0", ng-model: "answer.graph.coordinates.Y"}
 
-            %button.btn.btn-success.btn-sm{ng-if: "question.type != \"professor\"", ng-click: "addAnswer(topIndex, question)", type: "button"}
+            %button.btn.btn-success.btn-sm{ng-if: "question.type != \"professor\" && question.type != \"algebraicEquation\" && question.type != \"algebraicInequation\" && question.type != \"algebraicSystem\" ", ng-click: "addAnswer(topIndex, question)", type: "button"}
               %span.glyphicon.glyphicon-plus
               nouvelle réponse possible
 

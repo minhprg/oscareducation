@@ -2,6 +2,7 @@ from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from users.models import Professor, Student
 from django.core.urlresolvers import reverse
+from Equation import *
 
 
 class PermissionsTest(TestCase):
@@ -50,3 +51,16 @@ class PageLoadTest(TestCase):
 
     def test_static_pages_load(self):
         self.assertEqual(self.c.get(reverse("professor:dashboard")).status_code, 200)
+
+class EquationTest(TestCase):
+    def setUp(self):
+        pass
+
+    def test_equation(self):
+        equation = Equation("x-2")
+        self.assertTrue(equation.isSolution(2))
+        self.assertTrue(equation.isEquivalant("x-2 +2 -2"))
+        self.assertFalse(equation.isSolution(3))
+        self.assertFalse(equation.isEquivalant("x-2 +1 -2"))
+
+
