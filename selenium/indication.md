@@ -3,7 +3,8 @@
 ###### Install selenium in ve :
 
 ```bash
-$ sudo pip install selenium```
+$ sudo pip install selenium
+```
 
 ###### Install webdrivers
 
@@ -12,14 +13,16 @@ Chrome  :
 $ wget https://chromedriver.storage.googleapis.com/2.33/chromedriver_linux64.zip
 $ unzip chromedriver_linux64.zip
 $ sudo cp chromedriver /usr/bin/chromedriver
-$ rm chromedriver*```
+$ rm chromedriver*
+```
 
 Firefox :
 ``` bash
 $ wget https://github.com/mozilla/geckodriver/releases/download/v0.19.1/geckodriver-v0.19.1-linux64.tar.gz
 $ tar -xvf geckodriver-v0.19.1-linux64.tar.gz
 $ sudo cp geckodriver /usr/bin/geckodriver
-$ rm geckodriver*```
+$ rm geckodriver*
+```
 
 
 ###### Other distributions :
