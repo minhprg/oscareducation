@@ -62,6 +62,7 @@ INSTALLED_APPS = (
     'end_test_poll',
     'algebra',
 
+
 ) + ADDITIONAL_APPS
 
 MIDDLEWARE = (
@@ -112,7 +113,7 @@ DATABASES = {
         'NAME': 'oscar',
         'USER': 'oscar',
         'PASSWORD': 'oscar',
-        'HOST': '100.0.0.20',
+        'HOST': '127.0.0.1',
         'PORT': '5432',
     }
 }
@@ -159,9 +160,13 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+SCAN_ROOT = os.path.join(BASE_DIR, "exercices/tests")
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 

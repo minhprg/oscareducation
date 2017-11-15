@@ -1,0 +1,183 @@
+-extends "base.haml"
+
+-block breadcrumb
+  %ol.breadcrumb
+    %li
+      %a{href: "{% url 'professor:dashboard' %}"} Oscar
+    %li
+      %a{href: "{% url 'professor:lesson_detail' lesson.id %}"}
+        Classe
+        =lesson.name
+    %li.active
+      Évaluation libre
+
+
+
+  %h3 Évaluation libre <i>{{ test.name }}</i>  pour la classe <a href="{% url 'professor:lesson_detail' lesson.pk %}">{{ lesson.name }}</a>
+  %hr
+  .row
+    .col-lg-1
+
+    -if match == 0 and exist != 0
+      .col-lg-3
+        .panel.panel-default
+          .panel-heading
+            Avancement de la correction
+          .panel-body
+            %table.table
+              %thead
+                %th Éleves
+                %th États
+              -for st in lesson.students.all
+                %tr
+                  -for student in students
+                    -if st.id == student.student_id
+                      %td
+                        %a{href: "{% url 'professor:lesson_test_from_scan_correct_by_student' lesson.pk test.pk st.id %}"}
+                          {{st}}
+                      -if student.is_correct != None
+                        %td
+                          %span.status.alert.alert-success Corrigé
+                      -else
+                        %td
+                          %span.status.alert.alert-info Non corrigé
+    -else
+      .col-lg-2
+
+    .col-lg-6
+      .container-fluid.boxclassetitle
+        .pull-left
+          %td.center{width: "20px"}
+            %a.btn.btn-primary{href: "{% url 'professor:lesson_test_list' lesson.pk %}"}
+              Retour aux tests
+        .pull-right
+          %td.center{width: "20px"}
+            %a.btn.btn-primary{href: "{% url 'professor:lesson_test_from_scan_match' lesson.pk test.pk %}"}
+              Associer les élèves
+
+      .ligneorangefine
+      .container-fluid.boxclassetitle
+        %td.center{width: "20px"}
+          %form.form{action: "", method: "post", name: "copy", enctype: "multipart/form-data"}
+            -csrf_token
+            %input{type: "file", name: "copy", multiple : "multiple"}
+            %br/
+            %button.btn.btn-primary{type: "submit"}
+              Importer des copies
+      .ligneorangefine
+
+      .boxclasse.container-fluid
+        -if messages
+          -for message in messages
+            -if message.tags == 'error'
+              %h5{style:"color:red"}=message
+            -else
+              %h5{style:"color:green"}=message
+        %h5 Compétences sélectionnées
+        %ul.heatmap-list
+          -for skill in test.skills.all
+            %li
+              %a.btn.btn-default.skill{type: "button", href: "{% url 'professor:lesson_skill_detail' test.lesson.pk skill.code %}"}
+                %abbr{title: "{{ skill.name }}", style: "cursor: default; border: none"}= skill.code
+
+              =skill.name
+      .ligneorangefine
+      -if exist != 0
+        .boxclasse.container-fluid
+
+          %span.bullet.black
+          Non corrigé
+          %span.bullet.green
+          Bonne réponse
+          %span.bullet.red
+          Mauvaise réponse
+          %br
+          %br
+          %form.form{action: "", method: "post", name: "questions", enctype: "multipart/form-data"}
+            -csrf_token
+            %select{name : "questions"}
+              %option{value: "-1", id: "-1", selected:"selected"}
+                Toutes les questions
+              -for question in questions
+                -if request.session.sort_question == question.id
+                  %option{value: "{{ question.id }}", id: "{{ question.id }}", selected:"selected"}
+                    Question {{ question.question_num }}
+                -else
+                  %option{value: "{{ question.id }}", id: "{{ question.id }}"}
+                    Question {{ question.question_num }}
+
+            %button.btn.btn-primary{type: "submit"}
+              Trier
+
+          %h5 Réponses des étudiants
+          %ul.heatmap-list
+            -for answer in answers
+              %li.sld
+
+                -for question in questions
+                  -if question.id == answer.question_id
+                    =question.question_num
+                    )
+                    =question.contexte
+                {% load static %}
+
+                -for student in lesson.students.all
+                  -if student.id == answer.student_id
+                    %p{style:"color:blue;text-align:right"}
+                      [
+                      =student
+                      ]
+                %a{href: "{% url 'professor:lesson_test_from_scan_correct_one' lesson.id test.pk answer.pk  %}"}
+                  -if answer.is_correct
+                    %img.code.green.img-responsive{src : "{% static answer.reference %} "}
+                  -elif answer.is_correct == None
+                    %img.code.black.img-responsive{src : "{% static answer.reference %} "}
+                  -else
+                    %img.code.red.img-responsive{src : "{% static answer.reference %} "}
+
+
+  :css
+
+        .code {
+
+            border-style : solid;
+
+            border-width: 3px;
+            margin-bottom:3%;
+        }
+
+        .code:hover {
+          opacity:0.5;
+        }
+
+        .red{
+          background:red;
+          border-color : red;
+        }
+
+        .black{
+          background:black;
+          border-color : black;
+        }
+
+        .green{
+          background:green;
+          border-color : green;
+        }
+        .bullet{
+          display:inline-block;
+          height:16px;
+          width:16px;
+          margin-left:2%;
+          font-size:0.1em;
+          border-radius:16px;
+          position: relative;
+        }
+
+
+
+
+
+
+
+
