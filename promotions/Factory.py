@@ -456,7 +456,7 @@ class Expression:
 
 # tests Inequation
 #Inequation1 = Inequation('4*a-1/4>0', 'a')
-#Inequation2 = Inequation('a>1/16','a')
+#Inequation2 = Inequation('4*a>-1/4','a')
 #print Inequation1.isSolution('a>1/16')
 #print Inequation1.isEquivalant(Inequation2)
 

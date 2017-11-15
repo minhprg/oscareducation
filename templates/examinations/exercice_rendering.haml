@@ -1,5 +1,8 @@
 -load lesson_tags
-
+-load static
+-load compress
+-compress js
+  %script{type:"text/javascript", src:"{% static 'EquationForm.js' %}"}
   %form{method: "POST"}
     -csrf_token
     -for question in questions
@@ -23,7 +26,18 @@
           -elif answer.type == "algebraicEquation" or question.type == "algebraicInequation"
             %br
             =answer.answers.equations
-            %input.form-control{id: "{{ forloop.counter0 }}", name: "{{ forloop.counter0 }}", type: "text", autocomplete: "off"}
+            %form{:ng-app =>"equationApp", :ng-controller => "controller1" }
+              Enter text and hit enter:
+              -with y=forloop.counter0|stringformat:"s"
+                -with idpre="pre"|add:y
+                  %pre{:id=>idpre}
+
+                -with idtext="text"|add:y
+                  %input{:type=>"text", :ng-model =>"text", :name=>"text", :id=>idtext }
+                %input{:type=>"button", :id=>"buttonAlg" , :value=>"Check", :onclick=>"submit2({{ forloop.counter0}})"}
+            %input.form-control{id: "{{ forloop.counter0 }}", name: "{{ forloop.counter0 }}", type: "hidden", autocomplete: "off"}
+
+            //%input.form-control{id: "{{ forloop.counter0 }}", name: "{{ forloop.counter0 }}", type: "text", autocomplete: "off"}
           -elif answer.type == "algebraicSystem"
             %br
             -for equation in answer.answers.equations
@@ -61,6 +75,8 @@
             =answer.type
 
     %input.btn.btn-primary{type: "submit", value: "Répondre"}
+
+
 
   :css
     body {
