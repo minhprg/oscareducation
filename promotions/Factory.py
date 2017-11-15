@@ -448,7 +448,7 @@ def makeEquation(varRight=False, varLeft=True, minValueVar=-10, maxValueVar=10, 
             val1 = randint(minValueVar, maxValueVar)
         val2 = 0
         val4 = randint(2, maxValueVar)
-        while (val2 == 0 or val4 == 0):
+        while (val2 == 0):
             val2 = randint(minValueVar, maxValueVar)
 
         if(varLeft):
@@ -593,7 +593,7 @@ def makeInequation(varRight=False, varLeft=True, minValueVar=-10, maxValueVar=10
             equation = equation + "+" + str(val2)
 
         equation = parser(equation)
-        equationTest = Equation(handler.parse(unicode(equation, "utf-8"))[0], nameVar)
+        equationTest = Inequation(handler.parse(unicode(equation, "utf-8"))[0], nameVar)
 
         if(equationTest.solution != False and equationTest.solution != True):
             solution = getSolutionFromAND(str(equationTest.solution))
@@ -607,9 +607,96 @@ def makeInequation(varRight=False, varLeft=True, minValueVar=-10, maxValueVar=10
         else:
             equation = ""
 
+def makeEquation2Var(var1Right, var1Left, var2Right, var2Left, minValueVar, maxValueVar, nameVar1, nameVar2, division):
+    equation = ''
 
-def makeSys(varRight1=False, varLeft1=True, varRight2=True, varLeft2=False, minValueVar=-10, maxValueVar=10, minValueSol=-10, maxValueSol=10, nameVar1='y', nameVar2='x', division=False, isSolInt=True):
-    pass
+    isDivision1 = randint(0, 1)
+    isDivision2 = randint(0, 1)
+    isDivision3 = randint(0, 1)
+    val1 = 0
+    val3 = randint(2, maxValueVar)
+    while (val1 == 0):
+        val1 = randint(minValueVar, maxValueVar)
+    val2 = 0
+    val4 = randint(2, maxValueVar)
+    while (val2 == 0):
+        val2 = randint(minValueVar, maxValueVar)
+    val5 = 0
+    val6 = randint(2, maxValueVar)
+    while (val5 == 0):
+        val5 = randint(minValueVar, maxValueVar)
+
+    if (var1Left):
+        if (isDivision1 == 1 and division == True):
+            equation = equation + str(val1) + '/' + str(val3) + "*" + nameVar1
+        else:
+            equation = equation + str(val1) + "*" + nameVar1
+
+    if (var2Left):
+        if (isDivision3 == 1 and division == True):
+            equation = equation+"+" + str(val5) + '/' + str(val6) + "*" + nameVar2
+        else:
+            equation = equation+"+" + str(val5) + "*" + nameVar2
+
+    if (isDivision2 == 1 and division == True):
+        equation = equation + "+" + str(val2) + "/" + str(val4)
+    else:
+        equation = equation + "+" + str(val2)
+
+    equation = equation + "="
+
+    isDivision1 = randint(0, 1)
+    isDivision2 = randint(0, 1)
+    isDivision3 = randint(0, 1)
+    val1 = 0
+    val3 = randint(2, maxValueVar)
+    while (val1 == 0):
+        val1 = randint(minValueVar, maxValueVar)
+    val2 = 0
+    val4 = randint(2, maxValueVar)
+    while (val2 == 0):
+        val2 = randint(minValueVar, maxValueVar)
+    val5 = 0
+    val6 = randint(2, maxValueVar)
+    while (val5 == 0):
+        val5 = randint(minValueVar, maxValueVar)
+
+    if (var1Right):
+        if (isDivision1 == 1 and division == True):
+            equation = equation + str(val1) + '/' + str(val3) + "*" + nameVar1
+        else:
+            equation = equation + str(val1) + "*" + nameVar1
+
+    if (var2Right):
+        if (isDivision3 == 1 and division == True):
+            equation = equation+"+"+ str(val5) + '/' + str(val6) + "*" + nameVar2
+        else:
+            equation = equation+"+"+ str(val5) + "*" + nameVar2
+
+    if (isDivision2 == 1 and division == True):
+        equation = equation + "+" + str(val2) + "/" + str(val4)
+    else:
+        equation = equation + "+" + str(val2)
+
+    equation = parser(equation)
+    return equation
+
+def makeSys(var1Right1=False, var1Left1=True, var2Right1=False, var2Left1=True, var1Right2=True, var1Left2=False, var2Right2=True, var2Left2=False, minValueVar=-10, maxValueVar=10, minValueSol=-10, maxValueSol=10, nameVar1='y', nameVar2='x', division=False, isSolInt=True):
+    while(True):
+        handler = InputHandler("algebraicSystem")
+        equation1 = makeEquation2Var(var1Right1, var1Left1, var2Right1, var2Left1, minValueVar, maxValueVar, nameVar1, nameVar2, division)
+        equation2 = makeEquation2Var(var1Right2, var1Left2, var2Right2, var2Left2, minValueVar, maxValueVar, nameVar1, nameVar2, division)
+
+        systemTest = System(handler.parse((unicode(equation1, "utf-8"),(unicode(equation2, "utf-8"))))[0], nameVar1+","+nameVar2)
+
+        print list(systemTest.solution)
+        if (len(list(systemTest.solution)) != 0 and list(systemTest.solution)[0][0] > minValueSol and list(systemTest.solution)[0][0] < maxValueSol):
+            if (isSolInt and str(list(systemTest.solution)[0][0]).lstrip("-").isdigit() and str(list(systemTest.solution)[0][1]).lstrip("-").isdigit()):
+                return (equation1,equation2)
+            if (not isSolInt):
+                return (equation1,equation2)
+
+
 # tests Equation
 #handler = InputHandler.InputHandler()
 #eq1 = u'4*a-8 = 2*a +16'
@@ -660,9 +747,10 @@ def makeSys(varRight1=False, varLeft1=True, varRight2=True, varLeft2=False, minV
 #print Expression1.isEquivalant(Expression2)
 
 #test makeEquation
-#print(makeEquation(varRight=True, varLeft=True, minValueVar=-10, maxValueVar=10, minValueSol=0, maxValueSol=5, nameVar='s', division=True, isSolInt=True))
+#print(makeEquation(varRight=False, varLeft=True, minValueVar=-10, maxValueVar=10, minValueSol=0, maxValueSol=5, nameVar='s', division=True, isSolInt=True))
 
 #test makeInequation
-#print(makeInequation(varRight=True, varLeft=False, minValueVar=-10, maxValueVar=10, minValueSol=0, maxValueSol=20, nameVar='x', division=False, isSolInt=False, signeEquation='>'))
+print(makeInequation(varRight=True, varLeft=False, minValueVar=-10, maxValueVar=10, minValueSol=0, maxValueSol=20, nameVar='x', division=False, isSolInt=False, signeEquation='<'))
 
 #test makeSys
+#print(makeSys(var1Right1=True, var1Left1=False, var2Right1=False, var2Left1=True, var1Right2=False, var1Left2=True, var2Right2=True, var2Left2=True, minValueVar=-10, maxValueVar=10, minValueSol=-10, maxValueSol=10, nameVar1='y', nameVar2='x', division=True, isSolInt=True))
