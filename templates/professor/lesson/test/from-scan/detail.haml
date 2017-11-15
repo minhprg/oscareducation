@@ -26,8 +26,8 @@
           .panel-body
             %table.table
               %thead
-                %th Éleves
-                %th États
+                %th Élèves
+                %th Progression
               -for st in lesson.students.all
                 %tr
                   -for student in students
@@ -35,12 +35,9 @@
                       %td
                         %a{href: "{% url 'professor:lesson_test_from_scan_correct_by_student' lesson.pk test.pk st.id %}"}
                           {{st}}
-                      -if student.is_correct != None
-                        %td
-                          %span.status.alert.alert-success Corrigé
-                      -else
-                        %td
-                          %span.status.alert.alert-info Non corrigé
+                      %td
+                        .center
+                          {{student.pourcentage}}%
     -else
       .col-lg-2
 

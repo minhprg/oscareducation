@@ -1,0 +1,62 @@
+-extends "base.haml"
+-load bootstrap3
+-load static
+-load compress
+
+-block breadcrumb
+
+
+
+-block content
+  %h3 Création d'un test <i>{{ test.name }}</i>  pour la classe <a href="{% url 'professor:lesson_detail' lesson.pk %}">{{ lesson.name }}</a>
+  %hr
+
+  .ligneorange
+  .container-fluid.boxclassetitle
+    .pull-left
+      %td.center{width: "20px"}
+        %a.btn.btn-primary{href: "{% url 'professor:lesson_test_add' lesson.pk %}"}
+          Retour
+
+
+  .ligneorangefine
+
+  .container-fluid.boxclassetitle
+
+    %h5 Votre test
+    %br
+    %form.form{action: "", method: "post", name: "questions", enctype: "multipart/form-data"}
+      -csrf_token
+
+      Titre
+      %small (60 caractères max.)
+      %input.form-control{type: "text", required: "", placeholder: "Intitulé du test", name:"titre", maxlength:"60"}
+      %br
+      %ul.list-group{ng-app: "oscar", ng-controller: "severalQuestionsController"}
+        %li.list-group-item{ng-repeat: "question in questions"}
+          .index
+            Question {& $index + 1  &}
+          .row
+            .col-md-12
+              .form-group
+                %span
+                  %textarea.form-control{name:"{& $index &}",required: "", placeholder:"Texte de la question"}
+        %br
+        %button.btn.btn-success{type: "button", ng-click: "addMoreQuestion(1)"}
+          %span.glyphicon.glyphicon-plus
+        %button.btn.btn-danger.btn.remove{type: "button", ng-click: "removeQuestion(questions.length - 1)"}
+          %span.glyphicon.glyphicon-remove
+        %br
+        %br
+        .pull-right
+          %button.btn.btn-primary{type: "submit"}
+            Valider
+
+
+-block javascript
+  -compress js
+    %script{type: "text/javascript", src: "{% static 'js/professor_add_test_from_scan.js' %}"}
+
+
+
+
