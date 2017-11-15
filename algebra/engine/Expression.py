@@ -2,12 +2,12 @@
 
 import random
 import re as reg
-
-from datetime import datetime
 from abc import ABCMeta
 
 from sympy import symbols, sympify, degree, S
-#from algebra.models import AlgebraicExercice
+
+from Generator import Generator
+
 
 class ExpressionError(Exception):
     pass
@@ -34,6 +34,7 @@ class Expression(object):
     """
 
     __metaclass__ = ABCMeta
+    __generator__ = Generator()
     __children__ = set()
 
     # ---------------------------------------------------------- Magic methods
@@ -44,9 +45,9 @@ class Expression(object):
 
         Analyze the given expression string and computes the result(s) and
         places it in ´self.solution´ or raise and ´ExpressionError´ on syntax
-        failure.
+        parsing failure.
 
-        This constructor is not usable by itself as the Expression class is 
+        This constructor is not usable by itself as the Expression class is
         abstract. The intended use case is for children subclassing.
 
         e.g Equation :
@@ -71,10 +72,10 @@ class Expression(object):
         lo = self._sanitize(lo)
         ro = self._sanitize(ro)
         try:
-            locals = {}
-            for sym in self._symbols: locals[str(sym)] = sym
-            self._left_operand = sympify(lo, locals=locals)
-            self._right_operand = sympify(ro, locals=locals)
+            lcs = {}
+            for sym in self._symbols: lcs[str(sym)] = sym
+            self._left_operand = sympify(lo, locals=lcs)
+            self._right_operand = sympify(ro, locals=lcs)
         except Exception as e:
             raise ExpressionError('Invalid expression syntax, expression: ' +
                                   expression + "\nLeft operand: " + lo +
@@ -94,7 +95,7 @@ class Expression(object):
         )
 
     def __eq__(self, other):
-        return self._solution == other._solution
+        return self.solution == other.solution
 
     # --------------------------------------------------------- Static methods
 
@@ -108,6 +109,7 @@ class Expression(object):
         :param cls: type The Expression inherited class
         """
         Expression.__children__.add(cls)
+        return cls
 
     @staticmethod
     def generate(two_sided, degree):
@@ -115,12 +117,12 @@ class Expression(object):
         Generate an expression which type is taken at random from the
         registered classes.
 
-        :param two_sided:   bool    Whether the expression presents content 
+        :param two_sided:   bool    Whether the expression presents content
                                     at the two sides of the expression or not.
         :param degree:      int     The degree of the expression
         """
-        r = random.randint(0, len(Expression.children))
-        return Expression.children[r].generate()        
+        r = random.randint(0, len(Expression.__children__))
+        return Expression.__children__[r].generate(two_sided, degree)
 
     @staticmethod
     def _symbols_of(expression):
@@ -142,13 +144,15 @@ class Expression(object):
             if (start(c) or op.match(e[c.start() - 1])) \
             and (end(c, e) or op.match(e[c.start() + 1])):
                 continue
-            
+
             if not start(c) and not op.match(e[c.start() - 1]):
                 targets.append(c.start() - 1)
-            
+
             if not end(c, e) and not op.match(e[c.start() + 1]):
                 if not c.group() == "(":
                     targets.append(c.start() + 1)
+
+
 
         for i, target in enumerate(targets):
             e = e[0:target + 1] + '*' + e[target + 1:len(e)]

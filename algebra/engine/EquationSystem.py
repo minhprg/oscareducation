@@ -5,7 +5,8 @@ from sympy import symbols
 # ============================================================================
 # ============================= Equation System ==============================
 # ============================================================================
-    
+
+@Expression.register
 class EquationSystem(Expression):
     """
     Equation system representation, takes an array of expressions with
@@ -27,5 +28,3 @@ class EquationSystem(Expression):
         pass
 
 # ============================================================================
-
-Expression.register(EquationSystem)

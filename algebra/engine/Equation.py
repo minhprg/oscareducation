@@ -6,6 +6,7 @@ from sympy import solveset
 # ================================  Equation =================================
 # ============================================================================
 
+@Expression.register
 class Equation(Expression):
     """
     Simplest expression available. Solves equation(s) of any degree.
@@ -37,5 +38,3 @@ class Equation(Expression):
         return solutions
 
 # ============================================================================
-
-Expression.register(Equation)
