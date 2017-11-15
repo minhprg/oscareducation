@@ -8,8 +8,9 @@ from sympy.parsing.sympy_parser import standard_transformations as st
 from sympy.parsing.sympy_parser import implicit_multiplication_application as imp
 from sympy import Poly
 import copy
-import InputHandler
+from InputHandler import *
 from sympy import linsolve
+from random import *
 import sys
 import traceback
 # Based on http://python-3-patterns-idioms-test.readthedocs.io/en/latest/Factory.html
@@ -423,6 +424,278 @@ class Expression:
             return (False, hint)
 
 
+def parser(equation):
+    equation = equation.strip("+")
+    equation = equation.replace("=+","=")
+    equation = equation.replace(">=+",">=")
+    equation = equation.replace("<=+","<=")
+    equation = equation.replace("<+","<")
+    equation = equation.replace(">+",">")
+    equation = equation.replace("+-","-")
+    return equation
+
+
+def makeEquation(varRight=False, varLeft=True, minValueVar=-10, maxValueVar=10, minValueSol=-10, maxValueSol=10, nameVar='y', division=False, isSolInt=True):
+    equation = ''
+    handler = InputHandler("algebraicEquation")
+
+    while(True):
+        isDivision1 = randint(0, 1)
+        isDivision2 = randint(0, 1)
+        val1 = 0
+        val3 = randint(2, maxValueVar)
+        while (val1 == 0):
+            val1 = randint(minValueVar, maxValueVar)
+        val2 = 0
+        val4 = randint(2, maxValueVar)
+        while (val2 == 0):
+            val2 = randint(minValueVar, maxValueVar)
+
+        if(varLeft):
+            if(isDivision1 == 1 and division == True):
+                equation = equation + str(val1)+'/'+str(val3)+"*"+nameVar
+            else:
+                equation = equation + str(val1) + "*" + nameVar
+
+        if (isDivision2 == 1 and division == True):
+            equation = equation + "+" + str(val2) + "/" + str(val4)
+        else:
+            equation = equation + "+" + str(val2)
+
+
+
+        equation = equation+"="
+
+
+        isDivision1 = randint(0, 1)
+        isDivision2 = randint(0, 1)
+        val1 = 0
+        val3 = randint(2, maxValueVar)
+        while (val1 == 0):
+            val1 = randint(minValueVar, maxValueVar)
+        val2 = 0
+        val4 = randint(2, maxValueVar)
+        while (val2 == 0 or val4 == 0):
+            val2 = randint(minValueVar, maxValueVar)
+
+        if (varRight):
+            if (isDivision1 == 1 and division == True):
+                equation = equation + str(val1) + '/' + str(val3) + "*" + nameVar
+            else:
+                equation = equation + str(val1) + "*" + nameVar
+
+        if (isDivision2 == 1 and division == True):
+            equation = equation + "+" + str(val2) + "/" + str(val4)
+        else:
+            equation = equation + "+" + str(val2)
+
+        equation = parser(equation)
+        equationTest = Equation(handler.parse(unicode(equation, "utf-8"))[0], nameVar)
+
+
+        if(len(equationTest.solution)==1 and equationTest.solution[0] > minValueSol and equationTest.solution[0] < maxValueSol):
+            if(isSolInt and str(equationTest.solution[0]).lstrip("-").isdigit()):
+                return equation
+            if(not isSolInt):
+                return equation
+            equation = ""
+        else:
+            equation = ""
+
+def getSolutionFromAND(AND):
+    #print (AND)
+    solution = ""
+    if (not (AND[1].islower() or AND[1].isupper())):
+        i = 1
+        while (AND[i] != " "):
+            solution = solution + AND[i]
+            i += 1
+    else:
+        i = 3
+        while (AND[i] != " "):
+            i += 1
+        i += 1
+        while (AND[i] != ")"):
+            solution = solution + AND[i]
+            i += 1
+
+    if(solution.lstrip('-') == "oo"):
+        solution = ""
+        i = 0
+        while(AND[i] != "&"):
+            i += 1
+        i += 3
+        if(not (AND[i].islower() or AND[i].isupper())):
+            while (AND[i] != " "):
+                solution = solution + AND[i]
+                i += 1
+        else:
+            i += 2
+            while (AND[i] != " "):
+                i += 1
+            i += 1
+            while (AND[i] != ")"):
+                solution = solution + AND[i]
+                i += 1
+
+    #print(solution)
+    return solution
+
+def makeInequation(varRight=False, varLeft=True, minValueVar=-10, maxValueVar=10, minValueSol=-10, maxValueSol=10, nameVar='y', division=False, isSolInt=True, signeEquation='<'):
+    equation = ''
+    handler = InputHandler("algebraicInequation")
+
+    while (True):
+        isDivision1 = randint(0, 1)
+        isDivision2 = randint(0, 1)
+        val1 = 0
+        val3 = randint(2, maxValueVar)
+        while (val1 == 0):
+            val1 = randint(minValueVar, maxValueVar)
+        val2 = 0
+        val4 = randint(2, maxValueVar)
+        while (val2 == 0 or val4 == 0):
+            val2 = randint(minValueVar, maxValueVar)
+
+        if (varLeft):
+            if (isDivision1 == 1 and division == True):
+                equation = equation + str(val1) + '/' + str(val3) + "*" + nameVar
+            else:
+                equation = equation + str(val1) + "*" + nameVar
+
+        if (isDivision2 == 1 and division == True):
+            equation = equation + "+" + str(val2) + "/" + str(val4)
+        else:
+            equation = equation + "+" + str(val2)
+
+        equation = equation + signeEquation
+
+        isDivision1 = randint(0, 1)
+        isDivision2 = randint(0, 1)
+        val1 = 0
+        val3 = randint(2, maxValueVar)
+        while (val1 == 0):
+            val1 = randint(minValueVar, maxValueVar)
+        val2 = 0
+        val4 = randint(2, maxValueVar)
+        while (val2 == 0 or val4 == 0):
+            val2 = randint(minValueVar, maxValueVar)
+
+        if (varRight):
+            if (isDivision1 == 1 and division == True):
+                equation = equation + str(val1) + '/' + str(val3) + "*" + nameVar
+            else:
+                equation = equation + str(val1) + "*" + nameVar
+
+        if (isDivision2 == 1 and division == True):
+            equation = equation + "+" + str(val2) + "/" + str(val4)
+        else:
+            equation = equation + "+" + str(val2)
+
+        equation = parser(equation)
+        equationTest = Inequation(handler.parse(unicode(equation, "utf-8"))[0], nameVar)
+
+        if(equationTest.solution != False and equationTest.solution != True):
+            solution = getSolutionFromAND(str(equationTest.solution))
+
+        if (equationTest.solution != False and equationTest.solution != True and eval(solution) > minValueSol and eval(solution) < maxValueSol):
+            if (isSolInt and solution.lstrip("-").isdigit()):
+                return equation
+            if (not isSolInt):
+                return equation
+            equation = ""
+        else:
+            equation = ""
+
+def makeEquation2Var(var1Right, var1Left, var2Right, var2Left, minValueVar, maxValueVar, nameVar1, nameVar2, division):
+    equation = ''
+
+    isDivision1 = randint(0, 1)
+    isDivision2 = randint(0, 1)
+    isDivision3 = randint(0, 1)
+    val1 = 0
+    val3 = randint(2, maxValueVar)
+    while (val1 == 0):
+        val1 = randint(minValueVar, maxValueVar)
+    val2 = 0
+    val4 = randint(2, maxValueVar)
+    while (val2 == 0):
+        val2 = randint(minValueVar, maxValueVar)
+    val5 = 0
+    val6 = randint(2, maxValueVar)
+    while (val5 == 0):
+        val5 = randint(minValueVar, maxValueVar)
+
+    if (var1Left):
+        if (isDivision1 == 1 and division == True):
+            equation = equation + str(val1) + '/' + str(val3) + "*" + nameVar1
+        else:
+            equation = equation + str(val1) + "*" + nameVar1
+
+    if (var2Left):
+        if (isDivision3 == 1 and division == True):
+            equation = equation+"+" + str(val5) + '/' + str(val6) + "*" + nameVar2
+        else:
+            equation = equation+"+" + str(val5) + "*" + nameVar2
+
+    if (isDivision2 == 1 and division == True):
+        equation = equation + "+" + str(val2) + "/" + str(val4)
+    else:
+        equation = equation + "+" + str(val2)
+
+    equation = equation + "="
+
+    isDivision1 = randint(0, 1)
+    isDivision2 = randint(0, 1)
+    isDivision3 = randint(0, 1)
+    val1 = 0
+    val3 = randint(2, maxValueVar)
+    while (val1 == 0):
+        val1 = randint(minValueVar, maxValueVar)
+    val2 = 0
+    val4 = randint(2, maxValueVar)
+    while (val2 == 0):
+        val2 = randint(minValueVar, maxValueVar)
+    val5 = 0
+    val6 = randint(2, maxValueVar)
+    while (val5 == 0):
+        val5 = randint(minValueVar, maxValueVar)
+
+    if (var1Right):
+        if (isDivision1 == 1 and division == True):
+            equation = equation + str(val1) + '/' + str(val3) + "*" + nameVar1
+        else:
+            equation = equation + str(val1) + "*" + nameVar1
+
+    if (var2Right):
+        if (isDivision3 == 1 and division == True):
+            equation = equation+"+"+ str(val5) + '/' + str(val6) + "*" + nameVar2
+        else:
+            equation = equation+"+"+ str(val5) + "*" + nameVar2
+
+    if (isDivision2 == 1 and division == True):
+        equation = equation + "+" + str(val2) + "/" + str(val4)
+    else:
+        equation = equation + "+" + str(val2)
+
+    equation = parser(equation)
+    return equation
+
+def makeSys(var1Right1=False, var1Left1=True, var2Right1=False, var2Left1=True, var1Right2=True, var1Left2=False, var2Right2=True, var2Left2=False, minValueVar=-10, maxValueVar=10, minValueSol=-10, maxValueSol=10, nameVar1='y', nameVar2='x', division=False, isSolInt=True):
+    while(True):
+        handler = InputHandler("algebraicSystem")
+        equation1 = makeEquation2Var(var1Right1, var1Left1, var2Right1, var2Left1, minValueVar, maxValueVar, nameVar1, nameVar2, division)
+        equation2 = makeEquation2Var(var1Right2, var1Left2, var2Right2, var2Left2, minValueVar, maxValueVar, nameVar1, nameVar2, division)
+
+        systemTest = System(handler.parse((unicode(equation1, "utf-8"),(unicode(equation2, "utf-8"))))[0], nameVar1+","+nameVar2)
+
+        print list(systemTest.solution)
+        if (len(list(systemTest.solution)) != 0 and list(systemTest.solution)[0][0] > minValueSol and list(systemTest.solution)[0][0] < maxValueSol):
+            if (isSolInt and str(list(systemTest.solution)[0][0]).lstrip("-").isdigit() and str(list(systemTest.solution)[0][1]).lstrip("-").isdigit()):
+                return (equation1,equation2)
+            if (not isSolInt):
+                return (equation1,equation2)
+
 
 # tests Equation
 #handler = InputHandler.InputHandler()
@@ -472,3 +745,12 @@ class Expression:
 #Expression1 = Expression('(3+5)*2')
 #Expression2 = Expression('(8)*2')
 #print Expression1.isEquivalant(Expression2)
+
+#test makeEquation
+#print(makeEquation(varRight=False, varLeft=True, minValueVar=-10, maxValueVar=10, minValueSol=0, maxValueSol=5, nameVar='s', division=True, isSolInt=True))
+
+#test makeInequation
+print(makeInequation(varRight=True, varLeft=False, minValueVar=-10, maxValueVar=10, minValueSol=0, maxValueSol=20, nameVar='x', division=False, isSolInt=False, signeEquation='<'))
+
+#test makeSys
+#print(makeSys(var1Right1=True, var1Left1=False, var2Right1=False, var2Left1=True, var1Right2=False, var1Left2=True, var2Right2=True, var2Left2=True, minValueVar=-10, maxValueVar=10, minValueSol=-10, maxValueSol=10, nameVar1='y', nameVar2='x', division=True, isSolInt=True))
