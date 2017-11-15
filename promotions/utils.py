@@ -174,10 +174,10 @@ def stylesheet():
 def myFirstPage(canvas, doc):
 
     canvas.saveState()
-    url = pyqrcode.create(canvas.getPageNumber())
-    url.png('qr.png', scale=8)
+    #url = pyqrcode.create(canvas.getPageNumber())
+    #url.png('qr.png', scale=8)
 
-    canvas.drawInlineImage('qr.png', 45, 760, width=60,height=60)
+    #canvas.drawInlineImage('qr.png', 45, 760, width=60,height=60)
     canvas.rect(370,760,200,40)
     canvas.setFont('Times-Bold',16)
 
@@ -190,10 +190,10 @@ def myLaterPages(canvas, doc):
 
     canvas.saveState()
     canvas.setFont('Times-Roman',9)
-    url = pyqrcode.create(canvas.getPageNumber())
-    url.png('qr.png', scale=8)
+    #url = pyqrcode.create(canvas.getPageNumber())
+    #url.png('qr.png', scale=8)
 
-    canvas.drawInlineImage("qr.png", 530, 0.75*inch, width=45,height=45)
+    #canvas.drawInlineImage("qr.png", 530, 0.75*inch, width=45,height=45)
     canvas.drawString(inch, 0.75 * inch, "Page %d " % (doc.page))
     canvas.restoreState()
 

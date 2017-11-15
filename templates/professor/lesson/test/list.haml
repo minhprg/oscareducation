@@ -129,12 +129,9 @@
                 %a{href: "{% url 'professor:lesson_test_from_scan_detail' lesson.pk basetest.pk %}"}
                   =basetest.name
               %td
-                -if not basetest.testfromscan.testskillfromclass_set.exists
-                  %span.status.alert.alert-info
-                    Pas encore encodé
-                -else
-                  %span.status.alert.alert-info
-                    Encodé
+                %span.status.alert.alert-info
+                  =basetest.testfromscan.progress
+
 
               %td.align-right
                 -if not basetest.testfromscan.testskillfromscan_set.exists

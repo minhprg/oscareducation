@@ -609,7 +609,7 @@ class TestFromScan(BaseTest):
 
     """
     content = JSONField()
-    reference = models.CharField(max_length=50)
+    reference = models.CharField(max_length=50, default="")
 
 
 class TestSkillFromScan(models.Model):

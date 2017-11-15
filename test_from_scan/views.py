@@ -75,7 +75,12 @@ def lesson_test_from_scan_add(request, pk):
         title = request.POST.get('titre')
 
         scan = TestFromScan(lesson_id=pk,name=title)
-        scan.save()
+
+        try:
+            scan.save()
+        except Exception as e:
+            messages.error(request, "Une erreur s'est produite durant la création.")
+            return HttpResponseRedirect('/professor/lesson/'+str(pk)+'/test/from-scan/add/')
 
         form = sorted(form, key=lambda tup: tup[0])
 
@@ -83,16 +88,25 @@ def lesson_test_from_scan_add(request, pk):
 
         content = generate_coordinates(file)
 
-        TestFromScan.objects.filter(pk=scan.id).update(reference=file, content=json.dumps(content))
+        try:
+
+            TestFromScan.objects.filter(pk=scan.id).update(reference=file, content=json.dumps(content))
+        except Exception as e:
+            messages.error(request, "Une erreur s'est produite durant la création.")
+            return HttpResponseRedirect('/professor/lesson/'+str(pk)+'/test/from-scan/add/')
 
         for i in form:
             if not i[0] in "csrfmiddlewaretoken" and not i[0] in "titre":
                 question = TestQuestionFromScan(question_num=int(i[0])+1, contexte=i[1], test_id=scan.id)
-                question.save()
+                try:
+                    question.save()
+                except Exception as e:
+                    messages.error(request, "Une erreur s'est produite durant la création.")
+                    return HttpResponseRedirect('/professor/lesson/'+str(pk)+'/test/from-scan/add/')
 
 
 
-        return HttpResponseRedirect('/professor/lesson/'+str(pk)+'/test/from-scan/add/')
+        return HttpResponseRedirect('/professor/lesson/'+str(pk)+'/test/')
 
     return render(request, "professor/lesson/test/from-scan/add.haml", {
         "lesson": lesson,
@@ -114,8 +128,7 @@ def lesson_test_from_scan_correct_one(request, lesson_pk, test_pk, pk):
 
     for st in students:
         an =  TestAnswerFromScan.objects.all().filter(test_id=test_pk,student_id = st.student_id, is_correct__isnull=False).count()
-        print(an)
-        st.pourcentage = int((float(an)/len(questions))*100)
+        st.pourcentage = str(an)+"/"+str(len(questions))
 
 
     if answer.annotation == None:
@@ -148,7 +161,7 @@ def lesson_test_from_scan_download(request, lesson_pk, pk):
         filename = settings.STATIC_ROOT+"/tests/pdf/"+str(pk)+".pdf" # Select your file here.
         wrapper = FileWrapper(file(filename))
         response = HttpResponse(wrapper, content_type='application/pdf')
-        response['Content-Disposition'] = "filename="+test.name
+        response['Content-Disposition'] = "filename="+test.name+".pdf"
         response['Content-Length'] = os.path.getsize(filename)
         return response
     else:
@@ -178,8 +191,7 @@ def lesson_test_from_scan_correct_by_student(request, lesson_pk, test_pk, pk):
 
     for st in students:
         an =  TestAnswerFromScan.objects.all().filter(test_id=test_pk,student_id = st.student_id, is_correct__isnull=False).count()
-        print(an)
-        st.pourcentage = int((float(an)/len(questions))*100)
+        st.pourcentage = str(an)+"/"+str(len(questions))
 
 
     for answer in answers:
@@ -251,8 +263,7 @@ def lesson_test_from_scan_detail(request, lesson_pk, pk):
 
     for st in students:
         an =  TestAnswerFromScan.objects.all().filter(test_id=pk,student_id = st.student_id, is_correct__isnull=False).count()
-        print(an)
-        st.pourcentage = int((float(an)/len(questions))*100)
+        st.pourcentage = str(an)+"/"+str(len(questions))
 
 
     if request.method == "POST":
@@ -276,44 +287,49 @@ def lesson_test_from_scan_detail(request, lesson_pk, pk):
                 i=1
                 count_question = 0
                 cont = json.loads(test.content)
+                count_page = 1
                 for c in copy:
                     img = Image.open(c)
 
                     dpi = int(round(img.size[0]/(21*0.3937008)))
-                    qr = qrtools.QR()
-                    qr.decode(c)
+                    #qr = qrtools.QR()
+                    #qr.decode(c)
 
 
+                    if str(count_page) not in cont:
+                        count_page = 1
+                    numpage = str(count_page)
 
-                    if qr.data == '1':
+                    if count_page == 1:
 
-                        ran = range(2,len(cont[qr.data][0]),2)
+                        ran = range(2,len(cont[numpage][0]),2)
 
 
-                        x1 = pt_to_px(dpi,cont[qr.data][0][0])
-                        y1 = pt_to_px(dpi,cont[qr.data][1][0],1)
-                        x2 = pt_to_px(dpi,cont[qr.data][0][1])
-                        y2 = pt_to_px(dpi,cont[qr.data][1][1],1)
+                        x1 = pt_to_px(dpi,cont[numpage][0][0])
+                        y1 = pt_to_px(dpi,cont[numpage][1][0],1)
+                        x2 = pt_to_px(dpi,cont[numpage][0][1])
+                        y2 = pt_to_px(dpi,cont[numpage][1][1],1)
 
                         name = img.crop((x1, y1, x2, y2))
                         ref_name = "/tests/"+ pk + "/name"+str(i)+".png"
                         name.save(settings.STATIC_ROOT +"/tests/"+ pk + "/name"+str(i)+".png")
                         count_question = 0
                     else:
-                        ran = range(0,len(cont[qr.data][0]),2)
+                        ran = range(0,len(cont[numpage][0]),2)
 
                     for answ in ran:
                         answer = TestAnswerFromScan(test_id=pk, question_id=questions[count_question].id, reference_name=ref_name, reference='/tests/'+pk+'/crop'+str(i)+'.png')
                         answer.save()
 
-                        x1 = pt_to_px(dpi,cont[qr.data][0][answ])
-                        y1 = pt_to_px(dpi,cont[qr.data][1][answ],1)
-                        x2 = pt_to_px(dpi,cont[qr.data][0][answ+1])
-                        y2 = pt_to_px(dpi,cont[qr.data][1][answ+1],1)
+                        x1 = pt_to_px(dpi,cont[numpage][0][answ])
+                        y1 = pt_to_px(dpi,cont[numpage][1][answ],1)
+                        x2 = pt_to_px(dpi,cont[numpage][0][answ+1])
+                        y2 = pt_to_px(dpi,cont[numpage][1][answ+1],1)
                         img2 = img.crop((x1, y1, x2, y2))
                         img2.save(settings.STATIC_ROOT +"/tests/"+ pk + "/crop" + str(i) + ".png")
                         i += 1
                         count_question +=1
+                    count_page+=1
         return HttpResponseRedirect('/professor/lesson/'+str(lesson_pk)+'/test/from-scan/'+str(pk)+'/')
 
     return render(request, "professor/lesson/test/from-scan/detail.haml", {

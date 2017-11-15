@@ -35,8 +35,7 @@
                         %a{href: "{% url 'professor:lesson_test_from_scan_correct_by_student' lesson.pk test.pk st.id %}"}
                           {{st}}
                       %td
-                        .center
-                          {{student.pourcentage}}%
+                        {{student.pourcentage}} corrigée(s)
     -else
       .col-lg-2
     .col-lg-6

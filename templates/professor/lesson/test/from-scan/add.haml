@@ -22,7 +22,10 @@
   .ligneorangefine
 
   .container-fluid.boxclassetitle
-
+    -if messages
+      -for message in messages
+        -if message.tags == 'error'
+          %h5{style:"color:red"}=message
     %h5 Votre test
     %br
     %form.form{action: "", method: "post", name: "questions", enctype: "multipart/form-data"}

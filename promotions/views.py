@@ -33,7 +33,7 @@ from django.views.decorators.http import require_POST
 from ruamel.yaml.comments import CommentedMap
 
 from examinations.models import Test, TestStudent, BaseTest, TestExercice, Context, List_question, Question, Answer, \
-    TestFromClass
+    TestFromClass, TestAnswerFromScan
 from examinations.validate import validate_exercice_yaml_structure
 from resources.models import KhanAcademy, Sesamath, Resource
 from skills.models import Skill, StudentSkill, CodeR, Section, Relations, CodeR_relations
@@ -568,9 +568,33 @@ def lesson_test_list(request, pk):
 
     lesson = get_object_or_404(Lesson, pk=pk)
 
+    temp = lesson.basetest_set.order_by('-created_at')
+
+    for test in temp:
+
+        if test.testfromscan:
+            answers = TestAnswerFromScan.objects.all().filter(test_id=test.testfromscan.id).distinct('student_id')
+            tmp = 0
+            for answer in answers:
+
+                if TestAnswerFromScan.objects.all().filter(test_id=test.testfromscan.id,student_id=answer.student_id, is_correct__isnull=True).count() == 0:
+                    tmp += 1
+            if tmp == len(answers) and len(answers) > 0:
+                test.testfromscan.progress = "Encodé"
+            elif (tmp == 0 and len(answers) == 0):
+                test.testfromscan.progress = "Pas encore encodé"
+            else:
+                test.testfromscan.progress = str(tmp)+"/"+str(len(answers))+" élève(s) corrigé(s)"
+
+    for t in temp:
+        print(t.testfromscan.progress)
+
+
+
+
     return render(request, "professor/lesson/test/list.haml", {
         "lesson": lesson,
-        "all_tests": lesson.basetest_set.order_by('-created_at'),
+        "all_tests": temp,
     })
 
 

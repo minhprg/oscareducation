@@ -58,8 +58,9 @@ class BaseTestDelete(LessonMixin, DeleteView):
     def get_success_url(self):
 
         myFile = os.path.isfile(settings.STATIC_ROOT+"/tests/pdf/"+self.kwargs["pk"]+".pdf")
-
-        shutil.rmtree(settings.STATIC_ROOT+"/tests/"+self.kwargs["pk"], ignore_errors=False, onerror=None)
+        myDir = os.path.isfile(settings.STATIC_ROOT+"/tests/"+self.kwargs["pk"])
+        if myDir:
+            shutil.rmtree(settings.STATIC_ROOT+"/tests/"+self.kwargs["pk"], ignore_errors=False, onerror=None)
         if myFile:
             os.remove(settings.STATIC_ROOT+"/tests/pdf/"+self.kwargs["pk"]+".pdf")
         return reverse('professor:lesson_test_list', args=(self.get_lesson().pk,))
