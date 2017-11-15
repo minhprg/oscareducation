@@ -150,7 +150,7 @@ def validate_exercice(request, test_student, test_exercice):
                 raw_answer[number]["response"] = [request.POST[str(number)]]
 
             elif data["type"].startswith("algebraic"):
-                raw_answer[number]["response"] = [request.POST.get(str(number),[])]
+                raw_answer[number]["response"] = request.POST.get(str(number) , "").lstrip(":").split(":")
 
             elif data["type"] == "graph":
                 graph_list = list()

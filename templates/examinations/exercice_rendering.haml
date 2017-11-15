@@ -25,8 +25,11 @@
 
           -elif answer.type == "algebraicEquation" or question.type == "algebraicInequation"
             %br
+            -with y=forloop.counter0|stringformat:"s"
+              -with idans="ans"|add:y
+                %input{:id => idans, :value=>"{{answer.answers.equations}}", :disable=>"disabled", :type =>"hidden"}
             =answer.answers.equations
-            %form{:ng-app =>"equationApp", :ng-controller => "controller1" }
+            %form
               Enter text and hit enter:
               -with y=forloop.counter0|stringformat:"s"
                 -with idpre="pre"|add:y
@@ -34,8 +37,8 @@
 
                 -with idtext="text"|add:y
                   %input{:type=>"text", :ng-model =>"text", :name=>"text", :id=>idtext }
-                %input{:type=>"button", :id=>"buttonAlg" , :value=>"Check", :onclick=>"submit2({{ forloop.counter0}})"}
-            %input.form-control{id: "{{ forloop.counter0 }}", name: "{{ forloop.counter0 }}", type: "hidden", autocomplete: "off"}
+                  %input{:type=>"button", :id=>"buttonAlg" , :value=>"Check", :onclick=>"submit2({{ forloop.counter0 }})"}
+              %input.form-control{id: "{{ forloop.counter0 }}", name: "{{ forloop.counter0 }}", type: "hidden", autocomplete: "off"}
 
             //%input.form-control{id: "{{ forloop.counter0 }}", name: "{{ forloop.counter0 }}", type: "text", autocomplete: "off"}
           -elif answer.type == "algebraicSystem"

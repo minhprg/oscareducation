@@ -227,24 +227,29 @@ class Question(models.Model):
         elif evaluation_type.startswith("algebraic"):
             # all algebraic exercise starts with that and are corrected using the factory method.
             handler = InputHandler(evaluation_type)
-            try:
-                (eq1, letter) = handler.parse(unicode(raw_correct_answers["answers"]["equations"]))
-                eq_to_solve = algebraic_factory(evaluation_type, eq1, letter)  # equation that needs to be solved
-                if "System" in evaluation_type:
-                    (eq2, letter2) = handler.parse([unicode(x) for x in response])
-                else:
-                    (eq2, letter2) = handler.parse(unicode(response[0]))
-
-                answer_from_student = algebraic_factory(evaluation_type, eq2, letter)
-                test_solution = eq_to_solve.isEquivalant(answer_from_student)  # return (bool,str)
-
-                if test_solution[0] and test_solution[1] is None:
-                    return 1
-                else:
-                    # we still need to display the hints
-                    return 0
-            except Exception:
+            list_of_answer_steps = response
+            print(list_of_answer_steps)
+            if list_of_answer_steps is None or len(list_of_answer_steps) == 0:
                 return 0
+            (eq1, letter) = handler.parse(unicode(raw_correct_answers["answers"]["equations"]))
+            eq_to_solve = algebraic_factory(evaluation_type, eq1, letter)  # equation that needs to be solved
+            for step in list_of_answer_steps:
+                try:
+                    if "System" in evaluation_type:
+                        (eq2, letter2) = handler.parse([unicode(x) for x in step])
+                    else:
+                        (eq2, letter2) = handler.parse(unicode(step))
+
+                    answer_from_student = algebraic_factory(evaluation_type, eq2, letter)
+                    test_solution = eq_to_solve.isEquivalant(answer_from_student)  # return (bool,str)
+
+                    if test_solution[0] and test_solution[1] is None and step == list_of_answer_steps[-1]:
+                        return 1
+                    if not test_solution[0]:
+                        return 0
+                except Exception:
+                    return 0
+            return 0
 
         # No automatic correction type found, not corrected by default
         else:
