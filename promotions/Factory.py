@@ -541,9 +541,10 @@ def getSolutionFromAND(AND):
     #print(solution)
     return solution
 
-def makeInequation(varRight=False, varLeft=True, minValueVar=-10, maxValueVar=10, minValueSol=-10, maxValueSol=10, nameVar='y', division=False, isSolInt=True, signeEquation='<'):
+def makeInequation(varRight=False, varLeft=True, minValueVar=-10, maxValueVar=10, minValueSol=-10, maxValueSol=10, nameVar='y', division=False, isSolInt=True, signeEquation=None):
     equation = ''
     handler = InputHandler("algebraicInequation")
+    signe = ['<','>','<=','>=']
 
     while (True):
         isDivision1 = randint(0, 1)
@@ -568,7 +569,11 @@ def makeInequation(varRight=False, varLeft=True, minValueVar=-10, maxValueVar=10
         else:
             equation = equation + "+" + str(val2)
 
-        equation = equation + signeEquation
+        randSigne = randint(0, 3)
+        if(signeEquation is not None):
+            equation = equation + signeEquation
+        else:
+            equation = equation + signe[randSigne]
 
         isDivision1 = randint(0, 1)
         isDivision2 = randint(0, 1)
@@ -696,6 +701,55 @@ def makeSys(var1Right1=False, var1Left1=True, var2Right1=False, var2Left1=True, 
             if (not isSolInt):
                 return (equation1,equation2)
 
+def makeExpression(nbrTerm=3, maxValue=10, minSol=0, maxSol=20, multiplication=False, exponent=False, division=False, parenthesis=False, isSolInt=True):
+    signe = ['+','-','+','+','-','-']    # 3 fois plus de chance d'avoir un + ou un -
+    if (multiplication):
+        signe.append('*')
+        signe.append('*')
+    if (division):
+        signe.append('/')
+        signe.append('/')
+
+    while(True):
+        isThereParenthesis = 0
+        isThereExponent = False
+        val = randint(1,maxValue)
+        expression = str(val)
+
+        i = 0
+        while(i<nbrTerm):
+            rand = randint(0, len(signe)-1)
+            randExpo = randint(0,3)
+            val = randint(1, maxValue)
+            valExpo = randint(2,4)
+            if(randExpo == 2 and not(isThereExponent) and exponent):
+                expression = expression + '**'
+                expression = expression + str(valExpo)
+                isThereExponent = True
+            else:
+                expression = expression + signe[rand]
+                if (parenthesis):
+                    rand = randint(0, 3)
+                    if(rand == 1):
+                        expression = expression +"("
+                        isThereParenthesis += 1
+                expression = expression + str(val)
+            if(isThereParenthesis > 0):
+                rand = randint(0,1)
+                if(rand == 1):
+                    expression = expression + ")"
+                    isThereParenthesis -= 1
+            i += 1
+
+        while(isThereParenthesis > 0):
+            expression = expression + ")"
+            isThereParenthesis -= 1
+
+        if(isSolInt and str(eval(expression)).lstrip('-').isdigit() and eval(expression)<maxSol and eval(expression)>minSol):
+            return expression
+        elif(eval(expression)<maxSol and eval(expression)>minSol):
+            return expression
+
 
 # tests Equation
 #handler = InputHandler.InputHandler()
@@ -750,7 +804,10 @@ def makeSys(var1Right1=False, var1Left1=True, var2Right1=False, var2Left1=True, 
 #print(makeEquation(varRight=False, varLeft=True, minValueVar=-10, maxValueVar=10, minValueSol=0, maxValueSol=5, nameVar='s', division=True, isSolInt=True))
 
 #test makeInequation
-print(makeInequation(varRight=True, varLeft=False, minValueVar=-10, maxValueVar=10, minValueSol=0, maxValueSol=20, nameVar='x', division=False, isSolInt=False, signeEquation='<'))
+#print(makeInequation(varRight=True, varLeft=False, minValueVar=-10, maxValueVar=10, minValueSol=0, maxValueSol=20, nameVar='x', division=False, isSolInt=False))
 
 #test makeSys
 #print(makeSys(var1Right1=True, var1Left1=False, var2Right1=False, var2Left1=True, var1Right2=False, var1Left2=True, var2Right2=True, var2Left2=True, minValueVar=-10, maxValueVar=10, minValueSol=-10, maxValueSol=10, nameVar1='y', nameVar2='x', division=True, isSolInt=True))
+
+#test makeExpression
+print(makeExpression(nbrTerm=4, maxValue=10, minSol=0, maxSol=100, multiplication=True, exponent=True, division=False, parenthesis=True, isSolInt=False))
