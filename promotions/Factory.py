@@ -701,7 +701,7 @@ def makeSys(var1Right1=False, var1Left1=True, var2Right1=False, var2Left1=True, 
             if (not isSolInt):
                 return (equation1,equation2)
 
-def makeExpression(nbrTerm=3, maxValue=10, minSol=0, maxSol=20, multiplication=False, division=False, parenthesis=False, isSolInt=True):
+def makeExpression(nbrTerm=3, maxValue=10, minSol=0, maxSol=20, multiplication=False, exponent=False, division=False, parenthesis=False, isSolInt=True):
     signe = ['+','-','+','+','-','-']    # 3 fois plus de chance d'avoir un + ou un -
     if (multiplication):
         signe.append('*')
@@ -719,15 +719,21 @@ def makeExpression(nbrTerm=3, maxValue=10, minSol=0, maxSol=20, multiplication=F
         i = 0
         while(i<nbrTerm):
             rand = randint(0, len(signe)-1)
+            randExpo = randint(0,3)
             val = randint(1, maxValue)
             valExpo = randint(2,4)
-            expression = expression + signe[rand]
-            if (parenthesis):
-                rand = randint(0, 3)
-                if(rand == 1):
-                    expression = expression +"("
-                    isThereParenthesis += 1
-            expression = expression + str(val)
+            if(randExpo == 2 and not(isThereExponent) and exponent):
+                expression = expression + '**'
+                expression = expression + str(valExpo)
+                isThereExponent = True
+            else:
+                expression = expression + signe[rand]
+                if (parenthesis):
+                    rand = randint(0, 3)
+                    if(rand == 1):
+                        expression = expression +"("
+                        isThereParenthesis += 1
+                expression = expression + str(val)
             if(isThereParenthesis > 0):
                 rand = randint(0,1)
                 if(rand == 1):
@@ -739,8 +745,9 @@ def makeExpression(nbrTerm=3, maxValue=10, minSol=0, maxSol=20, multiplication=F
             expression = expression + ")"
             isThereParenthesis -= 1
 
-        print(expression)
         if(isSolInt and str(eval(expression)).lstrip('-').isdigit() and eval(expression)<maxSol and eval(expression)>minSol):
+            return expression
+        elif(eval(expression)<maxSol and eval(expression)>minSol):
             return expression
 
 
@@ -803,4 +810,4 @@ def makeExpression(nbrTerm=3, maxValue=10, minSol=0, maxSol=20, multiplication=F
 #print(makeSys(var1Right1=True, var1Left1=False, var2Right1=False, var2Left1=True, var1Right2=False, var1Left2=True, var2Right2=True, var2Left2=True, minValueVar=-10, maxValueVar=10, minValueSol=-10, maxValueSol=10, nameVar1='y', nameVar2='x', division=True, isSolInt=True))
 
 #test makeExpression
-print(makeExpression(nbrTerm=10, maxValue=10, minSol=0, maxSol=100, multiplication=True, division=True, parenthesis=True, isSolInt=True))
+print(makeExpression(nbrTerm=4, maxValue=10, minSol=0, maxSol=100, multiplication=True, exponent=True, division=False, parenthesis=True, isSolInt=False))
