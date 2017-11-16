@@ -23,11 +23,8 @@
               %span.mathquill{data-keyboard-type: "{{ answer.type }}"}
               %input.form-control.hidden-math-form{id: "{{ forloop.counter0 }}", name: "{{ forloop.counter0 }}", type: "text", autocomplete: "off"}
 
-          -elif answer.type == "algebraicEquation" or question.type == "algebraicInequation"
+          -elif answer.type == "algebraicEquation" or answer.type == "algebraicInequation"
             %br
-            -with y=forloop.counter0|stringformat:"s"
-              -with idans="ans"|add:y
-                %input{:id => idans, :value=>"{{answer.answers.equations}}", :disable=>"disabled", :type =>"hidden"}
             =answer.answers.equations
             Entrez une étape et appuyez sur Enter:
             -with y=forloop.counter0|stringformat:"s"
@@ -46,11 +43,27 @@
             -for equation in answer.answers.equations
               =equation
               %br
-            ="Première équation du système"
-            %input.form-control{id: "{{ forloop.counter0 }}", name: "{{ forloop.counter0 }}", type: "text", autocomplete: "off"}
+            Entrez une étape et appuyez sur Enter:
             %br
-            ="Seconde équation du système"
-            %input.form-control{id: "{{ forloop.counter0 }}", name: "{{ forloop.counter0 }}", type: "text", autocomplete: "off"}
+            -with y=forloop.counter0|stringformat:"s"
+              -with idpre="pre"|add:y
+                %pre{:id=>idpre}
+              -with idtext="textEq1"|add:y
+                ="Première équation du système"
+                %br
+                %input{:type=>"text", :ng-model =>"text", :name=>"text", :id=>idtext, :onkeypress=>"myInputHandlerSystem(event, {{ forloop.counter0 }})"}
+              %br
+              -with idtext="textEq2"|add:y
+                ="Seconde équation du système"
+                %br
+                %input{:type=>"text", :ng-model =>"text", :name=>"text", :id=>idtext, :onkeypress=>"myInputHandlerSystem(event, {{ forloop.counter0 }})"}
+
+              -with idbut="buttonAlgebraic"|add:y
+                %input{:type=>"button", :id=>idbut , :value=>"Ajouter une étape", :onclick=>"submitSystem({{ forloop.counter0 }})"}
+              -with idbut="buttonclearAlgebraic"|add:y
+                %input{:type=>"button", :id=>idbut , :value=>"Retirer une étape", :onclick=>"clearLastStepSystem({{ forloop.counter0 }})"}
+            %input.form-control{id: "{{ forloop.counter0 }}", name: "{{ forloop.counter0 }}", type: "hidden", autocomplete: "off"}
+
           -elif answer.type == "radio"
             -with name=forloop.counter0
               -for option in answer.answers
