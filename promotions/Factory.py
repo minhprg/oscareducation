@@ -776,7 +776,7 @@ def makeExpression(nbrTerm=3, maxValue=10, minSol=0, maxSol=20, multiplication=F
 
 # tests Inequation
 #Inequation1 = Inequation('4*a-1/4>0', 'a')
-#Inequation2 = Inequation('a>1/16','a')
+#Inequation2 = Inequation('4*a>-1/4','a')
 #print Inequation1.isSolution('a>1/16')
 #print Inequation1.isEquivalant(Inequation2)
 
