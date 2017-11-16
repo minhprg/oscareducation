@@ -3,8 +3,8 @@
 -load compress
 -compress js
   %script{type:"text/javascript", src:"{% static 'EquationForm.js' %}"}
-  %form{method: "POST"}
-    -csrf_token
+%form{method: "POST"}
+  -csrf_token
     -for question in questions
       -if question.description
         .well.question-description
@@ -29,18 +29,18 @@
               -with idans="ans"|add:y
                 %input{:id => idans, :value=>"{{answer.answers.equations}}", :disable=>"disabled", :type =>"hidden"}
             =answer.answers.equations
-            %form
-              Enter text and hit enter:
-              -with y=forloop.counter0|stringformat:"s"
-                -with idpre="pre"|add:y
-                  %pre{:id=>idpre}
+            Entrez une étape et appuyez sur Enter:
+            -with y=forloop.counter0|stringformat:"s"
+              -with idpre="pre"|add:y
+                %pre{:id=>idpre}
 
-                -with idtext="text"|add:y
-                  %input{:type=>"text", :ng-model =>"text", :name=>"text", :id=>idtext }
-                  %input{:type=>"button", :id=>"buttonAlg" , :value=>"Check", :onclick=>"submit2({{ forloop.counter0 }})"}
+              -with idtext="text"|add:y
+                %input{:type=>"text", :ng-model =>"text", :name=>"text", :id=>idtext, :onkeypress=>"myInputHandler(event, {{ forloop.counter0 }})"}
+              -with idbut="buttonAlgebraic"|add:y
+                %input{:type=>"button", :id=>idbut , :value=>"Ajouter une étape", :onclick=>"submit2({{ forloop.counter0 }})"}
+              -with idbut="buttonclearAlgebraic"|add:y
+                %input{:type=>"button", :id=>idbut , :value=>"Retirer une étape", :onclick=>"clearLastStep({{ forloop.counter0 }})"}
               %input.form-control{id: "{{ forloop.counter0 }}", name: "{{ forloop.counter0 }}", type: "hidden", autocomplete: "off"}
-
-            //%input.form-control{id: "{{ forloop.counter0 }}", name: "{{ forloop.counter0 }}", type: "text", autocomplete: "off"}
           -elif answer.type == "algebraicSystem"
             %br
             -for equation in answer.answers.equations
@@ -81,7 +81,7 @@
 
 
 
-  :css
-    body {
-      padding-bottom: 200px;
-    }
+:css
+   body {
+     padding-bottom: 200px;
+   }
