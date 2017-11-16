@@ -16,8 +16,10 @@ class InputHandler:
     def parseSys(self, inputStrings):
         eq1 = self.parseEq(inputStrings[0])
         eq2 = self.parseEq(inputStrings[1])
-        if eq1 == "Trop ou pas de variables" or eq1 == "L'equation n'est pas bien exprimee" or eq2 == "Trop ou pas de variables" or eq2 == "L'equation n'est pas bien exprimee":
-            raise ValueError
+        if eq1 == "Trop ou pas de variables" or eq1 == "L'equation n'est pas bien exprimee":
+            raise ValueError(eq1)
+        elif eq2 == "Trop ou pas de variables" or eq2 == "L'equation n'est pas bien exprimee":
+            raise ValueError(eq2)
         elif len(eq1[1]) == 2:
             return ([eq1[0], eq2[0]], eq1[1][0]+","+eq1[1][1])
         elif len(eq2[1]) == 2:
@@ -53,13 +55,15 @@ class InputHandler:
             inputString = inputString.replace("^", "**")
             return (inputString, variables[0]) #appler exercice avec inputString correctement parser
         elif len(variables) > 1 and bool1 and bool2 and self.type == "algebraicEquation":
-            raise ValueError
+            raise ValueError("Trop de variables")
         elif len(variables) == 2 and bool1 and bool2 and self.type == "algebraicSystem":
             inputString = s[0] + "-(" + s[1] + ")"
             inputString = inputString.replace("^", "**")
             return (inputString, variables)
+        elif self.type == "algebraicSystem":
+            raise ValueError("Les équations ne sont pas bien écrites!")
         else:
-            raise ValueError #print parse error
+            raise ValueError("L'équation n'est pas bien écrite!")
 
     def findVariables(self, inputString):
         variables = []
@@ -81,9 +85,9 @@ class InputHandler:
             inputString = inputString.replace("^", "**")
             return (inputString, variables[0]) #appler exercice avec inputString correctement parser
         elif (len(variables) > 1 or len(variables) == 0) and bool:
-            raise ValueError
+            raise ValueError("Trop de variables!")
         else:
-            return ValueError #print parse error
+            raise ValueError("L'inéquation n'est pas bien écrite!") #print parse error
 
     def checkParseError(self,listChar, nbPar = 0):
         if not listChar and nbPar == 0:
@@ -186,7 +190,7 @@ class InputHandler:
                     return self.checkParseErrorIneq(listChar, nbPar)
                 elif listChar[1] == "(":
                     del listChar[0]
-                    return self.checkParseErrorIneq(listChar,nbPar)
+                    return self.checkParseErrorIneq(listChar, nbPar)
                 else:
                     return False
             elif listChar[0] == "(":
@@ -198,7 +202,7 @@ class InputHandler:
             elif listChar[0] == ")":
                 if listChar[1] == "+" or listChar[1] == "-" or listChar[1] == "*" or listChar[1] == "/" or listChar[1] == "<" or listChar[1] == ">" or listChar[1] == "^" or listChar[1] == ")":
                     del listChar[0]
-                    return self.checkParseErrorIneq(listChar,nbPar-1)
+                    return self.checkParseErrorIneq(listChar, nbPar-1)
                 else:
                     return False
             elif listChar[0] == "<" or listChar[0] == ">":
