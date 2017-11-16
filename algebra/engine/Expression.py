@@ -34,7 +34,6 @@ class Expression(object):
     """
 
     __metaclass__ = ABCMeta
-    __generator__ = Generator()
     __children__ = set()
 
     # ---------------------------------------------------------- Magic methods
@@ -88,7 +87,7 @@ class Expression(object):
         self._solution = self.resolve()
 
     def __str__(self):
-        return self._pretty(
+        return self.pretty(
             str(self._left_operand).strip(' ') + ' ' +
             self._operator + ' ' +
             str(self._right_operand).strip(' ')
@@ -152,8 +151,6 @@ class Expression(object):
                 if not c.group() == "(":
                     targets.append(c.start() + 1)
 
-
-
         for i, target in enumerate(targets):
             e = e[0:target + 1] + '*' + e[target + 1:len(e)]
             targets[i+1:] = map(lambda x: x + 1, targets[i+1:])
@@ -166,19 +163,9 @@ class Expression(object):
         return s.search(expression) != None
 
     @staticmethod
-    def _pretty(expression):
+    def pretty(expression):
         expr = expression.replace('**', '^')
         expr = expr.replace('*', '')
-        operator = reg.compile('[+*/%=1-9-]')
-
-        chars = set([(op.start(), op.group()) for op in operator.finditer(expr)])
-        for c in chars:
-            replacement = c[1]
-            if c[0] != len(expr) - 1 and expr[c[0] + 1] != ' ':
-                replacement += ' '
-
-            expr = expr.replace(c[1], replacement)
-
         return expr.strip(' ')
 
     @staticmethod
