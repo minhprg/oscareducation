@@ -209,9 +209,10 @@
                                         %tr
                                           %td.right-border{width: "50%"}
                                             -for j in student_answer
-                                              \\(
-                                              =j
-                                              \\)
+                                              -for y in j
+                                                \\(
+                                                =y
+                                                \\)
                                               %br
                                           %td{width: "50%"}
                                             %ul

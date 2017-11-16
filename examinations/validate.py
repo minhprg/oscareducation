@@ -70,7 +70,7 @@ def validate_exercice_yaml_structure(exercice):
         elif data["type"] in ("algebraicEquation","algebraicInequation", "algebraicSystem"):
             ih = InputHandler.InputHandler(data["type"])
             if isinstance(data["answers"]["equations"], list):
-                ans = tuple([unicode(x )for x in data["answers"]["equations"]])
+                ans = data["answers"]["equations"]
             else:
                 ans = unicode(data["answers"]["equations"])
             try:

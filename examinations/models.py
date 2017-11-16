@@ -228,26 +228,35 @@ class Question(models.Model):
             # all algebraic exercise starts with that and are corrected using the factory method.
             handler = InputHandler(evaluation_type)
             list_of_answer_steps = response
-            print(list_of_answer_steps)
             if list_of_answer_steps is None or len(list_of_answer_steps) == 0:
                 return 0
-            (eq1, letter) = handler.parse(unicode(raw_correct_answers["answers"]["equations"]))
+            if "System" in evaluation_type:
+                (eq1, letter) = handler.parse([unicode(x) for x in raw_correct_answers["answers"]["equations"]])
+            else:
+                (eq1, letter) = handler.parse(unicode(raw_correct_answers["answers"]["equations"]))
             eq_to_solve = algebraic_factory(evaluation_type, eq1, letter)  # equation that needs to be solved
-            for step in list_of_answer_steps:
+            print list_of_answer_steps
+            for index,step in enumerate(list_of_answer_steps):
                 try:
+
+                    print step
                     if "System" in evaluation_type:
-                        (eq2, letter2) = handler.parse([unicode(x) for x in step])
+                        (eq2, letter2) = handler.parse(step)
                     else:
                         (eq2, letter2) = handler.parse(unicode(step))
 
                     answer_from_student = algebraic_factory(evaluation_type, eq2, letter)
                     test_solution = eq_to_solve.isEquivalant(answer_from_student)  # return (bool,str)
+                    print eq1
+                    print step
+                    print test_solution
 
-                    if test_solution[0] and test_solution[1] is None and step == list_of_answer_steps[-1]:
+                    if test_solution[0] and test_solution[1] is None and index == len(list_of_answer_steps) -1 :
                         return 1
                     if not test_solution[0]:
                         return 0
-                except Exception:
+                except Exception :
+                    print Exception
                     return 0
             return 0
 

@@ -1577,7 +1577,7 @@ def exercice_validation_form_submit(request, pk=None):
 
                     }
 
-                else:
+                elif question["type"] == "algebraicEquation":
                     ih = InputHandler(question["type"])
                     eq,letter = ih.parse(unicode(question["eq1"]))
                     equation = factory(question["type"],eq,letter)
@@ -1590,6 +1590,23 @@ def exercice_validation_form_submit(request, pk=None):
                                     "equations":question["eq1"],
 
                     }}
+                elif question["type"] == "algebraicInequation":
+                    ih = InputHandler(question["type"])
+                    eq,letter = ih.parse(unicode(question["eq1"]))
+                    equation = factory(question["type"],eq,letter)
+                    sol = equation.solution
+                    for elem in str(sol).split("&"):
+                        if "oo" not in elem:
+                            sol = elem
+
+                    sol = sol.replace("(", "").replace(")", "")
+                    new_question_answers = {
+                        "type": question["type"],
+                        "answers": {"sol":sol,
+                                    "equations":question["eq1"],
+
+                    }}
+
 
             else:
                 answers = CommentedMap()

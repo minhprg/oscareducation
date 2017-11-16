@@ -63,9 +63,9 @@ class InputHandler:
             inputString = inputString.replace("^", "**")
             return (inputString, variables)
         elif self.type == "algebraicSystem":
-            raise ValueError("Les équations ne sont pas bien écrites!")
+            raise ValueError("Les equations ne sont pas bien ecrites!")
         else:
-            raise ValueError("L'équation n'est pas bien écrite!")
+            raise ValueError("L'equation n'est pas bien ecrite!")
 
     def findVariables(self, inputString):
         variables = []
@@ -89,7 +89,7 @@ class InputHandler:
         elif (len(variables) > 1 or len(variables) == 0) and bool:
             raise ValueError("Trop de variables!")
         else:
-            raise ValueError("L'inéquation n'est pas bien écrite!") #print parse error
+            raise ValueError("L'inequation n'est pas bien ecrite!") #print parse error
 
     def checkParseError(self,listChar, nbPar = 0):
         if not listChar and nbPar == 0:
