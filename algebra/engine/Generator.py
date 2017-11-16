@@ -2,7 +2,11 @@
 from fractions import Fraction
 from random import choice
 
-from sympy import S
+from sympy import *
+from sympy.parsing.sympy_parser import parse_expr
+from sympy.printing.str import StrPrinter
+
+from Expression import Expression
 
 class GeneratorError(Exception):
     pass
@@ -66,3 +70,8 @@ class Generator(object):
             tabSolution = Generator.solution(3, e_range)
             delta = tabSolution[1]**2-4*tabSolution[0]*tabSolution[2]
         return str(tabSolution[0])+"*x^2+"+str(tabSolution[1])+"*x+"+str(tabSolution[2])
+
+x, y, z = symbols("x y z")
+maVariable = sympify(Expression._sanitize(Generator.generate()))
+print simplify(maVariable)
+print solveset(maVariable)
