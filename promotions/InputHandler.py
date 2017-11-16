@@ -24,6 +24,8 @@ class InputHandler:
             return ([eq1[0], eq2[0]], eq1[1][0]+","+eq1[1][1])
         elif len(eq2[1]) == 2:
             return ([eq1[0], eq2[0]], eq2[1][0]+","+eq2[1][1])
+        elif len(eq1[1]) == 1 and len(eq2[1]) == 1 and eq1[1][0] != eq2[1][0]:
+            return (eq1[0], eq2[0], eq1[1][0]+","+eq2[1][0])
         else:
             raise ValueError
 
