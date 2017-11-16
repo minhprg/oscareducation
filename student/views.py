@@ -71,6 +71,7 @@ def pass_test(request, pk):
     # so each student will have the exercices in the same order
     next_not_answered_test_exercice = TestExercice.objects.filter(test=test_student.test, exercice__isnull=False, testable_online=True).exclude(answer__in=test_student.answer_set.all()).order_by('created_at').first()
 
+    print request
     if request.method == "POST":
         # There is normally no way for a student to answer another exercice
         return validate_exercice(request, test_student, next_not_answered_test_exercice)
@@ -92,6 +93,7 @@ def pass_test(request, pk):
 
     return render(request, "examinations/take_exercice.haml", {
         "test_exercice": next_not_answered_test_exercice,
+
     })
 
 
@@ -148,7 +150,7 @@ def validate_exercice(request, test_student, test_exercice):
                 raw_answer[number]["response"] = [request.POST[str(number)]]
 
             elif data["type"].startswith("algebraic"):
-                raw_answer[number]["response"] = [request.POST[str(number)]]
+                raw_answer[number]["response"] = request.POST.get(str(number) , "").lstrip(":").split(":")
 
             elif data["type"] == "graph":
                 graph_list = list()
