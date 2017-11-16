@@ -1,3 +1,4 @@
+"use strict";
 $(document).ready(function(){
   //gestion de l'aspect "radio" des boutons
   $(".radio-side").click(function(){
@@ -34,7 +35,6 @@ $(document).ready(function(){
       solution: $("#solution").val() ,
       level: $("#exercice_level").val(),
     };
-    console.log(JSON.stringify(exerciceToSend)+$("#signe").val());
 
     var request=$.ajax({
       url: '/algebra/exercice/creation',

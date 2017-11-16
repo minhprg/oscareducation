@@ -1,6 +1,7 @@
 -extends "algebra/base.haml"
--block bootstrap3_title
-  Créer exercice
+-load static
+-block javascript
+  %script{type: "text/javascript", src: "{% static 'js/creationExercise.js' %}"}
 -block breadcrumb
   %br
   %br

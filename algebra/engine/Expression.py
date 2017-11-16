@@ -6,7 +6,6 @@ from abc import ABCMeta
 
 from sympy import symbols, sympify, degree, S
 
-from Generator import Generator
 
 
 class ExpressionError(Exception):
@@ -131,6 +130,9 @@ class Expression(object):
     @staticmethod
     def _sanitize(expression):
         e = expression.replace(' ', '')
+        e = e.replace('--', '+')
+        e = e.replace('+-', '-')
+        e = e.replace('-+', '-')
 
         sym = reg.compile('[a-zA-Z(]')
         op = reg.compile('[-+*^/%=)(]') # add operators here
