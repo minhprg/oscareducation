@@ -1,12 +1,14 @@
-
 from fractions import Fraction
 from random import choice
+import re as reg
+
 
 from sympy import *
 from sympy.parsing.sympy_parser import parse_expr
 from sympy.printing.str import StrPrinter
 
 from Expression import Expression
+
 
 class GeneratorError(Exception):
     pass
@@ -15,6 +17,19 @@ class GeneratorError(Exception):
 class Generator(object):
 
     _operators = ['-', '+', '*', '/']
+
+    def __init__(self):
+        raise GeneratorError("Cannot instanciate Generator object")
+
+    @staticmethod
+    def generate(e_degree=2, e_range=20, domain=S.Reals):
+        from algebra.engine import Expression
+        expression = ""
+        for solution in Generator.solution(e_degree, e_range):
+            expression += "(x+" + str(-solution) + ")*"
+        expression = expression[0:-1]
+        sexpr = expand(sympify(expression))
+        return Expression.pretty(str(sexpr))
 
     @staticmethod
     def generate(degree=2, ranges=20, domain=S.Reals):
@@ -29,12 +44,11 @@ class Generator(object):
         else:
             return Generator.impossibleEquation(ranges)
 
-
     @staticmethod
-    def solution(e_degree, e_range):
+    def solution(e_degree, e_range, fraction=False):
         solutions = []
 
-        for i in range (0,e_degree):
+        for i in range(0, e_degree):
             solutions.append(choice(range(-e_range, e_range)))
 
         return tuple(solutions)
