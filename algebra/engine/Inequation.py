@@ -6,6 +6,7 @@ from sympy import Poly, solve_poly_inequality
 # ================================ Inequation ================================
 # ============================================================================
 
+@Expression.register
 class Inequation(Expression):
     """
     Inequation representation, solves any kind of inequality. Tested for the
@@ -39,5 +40,3 @@ class Inequation(Expression):
         return results
 
 # ============================================================================
-
-Expression.register(Inequation)

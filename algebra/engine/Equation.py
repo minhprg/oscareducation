@@ -1,15 +1,17 @@
-from . import Expression
+"""TODO"""
 
 from sympy import solveset
+from . import Expression
 
 # ============================================================================
 # ================================  Equation =================================
 # ============================================================================
 
+@Expression.register
 class Equation(Expression):
     """
     Simplest expression available. Solves equation(s) of any degree.
-    
+
     :see: Expression
     """
 
@@ -37,5 +39,3 @@ class Equation(Expression):
         return solutions
 
 # ============================================================================
-
-Expression.register(Equation)
