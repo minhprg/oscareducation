@@ -5,6 +5,7 @@ $(document).ready(function(){
     $(".radio-side").removeClass("btn-primary");
     $(this).addClass("btn-primary");
   });
+
   //appels pour écrire
   $("#addTermWithVariable").click(function(){
     writeSide("#termWithVariable");
@@ -15,6 +16,7 @@ $(document).ready(function(){
   $("#addOperator").click(function(){
     writeSide("#operator");
   });
+
   //gestion du submit form
   $('form').submit(function(event) {
     var exerciceToSend,exerciceType;
