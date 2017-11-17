@@ -64,6 +64,23 @@ $(document).ready(function(){
     // stop action submit
     event.preventDefault();
   });
+
+    // mathquill keyboard
+    renderMathquil($(".mathquill"), function(MQ, index, mq) {
+      var input = $($(mq).parent().find("input")[0]);
+      var mathquill = MQ.MathField(mq, {
+        handlers: {
+          edit: function() {
+            input.val(mathquill.text());
+          }
+        }
+      });
+
+      var keyboard = $($(mq).parent().children()[0]);
+
+      return [mathquill, keyboard]
+    });
+    //end of document.ready
 });
 
   //gestion de l'ecriture d'un coté ou d'un autre
