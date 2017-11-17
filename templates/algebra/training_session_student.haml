@@ -25,11 +25,11 @@
           .col-md-12
             %h1.text-center.display-3.text-primary
               - for expression in expressions
-                %div{:class => "equation_type", :id=> "#{expression.id}_type"} Type : #{expression.expression_type}
+                %div{:class => "equation_type hide", :id=> "#{expression.id}_type"} Type : #{expression.expression_type}
             %h2.text-center.text-dark
               %em
                 - for expression in expressions
-                  %div{:class => "equation_level", :id=> "#{expression.id}_level"} Level : #{expression.level}
+                  %div{:class => "equation_level hide", :id=> "#{expression.id}_level"} Level : #{expression.level}
 
 
         #s_pricing1.p-1{:draggable => "true"}
@@ -39,7 +39,7 @@
               %hr
               %p
                 - for expression in expressions
-                    %div{:class => "equation", :id=> "#{expression.id}_expression"} #{expression.expression}
+                    %div{:class => "equation hide", :id=> "#{expression.id}_expression"} #{expression.expression}
             .p-3.align-self-top.col-md-4
               %h1 Score
               %hr
@@ -77,29 +77,5 @@
             .p-3.align-self-top.col-md-4
               %h2 Test navigation
               %hr
-              .row
-                .align-self-center.col-md-6.p-1
-                  %a.btn.btn-success.btn-block{:href => "#"} Q 1
-                .align-self-center.col-md-6.p-1
-                  %a.btn.btn-success.btn-block{:href => "#"} Q 2
-              .row
-                .align-self-center.col-md-6.p-1
-                  %a.btn.btn-success.btn-block{:href => "#"} Q 3
-                .align-self-center.col-md-6.p-1
-                  %a.btn.btn-success.btn-block{:href => "#"} Q 4
-              .row
-                .align-self-center.col-md-6.p-1
-                  %a.btn.btn-success.btn-block{:href => "#"} Q 5
-                .align-self-center.col-md-6.p-1
-                  %a.btn.btn-success.btn-block{:href => "#"} Q 6
-              .row
-                .align-self-center.col-md-6.p-1
-                  %a.btn.btn-success.btn-block{:href => "#"} Q 7
-                .align-self-center.col-md-6.p-1
-                  %a.btn.btn-success.btn-block{:href => "#"} Q 8
-              .row
-                .align-self-center.col-md-6.p-1
-                  %a.btn.btn-primary.text-white.btn-block{:href => "#"} Q 9
-                .align-self-center.col-md-6.p-1
-                  %a.btn.btn-primary.text-white.btn-block{:href => "#"} Q 10
+              .div{:id=>"clickQuestions"}
 / Contenair Question + nav FIN
