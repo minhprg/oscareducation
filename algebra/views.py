@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.core.exceptions import ObjectDoesNotExist
+from django.forms import model_to_dict
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.template.response import TemplateResponse
@@ -17,13 +19,13 @@ from algebra.models import AlgebraicExercice
 
 class List(View):
 
-	def get(self, request):
+    def get(self, request):
         expressions = AlgebraicExercice.objects.all()
         context = {
             'expressions': [expression.__dict__ for expression in expressions]
         }
-	    return TemplateResponse(request, "algebra/list.haml", context)
-    
+        return TemplateResponse(request, "algebra/list.haml", context)
+
 class TrainingSession(View):
 
 	def get(self, request):
@@ -103,3 +105,29 @@ class AssessmentCreation(View):
 
 	def get(self, request):
 		return TemplateResponse(request, "algebra/assessment_creation.haml")
+
+
+class APIExpressions(View):
+
+    def get(self, request):
+        query_set = AlgebraicExercice.objects.values_list('id', flat=True)
+        ids = [id for id in query_set]
+
+        return JsonResponse({
+            'nb': ids
+        }, status=200)
+
+class APIExpression(View):
+
+    def get(self, request, id):
+        expr = {}
+
+        try:
+            expr = AlgebraicExercice.objects.get(id=id)
+        except ObjectDoesNotExist:
+            return JsonResponse({}, status=404)
+
+        expr = model_to_dict(expr)
+        return JsonResponse({
+            'expression': expr
+        }, status=200)

@@ -1,9 +1,12 @@
-$(document).ready(function(){
+$(document).ready( function()
+{
+
   //gestion de l'aspect "radio" des boutons
   $(".radio-side").click(function(){
     $(".radio-side").removeClass("btn-primary");
     $(this).addClass("btn-primary");
   });
+
   //appels pour écrire
   $("#addTermWithVariable").click(function(){
     writeSide("#termWithVariable");
@@ -14,6 +17,7 @@ $(document).ready(function(){
   $("#addOperator").click(function(){
     writeSide("#operator");
   });
+
   //gestion du submit form
   $('form').submit(function(event) {
     var exerciceToSend,exerciceType;
@@ -64,6 +68,7 @@ $(document).ready(function(){
     // stop action submit
     event.preventDefault();
   });
+
 });
 
   //gestion de l'ecriture d'un coté ou d'un autre
