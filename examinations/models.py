@@ -235,11 +235,10 @@ class Question(models.Model):
             else:
                 (eq1, letter) = handler.parse(unicode(raw_correct_answers["answers"]["equations"]))
             eq_to_solve = algebraic_factory(evaluation_type, eq1, letter)  # equation that needs to be solved
-            print list_of_answer_steps
-            for index,step in enumerate(list_of_answer_steps):
+            for index, step in enumerate(list_of_answer_steps):
+
                 try:
 
-                    print step
                     if "System" in evaluation_type:
                         (eq2, letter2) = handler.parse(step)
                     else:
@@ -247,16 +246,12 @@ class Question(models.Model):
 
                     answer_from_student = algebraic_factory(evaluation_type, eq2, letter)
                     test_solution = eq_to_solve.isEquivalant(answer_from_student)  # return (bool,str)
-                    print eq1
-                    print step
-                    print test_solution
 
                     if test_solution[0] and test_solution[1] is None and index == len(list_of_answer_steps) -1 :
                         return 1
                     if not test_solution[0]:
                         return 0
-                except Exception :
-                    print Exception
+                except Exception as e:
                     return 0
             return 0
 
