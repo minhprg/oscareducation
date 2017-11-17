@@ -18,7 +18,6 @@
 
   -compress css
     %link{href: "{% static 'css/keyboard.css' %}", rel: "stylesheet"}
-    %link{href: "{% static 'css/mathquill.css' %}", rel: "stylesheet"}
     %link{href: "{% static 'css/jquery-ui.css' %}", rel: "stylesheet"}
     %link{href: "{% static 'css/mathquill.css' %}", rel: "stylesheet"}
     %link{href: "{% static 'css/textAngular.css' %}", rel: "stylesheet"}
@@ -32,6 +31,10 @@
   %link{rel: "icon", type: "image/png", href: "{% static 'img/favicon.png' %}"}
   %style
     hr {margin-top: 20px;}
+    span.mathquill{
+    padding: 6px 12px;
+    background-color: #fff;
+    }
   -block head
 
 
