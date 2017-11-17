@@ -9,7 +9,6 @@ from reportlab.rl_config import defaultPageSize
 from reportlab.lib.units import inch
 from reportlab.lib.enums import TA_LEFT, TA_CENTER
 import reportlab.lib.colors as colors
-import pyqrcode
 import time
 from PIL import Image
 from pdfminer.pdfparser import PDFParser

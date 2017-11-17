@@ -45,14 +45,14 @@
                 %span
                   %textarea.form-control{name:"{& $index &}",required: "", placeholder:"Texte de la question"}
         %br
-        %button.btn.btn-success{type: "button", ng-click: "addMoreQuestion(1)"}
+        %button.btn.btn-success{type: "button", ng-click: "addMoreQuestion(1)", name:"addQuestion"}
           %span.glyphicon.glyphicon-plus
         %button.btn.btn-danger.btn.remove{type: "button", ng-click: "removeQuestion(questions.length - 1)"}
           %span.glyphicon.glyphicon-remove
         %br
         %br
         .pull-right
-          %button.btn.btn-primary{type: "submit"}
+          %button.btn.btn-primary{type: "submit", id:"addScan"}
             Valider
 
 

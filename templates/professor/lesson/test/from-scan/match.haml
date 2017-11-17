@@ -21,7 +21,7 @@
   .container-fluid.boxclassetitle
     .pull-left
       %td.center{width: "20px"}
-        %a.btn.btn-primary{href: "{% url 'professor:lesson_test_from_scan_detail' lesson.pk test.pk %}"}
+        %a.btn.btn-primary{href: "{% url 'professor:lesson_test_from_scan_detail' lesson.pk test.pk %}", id:"previous"}
           Retour au test
   .ligneorange
 
@@ -73,7 +73,7 @@
         .pull-left
           %td.center{width: "20px"}
       %br
-      %button.btn.btn-primary{type: "submit"}
+      %button.btn.btn-primary{type: "submit", id: "match"}
         Associer les élèves
 
   .ligneorange

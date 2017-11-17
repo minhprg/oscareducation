@@ -83,7 +83,7 @@ def lesson_test_from_scan_add(request, pk):
             return HttpResponseRedirect('/professor/lesson/'+str(pk)+'/test/from-scan/add/')
 
         form = sorted(form, key=lambda tup: tup[0])
-
+        print(form)
         file = generate_pdf(form,scan.id)
 
         content = generate_coordinates(file)
