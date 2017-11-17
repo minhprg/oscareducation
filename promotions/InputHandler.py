@@ -21,11 +21,11 @@ class InputHandler:
         elif eq2 == "Trop ou pas de variables" or eq2 == "L'equation n'est pas bien exprimee":
             raise ValueError(eq2)
         elif len(eq1[1]) == 2:
-            return ([eq1[0], eq2[0]], eq1[1][0]+","+eq1[1][1])
+            return (([eq1[0], eq2[0]]), eq1[1][0]+","+eq1[1][1])
         elif len(eq2[1]) == 2:
-            return ([eq1[0], eq2[0]], eq2[1][0]+","+eq2[1][1])
+            return (([eq1[0], eq2[0]]), eq2[1][0]+","+eq2[1][1])
         elif len(eq1[1]) == 1 and len(eq2[1]) == 1 and eq1[1][0] != eq2[1][0]:
-            return (eq1[0], eq2[0], eq1[1][0]+","+eq2[1][0])
+            return ((eq1[0], eq2[0]), eq1[1][0]+","+eq2[1][0])
         else:
             raise ValueError
 
@@ -236,3 +236,6 @@ class InputHandler:
                 return True
             else:
                 return False
+
+ih = InputHandler("algebraicSystem")
+print(ih.parse((u"2*x=4", u"y+4=0")))
