@@ -3,8 +3,6 @@
 -block javascript
   %script{type: "text/javascript", src: "{% static 'js/creationExercise.js' %}"}
 -block breadcrumb
-  %br
-  %br
   %ol.breadcrumb
     %li
       %a{ :href => "{% url 'home' %}", :title => "Home" }
@@ -81,7 +79,10 @@
       %hr
       .row
         .col-md-5
-          %input.form-control{:id => "leftSide", :name => 'leftSide', :value=>'2X'}
+          %span
+            %textarea.keyboard
+            %span.mathquill{data-keyboard-type: "math-advanced"}
+            %input.form-control.hidden-math-form{:id => "leftSide", :name => 'leftSide'}
           %br/
         .col-md-2{:align => "center"}
           .btn-group.btn-group-lg
@@ -90,14 +91,20 @@
               %option >
               %option <
         .col-md-5
-          %input.form-control{:id => "rightSide", :name => 'rightSide', :value=>'1'}
+          %span
+            %textarea.keyboard
+            %span.mathquill{data-keyboard-type: "math-advanced"}
+            %input.form-control.hidden-math-form{:id => "rightSide", :name => 'rightSide'}
           %br/
       %hr
       .row
         .col-md-4
           %label{:for => 'solution'} Solution:
         .col-md-4
-          %input.form-control{:id => "solution", :name => 'solution', :value=>'x=5'}
+          %span
+            %textarea.keyboard
+            %span.mathquill{data-keyboard-type: "math-advanced"}
+            %input.form-control.hidden-math-form{:id => "solution", :name => 'solution'}
           %br/
       .row
         .col-md-12
