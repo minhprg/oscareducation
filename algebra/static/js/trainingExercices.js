@@ -14,7 +14,10 @@ $(document).ready(function(){
   });
 
   $("#check").click(function(){
-    verifResponse();
+    if ($("#step1").val()!="") verifResponse(1);
+    if ($("#step2").val()!="") verifResponse(2);
+    if ($("#step3").val()!="") verifResponse(3);
+    if ($("#step4").val()!="") verifResponse(4);
   });
 
   chargeQuestion(1);
@@ -73,11 +76,11 @@ function chargeQuestion (num){
   });
 }
 
-function verifResponse(){
+function verifResponse(step){
   var exerciceToSend = {
     expression: $("#expression_"+question).html(),
     type: "Equation" ,
-    solution: $("#step1").val() ,
+    solution: $("#step"+step).val() ,
     level: "1",
     };
 
@@ -91,12 +94,12 @@ function verifResponse(){
 
   request.done(function(data) {
     // message success
-    $("#hintstep1").val("ok").removeClass("alert-danger").addClass("alert-success");
+    $("#hintstep"+step).val("ok").removeClass("alert-danger").addClass("alert-success");
     });
 
   request.fail(function(xhr) {
 
-    $("#hintstep1").val("erreur").removeClass("alert-success").addClass("alert-danger");
+    $("#hintstep"+step).val("erreur").removeClass("alert-success").addClass("alert-danger");
     });
 
 }
