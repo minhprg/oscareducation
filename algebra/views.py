@@ -31,16 +31,20 @@ class List(View):
 class TrainingSession(View):
 
     def get(self, request):
+	print "test3"
 	expressions = AlgebraicExercice.objects.filter(level=1)
 
 	number = expressions.count()
 
 	i=0
 	tab = []
-	while i!=10 :
+	while i!=number :
+		print "test4"
 		myrandom = choice(range(0, number-1))
 		while myrandom in tab:
-			myrandom = choice(range(0, number-1))
+			print tab
+			myrandom = choice(range(0, number))
+			print myrandom
 		tab.append(myrandom)
 		i+=1
 	print tab
@@ -81,7 +85,6 @@ class TrainingSession(View):
         return expr, solution
 
     def post(self, request):
-
         if request.content_type != "application/json":
             return HttpResponse(status=415)
 
