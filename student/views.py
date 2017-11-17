@@ -6,7 +6,7 @@ from datetime import datetime
 
 from django.shortcuts import render, get_object_or_404
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.views.decorators.http import require_POST
 from django.db import transaction
@@ -518,3 +518,9 @@ def skill_pedagogic_ressources(request, type, slug):
         "sori_coder_lesson_resource_khanacademy": sori_coder_lesson_resource_khanacademy,
         "sori_coder_exercice_resource_sesamath": sori_coder_exercice_resource_sesamath,
     })
+
+@user_is_student
+def verifyEquation(request):
+    print(request.POST)
+    return HttpResponse("Coucou qui est là ?")
+

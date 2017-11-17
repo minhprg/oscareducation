@@ -24,6 +24,7 @@
       -elif question.type == "algebraicEquation" or question.type == "algebraicInequation"
         %br
         =question.answers.equations
+        %br
       -elif question.type == "algebraicSystem"
         %br
         -for equation in question.answers.equations
