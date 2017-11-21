@@ -1,10 +1,11 @@
 
   var question = 1;
   var nbrQuestion = 0;
+  var nbrCorrectAnswers = 0;
 
 $(document).ready(function(){
   $("#clear").click(function(){
-    $(".form-control").val("");
+    clear();
   });
   $("#previous").click(function(){
     if (question>1) chargeQuestion(question-1);
@@ -27,10 +28,10 @@ $(document).ready(function(){
   for (var i = 0; i < nbrRows; i++) {
     html += "<div class='row'>"+
            "<div class='align-self-center col-md-6 p-1'>"+
-              "<a href='#' class='btn btn-primary btn-block' onclick='chargeQuestion("+(i+1+(1*i))+")'>Q "+(i+1+(1*i))+"</a>"+
+              "<a href='#' id='Q_"+(i+1+(1*i))+"' class='btn btn-primary btn-block' onclick='chargeQuestion("+(i+1+(1*i))+")'>Q "+(i+1+(1*i))+"</a>"+
            "</div>"+
            "<div class='align-self-center col-md-6 p-1'>"+
-              "<a href='#' class='btn btn-primary btn-block' onclick='chargeQuestion("+(i+2+(1*i))+")'>Q "+(i+2+(1*i))+"</a>"+
+              "<a href='#' id='Q_"+(i+2+(1*i))+"' class='btn btn-primary btn-block' onclick='chargeQuestion("+(i+2+(1*i))+")'>Q "+(i+2+(1*i))+"</a>"+
            "</div></div>";
   }
   $("#clickQuestions").html(html);
@@ -41,6 +42,7 @@ $(document).ready(function(){
 
 function chargeQuestion (num){
   question = num;
+  clear();
   $("#question_title").html("Question "+question+" :");
 
   var i = 0;
@@ -95,6 +97,15 @@ function verifResponse(step){
   request.done(function(data) {
     // message success
     $("#hintstep"+step).val("ok").removeClass("alert-danger").addClass("alert-success");
+      if (data.message == "Ok-solution"){
+         if ($("#Q_"+question).hasClass('btn-primary')){
+            nbrCorrectAnswers++;
+            $("#Q_"+question).removeClass("btn-primary").addClass("alert-success");
+            $("#success-progress").html("Success : "+nbrCorrectAnswers+"/10");
+            $("#question-progress").css("width", nbrCorrectAnswers*10+"%");
+            $("#question-progress").html(nbrCorrectAnswers*10+"%");
+         }
+      }
     });
 
   request.fail(function(xhr) {
@@ -102,4 +113,12 @@ function verifResponse(step){
     $("#hintstep"+step).val("erreur").removeClass("alert-success").addClass("alert-danger");
     });
 
+}
+
+function clear(){
+  $(".form-control").val("");
+  $("#hintstep1").val("").removeClass("alert-danger").removeClass("alert-success");
+  $("#hintstep2").val("").removeClass("alert-danger").removeClass("alert-success");
+  $("#hintstep3").val("").removeClass("alert-danger").removeClass("alert-success");
+  $("#hintstep4").val("").removeClass("alert-danger").removeClass("alert-success");
 }

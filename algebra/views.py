@@ -88,15 +88,18 @@ class TrainingSession(View):
         try:
 
             expr, solution = self._parse(json.loads(request.body))
-            created = datetime.now()
-            db_expr = AlgebraicExercice(
-                expression=str(expr),
-                expression_type=expr._db_type,
-                created=created,
-                updated=created,
-                solution=str(expr.solution),
-                level=1
-            )
+            print expr
+            print solution
+            #AlgebraicExercice.objects.all().delete()
+
+            expressions = AlgebraicExercice.objects.filter(expression=expr)
+
+
+            if str(expressions[0].solution)==str(solution) :
+                return JsonResponse({
+                    'status': True,
+                    'message': "Ok-solution"
+                }, status=200)
 
             return JsonResponse({
                 'status': True,
@@ -162,7 +165,7 @@ class ExerciceCreation(View):
                 expression_type=expr._db_type,
                 created=created,
                 updated=created,
-                solution=str(expr.solution),
+                solution=str(solution),
                 level=1
             )
             db_expr.save()
