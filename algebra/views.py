@@ -91,9 +91,7 @@ class TrainingSession(View):
             print expr
             print solution
             #AlgebraicExercice.objects.all().delete()
-
             expressions = AlgebraicExercice.objects.filter(expression=expr)
-
 
             if str(expressions[0].solution)==str(solution) :
                 return JsonResponse({
@@ -168,7 +166,17 @@ class ExerciceCreation(View):
                 solution=str(solution),
                 level=1
             )
-            db_expr.save()
+            testExist = AlgebraicExercice.objects.filter(expression=str(expr))
+            i = 0
+            for elem in testExist :
+                i+=1
+            if i>0 :
+                return JsonResponse({
+                    'status': True,
+                    'message': "Exercice déjà enregistré"
+                }, status=200)
+            else :
+                db_expr.save()
 
             return JsonResponse({
                 'status': True,
