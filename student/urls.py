@@ -13,5 +13,5 @@ urlpatterns = [
     url(r'^test/(?P<pk>\d+)/$', views.pass_test, name='student_pass_test'),
     url(r'^test/(?P<pk>\d+)/start/$', views.start_test, name='student_start_test'),
     url(r'^pedagogical/(?P<type>.+)/(?P<slug>[a-zA-Z0-9_-]+)/$', user_is_student(views.skill_pedagogic_ressources), name='student_skill_pedagogic_ressources'),
-    url(r'^equationVerification$', csrf_exempt(views.verifyEquation), name='student_verifyEquation'),
+    url(r'^equationVerification/(?P<id>.+)/(?P<type>.+)/(?P<equa>.+)/$', views.verifyEquation, name='student_verifyEquation'),
 ]
