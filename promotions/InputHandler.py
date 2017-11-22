@@ -35,6 +35,7 @@ class InputHandler:
         inputString = inputString.replace(" ", "")
         bool = self.checkParseError(list(inputString))
         if bool:
+            inputString = inputString.replace("^", "**")
             return inputString
         else:
             raise ValueError("L'expression n'est pas bien formee")
