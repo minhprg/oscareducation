@@ -353,8 +353,6 @@ class System: #(Exercice):
     def analyse(self):
         left = ['']*len(self.sys)
         right = ['']*len(self.sys)
-        left_crypt = [''] * len(self.sys)
-        right_crypt = [''] * len(self.sys)
         coeffLeft = ['']*len(self.sys)
         coeffRight = ['']*len(self.sys)
 
@@ -493,7 +491,7 @@ def makeEquation(varRight=False, varLeft=True, minValueVar=-10, maxValueVar=10, 
         equationTest = Equation(handler.parse(unicode(equation, "utf-8"))[0], nameVar)
 
 
-        if(len(equationTest.solution)==1 and equationTest.solution[0] > minValueSol and equationTest.solution[0] < maxValueSol):
+        if(len(equationTest.solution)==1 and equationTest.solution[0] >= minValueSol and equationTest.solution[0] <= maxValueSol):
             if(isSolInt and str(equationTest.solution[0]).lstrip("-").isdigit()):
                 return equation
             if(not isSolInt):
@@ -603,7 +601,7 @@ def makeInequation(varRight=False, varLeft=True, minValueVar=-10, maxValueVar=10
         if(equationTest.solution != False and equationTest.solution != True):
             solution = getSolutionFromAND(str(equationTest.solution))
 
-        if (equationTest.solution != False and equationTest.solution != True and eval(solution) > minValueSol and eval(solution) < maxValueSol):
+        if (equationTest.solution != False and equationTest.solution != True and eval(solution) >= minValueSol and eval(solution) <= maxValueSol):
             if (isSolInt and solution.lstrip("-").isdigit()):
                 return equation
             if (not isSolInt):
@@ -694,8 +692,8 @@ def makeSys(var1Right1=False, var1Left1=True, var2Right1=False, var2Left1=True, 
 
         systemTest = System(handler.parse((unicode(equation1, "utf-8"),(unicode(equation2, "utf-8"))))[0], nameVar1+","+nameVar2)
 
-        print list(systemTest.solution)
-        if (len(list(systemTest.solution)) != 0 and list(systemTest.solution)[0][0] > minValueSol and list(systemTest.solution)[0][0] < maxValueSol):
+        if (len(list(systemTest.solution)) != 0 and list(systemTest.solution)[0][0] >= minValueSol and list(systemTest.solution)[0][0] <= maxValueSol
+                                                and list(systemTest.solution)[0][1] >= minValueSol and list(systemTest.solution)[0][1] <= maxValueSol):
             if (isSolInt and str(list(systemTest.solution)[0][0]).lstrip("-").isdigit() and str(list(systemTest.solution)[0][1]).lstrip("-").isdigit()):
                 return (equation1,equation2)
             if (not isSolInt):
@@ -810,4 +808,4 @@ def makeExpression(nbrTerm=3, maxValue=10, minSol=0, maxSol=20, multiplication=F
 #print(makeSys(var1Right1=True, var1Left1=False, var2Right1=False, var2Left1=True, var1Right2=False, var1Left2=True, var2Right2=True, var2Left2=True, minValueVar=-10, maxValueVar=10, minValueSol=-10, maxValueSol=10, nameVar1='y', nameVar2='x', division=True, isSolInt=True))
 
 #test makeExpression
-print(makeExpression(nbrTerm=4, maxValue=10, minSol=0, maxSol=100, multiplication=True, exponent=True, division=False, parenthesis=True, isSolInt=False))
+#print(makeExpression(nbrTerm=4, maxValue=10, minSol=0, maxSol=100, multiplication=True, exponent=True, division=False, parenthesis=True, isSolInt=False))
