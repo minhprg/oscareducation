@@ -810,4 +810,7 @@ def makeExpression(nbrTerm=3, maxValue=10, minSol=0, maxSol=20, multiplication=F
 #print(makeSys(var1Right1=True, var1Left1=False, var2Right1=False, var2Left1=True, var1Right2=False, var1Left2=True, var2Right2=True, var2Left2=True, minValueVar=-10, maxValueVar=10, minValueSol=-10, maxValueSol=10, nameVar1='y', nameVar2='x', division=True, isSolInt=True))
 
 #test makeExpression
-print(makeExpression(nbrTerm=4, maxValue=10, minSol=0, maxSol=100, multiplication=True, exponent=True, division=False, parenthesis=True, isSolInt=False))
+#print(makeExpression(nbrTerm=4, maxValue=10, minSol=0, maxSol=100, multiplication=True, exponent=True, division=False, parenthesis=True, isSolInt=False))
+#exp = factory("algebraicExpression", u"5*8","a")
+#print(type(exp.solution))
+#print(str(exp.solution))

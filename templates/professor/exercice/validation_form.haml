@@ -90,6 +90,7 @@
                     %option{value: "algebraicEquation"} Equations algrébriques
                     %option{value: "algebraicInequation"} Inéquations algrébriques
                     %option{value: "algebraicSystem"} Systèmes algrébriques
+                    %option{value: "algebraicExpression"} Expressions algébriques
                     %option{value: "math-simple"} Réponse mathématique simple
                     %option{value: "math-advanced"} Réponse mathématique avancée
                     %option{value: "radio"} Une seule réponse unique possible parmi toutes (radio)
@@ -106,11 +107,12 @@
                   %input.form-control{type: "text", ng-model: "question.indication", ng-required: "false"}
             %ul.list-group
 
-              %li.list-group-item{ng-if:"question.type == \"algebraicEquation\" || question.type == \"algebraicInequation\" "}
+              %li.list-group-item{ng-if:"question.type == \"algebraicEquation\" || question.type == \"algebraicInequation\" || question.type == \"algebraicExpression\" "}
                 .form-horizontal
                   .form-group
-                    %label.col-sm-2.control-label{ng-if: "question.type == \"algebraicEquation\""} Equation:
-                    %label.col-sm-2.control-label{ng-if: "question.type == \"algebraicInequation\""} Inéquation:
+                    %label.col-sm-2.control-label{ng-if: "question.type == \"algebraicEquation\""} Equation :
+                    %label.col-sm-2.control-label{ng-if: "question.type == \"algebraicInequation\""} Inéquation :
+                    %label.col-sm-2.control-label{ng-if: "question.type == \"algebraicExpression\""} Expression :
                     .col-sm-9
                     %input.form-control{type: "text", ng-model: "question.eq1", ng-required: "true"}
 
@@ -125,7 +127,7 @@
                     .col-sm-9
                     %input.form-control{type: "text", ng-model: "question.eq2", ng-required: "true"}
 
-              %li.list-group-item{ng-if: "question.type != \"professor\" && question.type != \"algebraicEquation\" && question.type != \"algebraicInequation\" && question.type != \"algebraicSystem\" ", ng-repeat: "answer in question.answers", ng-init: "answerIndex = $index.toString()"}
+              %li.list-group-item{ng-if: "question.type != \"professor\" && question.type != \"algebraicEquation\" && question.type != \"algebraicInequation\" && question.type != \"algebraicSystem\" && question.type != \"algebraicExpression\" ", ng-repeat: "answer in question.answers", ng-init: "answerIndex = $index.toString()"}
                 .form-horizontal{ng-if: "question.type != \"graph\"  "}
                   .form-group
                     %label.col-sm-2.control-label Réponse possible :
