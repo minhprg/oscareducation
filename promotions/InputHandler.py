@@ -10,6 +10,8 @@ class InputHandler:
             return self.parseIneq(inputString)
         elif self.type == "algebraicSystem":
             return self.parseSys(inputString) #tuple of strings
+        elif self.type == "algebraicExpression":
+            return self.parseExp(inputString)
         else:
             return "Type not found"
 
@@ -28,6 +30,14 @@ class InputHandler:
             return ((eq1[0], eq2[0]), eq1[1][0]+","+eq2[1][0])
         else:
             raise ValueError
+
+    def parseExp(self, inputString):
+        inputString = inputString.replace(" ", "")
+        bool = self.checkParseError(list(inputString))
+        if bool:
+            return inputString
+        else:
+            raise ValueError("L'expression n'est pas bien formee")
 
     def parseEq(self,inputString):
         inputString = inputString.replace(" ", "")
@@ -236,6 +246,3 @@ class InputHandler:
                 return True
             else:
                 return False
-
-ih = InputHandler("algebraicSystem")
-print(ih.parse((u"2*x=4", u"y+4=0")))
