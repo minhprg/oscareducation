@@ -49,3 +49,21 @@ assert "No results found." not in driver.page_source
 driver.close()
 
 ```
+
+### How run oscarSelenium.py
+
+Create a professor with :
+* username : ``selenium_prof``
+* password : ``selenium_prof``
+
+Create a class : ``Selenium_class``
+
+Create a student : 
+* Firstname : ``Student``
+* Name : ``Selenium``
+
+Generate password for this sudent. 
+
+ID __**must**__ be ``student.selenium``
+
+Set password : ``student.selenium``

@@ -26,9 +26,9 @@ def lookup(driver):
 
         #Connexion
         element = driver.find_element_by_id("id_username")
-        element.send_keys("prof", Keys.ENTER)
+        element.send_keys("selenium_prof", Keys.ENTER)
         element = driver.find_element_by_id("id_password")
-        element.send_keys("prof", Keys.ENTER)
+        element.send_keys("selenium_prof", Keys.ENTER)
 
         #Creating the test
         element = driver.find_element_by_partial_link_text("Selenium")
