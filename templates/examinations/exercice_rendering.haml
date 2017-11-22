@@ -3,6 +3,7 @@
 -load compress
 -compress js
   %script{type:"text/javascript", src:"{% static 'EquationForm.js' %}"}
+  %script{type:"text/javascript", src:"https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"}
 %form{method: "POST"}
   -csrf_token
     -for question in questions
