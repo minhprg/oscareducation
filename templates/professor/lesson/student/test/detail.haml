@@ -191,7 +191,7 @@
                                             %ul
                                               -for j in question.get_answers
                                                 %li= j
-                                      -elif type == "algebraicEquation" or type == "algebraicInequation"
+                                      -elif type == "algebraicEquation" or type == "algebraicInequation" or type == "algebraicExpression"
                                         %tr
                                           %td.right-border{width: "50%"}
                                             -for j in student_answer
@@ -209,6 +209,7 @@
                                         %tr
                                           %td.right-border{width: "50%"}
                                             -for j in student_answer
+
                                               -for y in j
                                                 \\(
                                                 =y
