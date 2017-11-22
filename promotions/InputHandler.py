@@ -33,10 +33,10 @@ class InputHandler:
 
     def parseExp(self, inputString):
         inputString = inputString.replace(" ", "")
-        bool = self.checkParseError(list(inputString))
+        bool = self.checkParseErrorExp(list(inputString))
         if bool:
             inputString = inputString.replace("^", "**")
-            return inputString
+            return inputString, "a"
         else:
             raise ValueError("L'expression n'est pas bien formee")
 
@@ -247,3 +247,57 @@ class InputHandler:
                 return True
             else:
                 return False
+    def checkParseErrorExp(self,listChar, nbPar = 0):
+        if not listChar and nbPar == 0:
+            return True #no parse error
+
+        if nbPar < 0:
+            return False
+        if len(listChar) > 1:
+            if listChar[0].isnumeric():
+                if listChar[1].isnumeric():
+                    del listChar[0]
+                    return self.checkParseErrorExp(listChar, nbPar)
+                elif listChar[1] == "+" or listChar[1] == "-" or listChar[1] == "*" or listChar[1] == "/" or listChar[1] == "^":
+                    del listChar[0]
+                    return self.checkParseErrorExp(listChar, nbPar)
+                elif listChar[1] == ")":
+                    del listChar[0]
+                    return self.checkParseErrorExp(listChar, nbPar)
+                else:
+                    return False
+            elif listChar[0] == "+" or listChar[0] == "-" or listChar[0] == "*"  or listChar[0] == "/" or listChar[0] == "^":
+                if listChar[1].isnumeric():
+                    del listChar[0]
+                    return self.checkParseErrorExp(listChar, nbPar)
+                elif listChar[1] == "(":
+                    del listChar[0]
+                    return self.checkParseErrorExp(listChar,nbPar)
+                else:
+                    return False
+            elif listChar[0] == "(":
+                if listChar[1].isnumeric() or listChar[1] == "(" or listChar[1] == "-":
+                    del listChar[0]
+                    return self.checkParseErrorExp(listChar, nbPar+1)
+                else:
+                    return False
+            elif listChar[0] == ")":
+                if listChar[1] == "+" or listChar[1] == "-" or listChar[1] == "*" or listChar[1] == "/" or listChar[1] == "=" or listChar[1] == "^" or listChar[1] == ")":
+                    del listChar[0]
+                    return self.checkParseErrorExp(listChar,nbPar-1)
+                else:
+                    return False
+            else:
+                return False
+        elif len(listChar) == 0 and nbPar == 0:
+            return True
+        else:
+            if nbPar == 1 and listChar[0] == ")":
+                return True
+            elif listChar[0].isnumeric() and nbPar == 0:
+                return True
+            else:
+                return False
+
+ih = InputHandler("algebraicExpression")
+print(ih.parse(u"2-5^5"))
