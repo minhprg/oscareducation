@@ -33,9 +33,10 @@
                 %pre{:id=>idpre}
 
               -with idtext="text"|add:y
-                %input{:type=>"text", :ng-model =>"text", :name=>"text", :id=>idtext, :onkeypress=>"myInputHandler(event, {{ forloop.counter0 }})"}
-              -with idbut="buttonAlgebraic"|add:y
-                %input{:type=>"button", :id=>idbut , :value=>"Ajouter une étape", :onclick=>"submit2({{ forloop.counter0 }})"}
+                -with idbut="buttonAlgebraic"|add:y
+                  -with typeString="'"|add:answer.type|add:"'"
+                    %input{:type=>"text", :ng-model =>"text", :name=>"text", :id=>idtext, :onkeypress=>"myInputHandler(event, {{ forloop.counter0 }}, {{typeString}})", :maxlength=>"50"}
+                    %input{:type=>"button", :id=>idbut , :value=>"Ajouter une étape", :onclick=>"submit2({{ forloop.counter0 }}, {{typeString}})"}
               -with idbut="buttonclearAlgebraic"|add:y
                 %input{:type=>"button", :id=>idbut , :value=>"Retirer une étape", :onclick=>"clearLastStep({{ forloop.counter0 }})"}
               %input.form-control{id: "{{ forloop.counter0 }}", name: "{{ forloop.counter0 }}", type: "hidden", autocomplete: "off"}
@@ -52,12 +53,12 @@
               -with idtext="textEq1"|add:y
                 ="Première équation du système"
                 %br
-                %input{:type=>"text", :ng-model =>"text", :name=>"text", :id=>idtext, :onkeypress=>"myInputHandlerSystem(event, {{ forloop.counter0 }})"}
+                %input{:type=>"text", :ng-model =>"text", :name=>"text", :id=>idtext, :onkeypress=>"myInputHandlerSystem(event, {{ forloop.counter0 }})", :maxlength=>"50"}
               %br
               -with idtext="textEq2"|add:y
                 ="Seconde équation du système"
                 %br
-                %input{:type=>"text", :ng-model =>"text", :name=>"text", :id=>idtext, :onkeypress=>"myInputHandlerSystem(event, {{ forloop.counter0 }})"}
+                %input{:type=>"text", :ng-model =>"text", :name=>"text", :id=>idtext, :onkeypress=>"myInputHandlerSystem(event, {{ forloop.counter0 }})", :maxlength=>"50"}
 
               -with idbut="buttonAlgebraic"|add:y
                 %input{:type=>"button", :id=>idbut , :value=>"Ajouter une étape", :onclick=>"submitSystem({{ forloop.counter0 }})"}
