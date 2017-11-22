@@ -743,9 +743,9 @@ def makeExpression(nbrTerm=3, maxValue=10, minSol=0, maxSol=20, multiplication=F
             expression = expression + ")"
             isThereParenthesis -= 1
 
-        if(isSolInt and str(eval(expression)).lstrip('-').isdigit() and eval(expression)<maxSol and eval(expression)>minSol):
+        if(isSolInt and str(eval(expression)).lstrip('-').isdigit() and eval(expression)<=maxSol and eval(expression)>=minSol):
             return expression
-        elif(eval(expression)<maxSol and eval(expression)>minSol):
+        elif(eval(expression)<=maxSol and eval(expression)>=minSol):
             return expression
 
 
