@@ -1597,7 +1597,7 @@ def exercice_validation_form_submit(request, pk=None):
                     sol = expression.solution
                     new_question_answers = {
                         "type": question["type"],
-                        "answers": {"sol":sol,
+                        "answers": {"sol":str(sol),
                                     "equations":question["eq1"],
                     }}
 

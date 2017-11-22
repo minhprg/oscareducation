@@ -24,9 +24,10 @@
               %span.mathquill{data-keyboard-type: "{{ answer.type }}"}
               %input.form-control.hidden-math-form{id: "{{ forloop.counter0 }}", name: "{{ forloop.counter0 }}", type: "text", autocomplete: "off"}
 
-          -elif answer.type == "algebraicEquation" or answer.type == "algebraicInequation"
+          -elif answer.type == "algebraicEquation" or answer.type == "algebraicInequation" or answer.type == "algebraicExpression"
             %br
             =answer.answers.equations
+            %br
             Entrez une étape et appuyez sur Enter:
             -with y=forloop.counter0|stringformat:"s"
               -with idpre="pre"|add:y
