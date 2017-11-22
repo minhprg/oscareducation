@@ -246,7 +246,3 @@ class InputHandler:
                 return True
             else:
                 return False
-
-ih = InputHandler("algebraicExpression")
-exp = ih.parse(u"2*4+5-8--")
-print(exp)
