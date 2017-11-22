@@ -108,13 +108,39 @@
             %ul.list-group
 
               %li.list-group-item{ng-if:"question.type == \"algebraicEquation\" || question.type == \"algebraicInequation\" || question.type == \"algebraicExpression\" "}
+
+                %label.col-sm-4.control-label Générer automatiquement:
+                .col-sm-1
+                  %input.form-control{type:"checkbox", name:"autogen", value:"Automatic generation", ng-model: "question.autogen"}
+                  %br
+
                 .form-horizontal
-                  .form-group
-                    %label.col-sm-2.control-label{ng-if: "question.type == \"algebraicEquation\""} Equation :
-                    %label.col-sm-2.control-label{ng-if: "question.type == \"algebraicInequation\""} Inéquation :
-                    %label.col-sm-2.control-label{ng-if: "question.type == \"algebraicExpression\""} Expression :
+                  .form-group{ng-if: "!question.autogen"}
+
                     .col-sm-9
-                    %input.form-control{type: "text", ng-model: "question.eq1", ng-required: "true"}
+                      %label.col-sm-2.control-label{ng-if: "question.type == \"algebraicEquation\""} Equation:
+                      %label.col-sm-2.control-label{ng-if: "question.type == \"algebraicInequation\""} Inéquation:
+                      %label.col-sm-2.control-label{ng-if: "question.type == \"algebraicExpression\""} Expression:
+                      %input.form-control{type: "text", ng-model: "question.eq1", ng-required: "true"}
+                  .form-group{ng-if: "question.autogen"}
+                    .col-sm-9
+                      %label.col-sm-7.control-label Variable à droite ?
+                    .col-sm-9
+                      %label.col-sm-7.control-label Variable à gauche ?
+                    .col-sm-9
+                      %label.col-sm-7.control-label coefficient minimum ?
+                    .col-sm-9
+                      %label.col-sm-7.control-label coefficient maximum ?
+                    .col-sm-9
+                      %label.col-sm-7.control-label solution minimum ?
+                    .col-sm-9
+                      %label.col-sm-7.control-label solution maximum ?
+                    .col-sm-9
+                      %label.col-sm-7.control-label{ng-if: "question.type != \"algebraicExpression\""} nom de la variable ?
+                    .col-sm-9
+                      %label.col-sm-7.control-label fraction ?
+                    .col-sm-9
+                      %label.col-sm-7.control-label solution entière ?
 
               %li.list-group-item{ng-if:"question.type == \"algebraicSystem\" "}
                 .form-horizontal
