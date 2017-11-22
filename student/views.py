@@ -18,6 +18,7 @@ from skills.models import StudentSkill, Skill, Section, CodeR, Relations, CodeR_
 from end_test_poll.models import StudentPoll
 from end_test_poll.forms import StudentPollForm
 from resources.models import KhanAcademy, Sesamath, Resource
+from promotions.InputHandler import InputHandler
 
 
 from utils import user_is_student
@@ -520,7 +521,25 @@ def skill_pedagogic_ressources(request, type, slug):
     })
 
 @user_is_student
-def verifyEquation(request):
-    print(request.POST)
-    return HttpResponse("Coucou qui est là ?")
+def verifyEquation(request,id,type, equa):
+    print(id)
+    print(type)
+    equation = equa.replace("&","/")
+    print(equa)
+    ih = InputHandler(type)
+
+    if "System" in type:
+        equationToParse = equation.split(";")
+    else:
+        equationToParse = equation
+    try:
+        tup = ih.parse(equationToParse)
+    except Exception as e:
+        parsed = 0
+        ans = HttpResponse(str(parsed)+":"+e.message)
+    else:
+        parsed = 1
+        ans = HttpResponse(str(parsed)+":"+str(type)+":"+str(id)+":"+str(equation))
+
+    return ans
 

@@ -809,3 +809,7 @@ def makeExpression(nbrTerm=3, maxValue=10, minSol=0, maxSol=20, multiplication=F
 
 #test makeExpression
 #print(makeExpression(nbrTerm=4, maxValue=10, minSol=0, maxSol=100, multiplication=True, exponent=True, division=False, parenthesis=True, isSolInt=False))
+
+#exp = factory("algebraicExpression", u"5*8","a")
+#print(type(exp.solution))
+#print(str(exp.solution))

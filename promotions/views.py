@@ -1590,6 +1590,17 @@ def exercice_validation_form_submit(request, pk=None):
                                     "equations":question["eq1"],
 
                     }}
+                elif question["type"] == "algebraicExpression":
+                    ih = InputHandler(question["type"])
+                    exp = ih.parse(unicode(question["eq1"]))
+                    expression = factory(question["type"], exp, "a")
+                    sol = expression.solution
+                    new_question_answers = {
+                        "type": question["type"],
+                        "answers": {"sol":sol,
+                                    "equations":question["eq1"],
+                    }}
+
                 elif question["type"] == "algebraicInequation":
                     ih = InputHandler(question["type"])
                     eq,letter = ih.parse(unicode(question["eq1"]))
