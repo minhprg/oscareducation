@@ -56,7 +56,7 @@ Create a professor with :
 * username : ``selenium_prof``
 * password : ``selenium_prof``
 
-Create a class : ``Selenium_class``
+Create a class : ``Selenium_class`` and select : ``6e année`` and ``enseignement de transition mathématiques générales`` 
 
 Create a student : 
 * Firstname : ``Student``
