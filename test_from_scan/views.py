@@ -83,9 +83,23 @@ def lesson_test_from_scan_add(request, pk):
             lesson = lesson,
             name = title,
         )
-        skills = request.POST.get('skills-scan').split(",")
-        for skill_id in skills:
-            scan.skills.add(Skill.objects.get(code=skill_id))
+
+        skills_string = request.POST.get('skills-scan')
+        if(skills_string != ""):
+            skills = skills_string.split(",")
+            for skill_id in skills:
+                print("heuu")
+                print(skill_id)
+                s = Skill.objects.get(code=skill_id)
+                if(s is not None):
+                    scan.skills.add()
+                else :
+                    messages.error(request, "Aucune compétence sélectionnée.")
+                    return HttpResponseRedirect('/professor/lesson/' + str(pk) + '/test/from-scan/add/')
+        else :
+            messages.error(request, "Aucune compétence sélectionnée.")
+            return HttpResponseRedirect('/professor/lesson/' + str(pk) + '/test/from-scan/add/')
+
 
         """for student in lesson.students.all():
             scan.add_student(student)"""
