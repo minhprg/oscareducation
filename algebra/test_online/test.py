@@ -47,6 +47,7 @@ response = form.submit()
 time.sleep(2)
 assert "422" in driver.page_source
 
+
 driver.get("http://127.0.0.1:8000/algebra/student/training_session")
 time.sleep(2)
 
