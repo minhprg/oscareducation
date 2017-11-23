@@ -22,6 +22,8 @@ from datetime import datetime
 
 def init_driver():
     driver = webdriver.Chrome()
+
+
     driver.set_window_size(1800, 1000)
     driver.implicitly_wait(15)
     driver.set_page_load_timeout(60)

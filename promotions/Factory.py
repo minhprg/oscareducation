@@ -407,6 +407,7 @@ class System: #(Exercice):
 class Expression:
     def __init__(self, equa):
         self.equa = equa
+        print equa
         self.solution = eval(equa,transformations=(st+(imp,)))
 
     def isEquivalant(self, other):
@@ -596,7 +597,7 @@ def makeInequation(varRight=False, varLeft=True, minValueVar=-10, maxValueVar=10
             equation = equation + "+" + str(val2)
 
         equation = parser(equation)
-        equationTest = Inequation(handler.parse(unicode(equation, "utf-8"))[0], nameVar)
+        equationTest = Inequation(handler.parse(equation)[0], nameVar)
 
         if(equationTest.solution != False and equationTest.solution != True):
             solution = getSolutionFromAND(str(equationTest.solution))
@@ -690,7 +691,9 @@ def makeSys(var1Right1=False, var1Left1=True, var2Right1=False, var2Left1=True, 
         equation1 = makeEquation2Var(var1Right1, var1Left1, var2Right1, var2Left1, minValueVar, maxValueVar, nameVar1, nameVar2, division)
         equation2 = makeEquation2Var(var1Right2, var1Left2, var2Right2, var2Left2, minValueVar, maxValueVar, nameVar1, nameVar2, division)
 
-        systemTest = System(handler.parse((unicode(equation1, "utf-8"),(unicode(equation2, "utf-8"))))[0], nameVar1+","+nameVar2)
+        print(equation1)
+        print(equation2)
+        systemTest = System(handler.parse((equation1,equation2))[0], nameVar1+","+nameVar2)
 
         if (len(list(systemTest.solution)) != 0 and list(systemTest.solution)[0][0] >= minValueSol and list(systemTest.solution)[0][0] <= maxValueSol
                                                 and list(systemTest.solution)[0][1] >= minValueSol and list(systemTest.solution)[0][1] <= maxValueSol):
@@ -700,6 +703,7 @@ def makeSys(var1Right1=False, var1Left1=True, var2Right1=False, var2Left1=True, 
                 return (equation1,equation2)
 
 def makeExpression(nbrTerm=3, maxValue=10, minSol=0, maxSol=20, multiplication=False, exponent=False, division=False, parenthesis=False, isSolInt=True):
+    nbrTerm -= 1
     signe = ['+','-','+','+','-','-']    # 3 fois plus de chance d'avoir un + ou un -
     if (multiplication):
         signe.append('*')
