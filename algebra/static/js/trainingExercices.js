@@ -28,14 +28,14 @@ $(document).ready(function(){
   for (var i = 0; i < nbrRows; i++) {
     html += "<div class='row'>"+
            "<div class='align-self-center col-md-6 p-1'>"+
-              "<a href='#' id='Q_"+(i+1+(1*i))+"' class='btn btn-primary btn-block' onclick='chargeQuestion("+(i+1+(1*i))+")'>Q "+(i+1+(1*i))+"</a>"+
+              "<a id='Q_"+(i+1+(1*i))+"' class='btn btn-primary btn-block' onclick='chargeQuestion("+(i+1+(1*i))+")'>Q "+(i+1+(1*i))+"</a>"+
            "</div>";
     if ((nbrQuestion%2)==1 && i==(nbrRows-1)){
         html+="";
       }
     else {
       html+="<div class='align-self-center col-md-6 p-1'>"+
-          "<a href='#' id='Q_"+(i+2+(1*i))+"' class='btn btn-primary btn-block' onclick='chargeQuestion("+(i+2+(1*i))+")'>Q "+(i+2+(1*i))+"</a>"+
+          "<a id='Q_"+(i+2+(1*i))+"' class='btn btn-primary btn-block' onclick='chargeQuestion("+(i+2+(1*i))+")'>Q "+(i+2+(1*i))+"</a>"+
        "</div>";
      }
     html+=  "</div>";
