@@ -352,6 +352,8 @@ def lesson_test_from_scan_detail(request, lesson_pk, pk):
 
                         all_pages = reader.getNumPages()
 
+                        if not os.path.isdir(settings.STATIC_ROOT +"/tests/tmp"):
+                            os.makedirs(settings.STATIC_ROOT +"/tests/tmp")
                         os.system("convert -density 150 %s %s"%(settings.MEDIA_ROOT+"/"+pk+".pdf",settings.STATIC_ROOT+"/tests/tmp/"+pk+".jpg"))
 
                         default_storage.delete(pk+".pdf")
