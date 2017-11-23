@@ -101,7 +101,7 @@ class ScanTestCase(LiveServerTestCase):
         selenium.find_element_by_id('djHideToolBarButton').click()
         username = selenium.find_element_by_id('id_username')
         username.send_keys('Michael')
-        time.sleep(3)
+
 
         selenium.find_element_by_css_selector(".btn-primary").click()
 
@@ -125,7 +125,7 @@ class ScanTestCase(LiveServerTestCase):
 
         #Create a test
         selenium.get('http://127.0.0.1:8000/professor/lesson/1/test/from-scan/add/')
-        time.sleep(2)
+
 
         for i in range(0,3):
             selenium.find_element_by_name('addQuestion').click()
