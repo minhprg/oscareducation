@@ -3,10 +3,8 @@ var xhr = new XMLHttpRequest();
 var maxId = 0
 
 function updateAutoGeneration(id){
-    if(id < maxId){
-       id = maxId;
-        maxId = maxId +1;
-    }
+    console.log(typeof(id));
+    console.log(id);
     var typeBox = document.getElementById("typebox");
     var type = typeBox.options[typeBox.selectedIndex].value;
     var idstring = id.toString()

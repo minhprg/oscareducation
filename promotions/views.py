@@ -50,7 +50,8 @@ from .utils import generate_random_password, user_is_professor, force_encoding
 import csv
 from django.http import JsonResponse
 from promotions.InputHandler import InputHandler
-from promotions.Factory import factory
+from promotions.Factory import factory, makeEquation, makeExpression, makeSys, makeInequation
+
 
 
 @user_is_professor
@@ -562,6 +563,28 @@ def professor_test_delete_skill(request):
     }
     return JsonResponse(data)
 
+def professor_generate(request, id, type, varleft, varright, coeffmini, coeffmaxi, solmini, solmaxi, varvar, frac, solint ):
+    print(id)
+    print(type)
+    print(varleft)
+    print(varright)
+    print(coeffmini)
+    print(coeffmaxi)
+    print(solmini)
+    print(solmaxi)
+    print(varvar)
+    print(frac)
+    print(solint)
+    if type == "algebraicSystem":
+        pass
+    elif type == "algebraicEquation":
+        equation = makeEquation(varright == "true", varleft == "true", int(coeffmini), int(coeffmaxi), int(solmini), int(solmaxi), varvar, frac == "true", solint == "true")
+    elif type == "algebraicInequation":
+        pass
+    elif type == "algebraicExpression":
+        pass
+
+    return HttpResponse(id+":"+equation)
 
 @user_is_professor
 def lesson_test_list(request, pk):
@@ -1939,3 +1962,4 @@ def enseign_trans(request):
     data["code_r"] = CodeR.objects.all().order_by('id')
     data["section"] = Section.objects.all()
     return render(request, "professor/skill/new-list-trans.haml", data)
+
