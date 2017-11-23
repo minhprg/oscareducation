@@ -430,7 +430,7 @@ def parser(equation):
     equation = equation.replace("<+","<")
     equation = equation.replace(">+",">")
     equation = equation.replace("+-","-")
-    return equation
+    return unicode(equation)
 
 
 def makeEquation(varRight=False, varLeft=True, minValueVar=-10, maxValueVar=10, minValueSol=-10, maxValueSol=10, nameVar='y', division=False, isSolInt=True):
@@ -488,7 +488,7 @@ def makeEquation(varRight=False, varLeft=True, minValueVar=-10, maxValueVar=10, 
             equation = equation + "+" + str(val2)
 
         equation = parser(equation)
-        equationTest = Equation(handler.parse(unicode(equation, "utf-8"))[0], nameVar)
+        equationTest = Equation(handler.parse(equation)[0], nameVar)
 
 
         if(len(equationTest.solution)==1 and equationTest.solution[0] >= minValueSol and equationTest.solution[0] <= maxValueSol):
