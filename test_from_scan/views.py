@@ -351,12 +351,11 @@ def lesson_test_from_scan_detail(request, lesson_pk, pk):
                             count_question +=1
                     # It's a pdf
                     elif split[1] == "pdf":
+
                         if not os.path.isdir(settings.STATIC_ROOT + "/tests/tmp"):
-                            print("ok")
                             print(settings.STATIC_ROOT + "/tests/tmp")
                             os.makedirs(settings.STATIC_ROOT + "/tests/tmp")
-                        print("pas ok")
-                        print(settings.STATIC_ROOT + "/tests/tmp")
+
                         # number of page per test
                         pages_per_test = PdfFileReader(settings.STATIC_ROOT +"/tests/pdf/"+pk+".pdf").getNumPages();
 
@@ -367,7 +366,11 @@ def lesson_test_from_scan_detail(request, lesson_pk, pk):
 
                         all_pages = reader.getNumPages()
 
-                        os.system("convert -density 150 %s %s"%(settings.MEDIA_ROOT+"/"+pk+".pdf",settings.STATIC_ROOT+"/tests/tmp/"+pk+".jpg"))
+                        if all_pages == 1:
+                            dir =settings.STATIC_ROOT+"/tests/tmp/"+pk+"-0.jpg"
+                        else :
+                            dir =settings.STATIC_ROOT+"/tests/tmp/"+pk+".jpg"
+                        os.system("convert -density 150 %s %s"%(settings.MEDIA_ROOT+"/"+pk+".pdf",dir))
 
                         default_storage.delete(pk+".pdf")
 
