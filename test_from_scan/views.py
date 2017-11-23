@@ -351,8 +351,12 @@ def lesson_test_from_scan_detail(request, lesson_pk, pk):
                             count_question +=1
                     # It's a pdf
                     elif split[1] == "pdf":
-
-
+                        if not os.path.isdir(settings.STATIC_ROOT + "/tests/tmp"):
+                            print("ok")
+                            print(settings.STATIC_ROOT + "/tests/tmp")
+                            os.makedirs(settings.STATIC_ROOT + "/tests/tmp")
+                        print("pas ok")
+                        print(settings.STATIC_ROOT + "/tests/tmp")
                         # number of page per test
                         pages_per_test = PdfFileReader(settings.STATIC_ROOT +"/tests/pdf/"+pk+".pdf").getNumPages();
 
