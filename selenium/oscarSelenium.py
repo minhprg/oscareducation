@@ -20,10 +20,12 @@ def init_driver():
 
 def lookup(driver):
     exType = ("algebraicEquation", "algebraicEquation", "algebraicInequation", "algebraicInequation",
-              "algebraicExpression", "algebraicExpression","algebraicSystem", "algebraicSystem")
-    instruction = ("Eq1", "Eq2", "Ineq1", "Ineq2", "Expr1", "Expr2", "Syst1", "Syst2")
-    equations = ("4*x + 10 = 14", "2*x + 2 = 22", "2*x + 2 < 22", "2*x + 2 > 22", "8*2+4", "8*(2+4)", "x=1", "x+y=3")
-    secondEquations = ("no", "no", "no", "no", "no", "no", "y=10", "y=1") # only for system of equation
+              "algebraicSystem", "algebraicSystem")
+    instruction = ("Eq1", "Eq2", "Ineq1", "Ineq2", "Syst1", "Syst2")
+    equations = ("4*x + 10 = 14", "2*x + 2 = 22", "x + 2 < 10", "2*x > 5", "x=1", "x+y=3")
+    secondEquations = ("no", "no", "no", "no", "y=10", "y=1") # only for system of equation
+    solutionTentative = ("x=1", "x=42", "x<8", "x<=42", "x=1","x=5")
+    secondSolution = ("no", "no", "no", "no", "y=10", "y=1") # only for system of equation
 
     driver.get("http://127.0.0.1:8000/")
 
@@ -43,16 +45,15 @@ def lookup(driver):
         # Creating the test
         element = driver.find_element_by_partial_link_text("Selenium_class")
         element.click()
-        # time.sleep(5)
         element = driver.find_element_by_partial_link_text("Mes Tests")
         element.click()
-        # time.sleep(4)
-        element = driver.find_element_by_xpath("/html/body/div[2]/div[2]/div[2]/div/a/img")
+        element = driver.find_element_by_xpath("/html/body/div[2]/div[2]/div[2]/div/a/img") # add a new test
         element.click()
         element = driver.find_element_by_partial_link_text("Ajouter un test en ligne")
         element.click()
         element = driver.find_element_by_id("test_name")
         element.click()
+
         now = datetime.now()
         test_name_time = now.strftime("%y_%m_%d/%H_%M_%S")
         element.send_keys(test_name_time)
@@ -61,9 +62,7 @@ def lookup(driver):
         select.select_by_value("TG6-U3-T1")
         element = driver.find_element_by_id("addSkillToTestButtonForStage17")
         element.click()
-        # time.sleep(3)
 
-        # element = driver.find_element_by_partial_link_text("er le test")
         element = driver.find_element_by_xpath("//button[@type='submit']")
         element.click()
         time.sleep(2)
@@ -79,7 +78,9 @@ def lookup(driver):
         element = driver.find_element_by_xpath("//input[@ng-model='question.eq1']")
         element.send_keys(equations[0], Keys.ENTER)
 
-        for i in range(1,8):
+
+        for i in range(1,6):
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             element = driver.find_element_by_xpath("/html/body/div[2]/div[2]/div/div[2]/form/div[1]/button")
             element.click()
             elements = driver.find_elements_by_xpath("//input[@ng-model='question.instructions']")
@@ -91,14 +92,17 @@ def lookup(driver):
             elements[i].send_keys(equations[i], Keys.ENTER)
             if "Syst" in exType[i]:
                 elements = driver.find_elements_by_xpath("//input[@ng-model='question.eq2']")
-                elements[i-6].send_keys(secondEquations[i], Keys.ENTER)
-
+                elements[i-4].send_keys(secondEquations[i], Keys.ENTER)
+            # print ("Question "+str(i+1)+" ok")
 
         # Submit the test
         element = driver.find_element_by_xpath("//button[@ng-click='proposeToOscar()']")
         element.click()
 
-        element = driver.find_element_by_partial_link_text("capitulatif du test")
+        time.sleep(1)
+        # element = driver.find_element_by_partial_link_text("capitulatif du test")
+        element = driver.find_element_by_xpath("/html/body/div[2]/div[2]/div[2]/a")
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         element.click()
 
         element = driver.find_element_by_xpath("//button[@type='submit']")
@@ -131,17 +135,26 @@ def lookup(driver):
         element = driver.find_element_by_xpath("//button[@type='submit']")
         element.click()
 
-        element = driver.find_element_by_id("text0")
-        element.send_keys("x=1")
+        h = driver.execute_script("return document.body.scrollHeight")
 
-        element = driver.find_element_by_id("buttonAlgebraic0")
-        element.click()
+        for i in range(0,6):
+            button= "buttonAlgebraic"+str(i)
+            if "Syst" in exType[i]:
+                element = driver.find_element_by_id("textEq1" + str(i))
+                element.send_keys(solutionTentative[i])
+                element = driver.find_element_by_id("textEq2" + str(i))
+                element.send_keys(secondSolution[i])
+            else:
+                text = "text" + str(i)
+                element = driver.find_element_by_id(text)
+                element.send_keys(solutionTentative[i])
+            element = driver.find_element_by_id(button)
+            element.click()
 
-        element = driver.find_element_by_id("text1")
-        element.send_keys("x=42")
+            script = "window.scrollTo(0, " + str((i*h) / exType.__len__()) + ");"
+            driver.execute_script(script)
 
-        element = driver.find_element_by_id("buttonAlgebraic1")
-        element.click()
+
 
         element = driver.find_element_by_xpath("/html/body/div[2]/div[2]/div/div[2]/form/input[2]")
         element.click()
@@ -168,17 +181,17 @@ def lookup(driver):
         element.click()
 
         # Here we must verify the answer
-        time.sleep(5)
+        time.sleep(10)
 
-        # Delete test
-        element = driver.find_element_by_partial_link_text("Test")
-        element.click()
-        element = driver.find_element_by_partial_link_text("Effacer")
-        element.click()
-        element = driver.find_element_by_xpath("//button[@type='submit']")
-        element.click()
-        element = driver.find_element_by_class_name("icon")
-        element.click()
+        # # Delete test
+        # element = driver.find_element_by_partial_link_text("Test")
+        # element.click()
+        # element = driver.find_element_by_partial_link_text("Effacer")
+        # element.click()
+        # element = driver.find_element_by_xpath("//button[@type='submit']")
+        # element.click()
+        # element = driver.find_element_by_class_name("icon")
+        # element.click()
 
 
 
