@@ -10,6 +10,16 @@ from selenium.webdriver.support.ui import Select
 from datetime import datetime
 
 
+# On se connect en tant que prof et on creer un test
+# Pour ce test on donne deux equations inequations et systemes.
+# On publie le test et on se connecte en tant qu'etudiant
+# L'etudiant selectionne le test et le rempli en donnant la bonne reponse au numero impairs et la mauvaise au numero pairs:
+# Il soumet ses reponseetse deconnecte
+# Le prof se connect et regarde les resultat du tests pour cet etudiant
+# On verifie avec les couleurs que on a bien une sequence vrai/faux/vrai...
+# on quitte la page de l'eleve,on supprime le test pour que se soit propre et on se deconnecte.
+
+
 def init_driver():
     driver = webdriver.Chrome()
     driver.set_window_size(1800, 1000)
@@ -220,7 +230,7 @@ def lookup(driver):
 
             xpath = "/html/body/div[2]/div[2]/div[4]/table/tbody/tr/td[2]/table/tbody/tr["+str(i+2)+"]/td/div/div[1]"
             element = driver.find_element_by_xpath(xpath)
-            
+
             actualcolor = str(element.value_of_css_property("color"))
             if actualcolor != color:
                 verif = False
