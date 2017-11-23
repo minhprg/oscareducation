@@ -17,8 +17,8 @@ function insertExpression( json )
     let $expression = $(
         "<tr>" +
         "<td><div class='algebra-expression'>" + expression.expression + "</div></td>" +
-        "<td><input placeholder='1' type='text'></td>" +
-        "<td>" + expression.solution + "</td>" +
+        "<td><input placeholder='" + expression.level + "' type='text'></td>" +
+        "<td><div class='algebra-expression'>" + expression.solution + "</div></td>" +
         "<td>" + expression.expression_type + "</td>" +
         "<td><input checked='checked' value='on' type='checkbox'></td>" +
         "<td><a href='' class='btn btn-primary'>Edit</a></td>" +
@@ -27,6 +27,7 @@ function insertExpression( json )
     );
 
     $expressionList.append($expression);
+    formatExpressions();
 }
 
 function getExpression( id )
@@ -42,7 +43,7 @@ function getExpression( id )
 function getExpressions()
 {
     return new Promise( function( resolve, reject )
-    {    
+    {
         $.get("/algebra/api/expressions")
          .done( resolve )
          .fail( reject );
@@ -54,9 +55,9 @@ function init()
     getExpressions()
         .then( ( response ) => {
             let promises = [];
-            
+
             for (let id of response.nb)
-            { 
+            {
                 getExpression(id)
                     .then( insertExpression )
                     .catch( console.log );
