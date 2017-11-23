@@ -133,7 +133,6 @@ class Expression(object):
         e = e.replace('--', '+')
         e = e.replace('+-', '-')
         e = e.replace('-+', '-')
-        print expression
 
         sym = reg.compile('[a-zA-Z(]')
         op = reg.compile('[-+*^/%=)(]') # add operators here
