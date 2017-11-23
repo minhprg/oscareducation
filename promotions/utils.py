@@ -21,6 +21,7 @@ from pdfminer.pdfdevice import PDFDevice
 from pdfminer.layout import LAParams
 from pdfminer.converter import PDFPageAggregator
 import pdfminer
+import ghostscript
 
 from django.contrib.auth.decorators import user_passes_test
 
@@ -241,7 +242,7 @@ def parse_obj(lt_objs,content):
             content[0].append(int(obj.x1))
             content[1].append(int(obj.y1))
             content[1].append(int(obj.y0))
-            #print "%6d, %6d, %6d, %6d" % (obj.x0, obj.y1, obj.x1, obj.y0)
+
 
 
 def pt_to_px(dpi,coord,i=0):
@@ -251,5 +252,16 @@ def pt_to_px(dpi,coord,i=0):
         return ((int(coord)*dpi)/72)
     else:
         return ((842*dpi)/72)-((int(coord)*dpi)/72)
+
+
+
+def pdf2png(pdf_input_path, png_output_path):
+    args = ["pdf2png", # actual value doesn't matter
+            "-dNOPAUSE",
+            "-sDEVICE=png",
+            "-r144",
+            "-sOutputFile=" + png_output_path,
+            pdf_input_path]
+    ghostscript.Ghostscript(*args)
 
 

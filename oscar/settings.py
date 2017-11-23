@@ -168,6 +168,10 @@ SCAN_ROOT = os.path.join(BASE_DIR, "exercices/tests")
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
+PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
+
+BITE_ROOT = os.path.join(PROJECT_DIR, '../static')
+
 BOOTSTRAP3 = {
     "css_url": "/static/css/bootstrap.min.css",
 }

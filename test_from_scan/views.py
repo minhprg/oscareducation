@@ -16,10 +16,15 @@ from django.contrib import messages
 import os, tempfile, zipfile
 from promotions.models import Lesson, Students
 from users.models import Student
-from promotions.utils import user_is_professor, insertion_sort_file, all_different, generate_pdf, generate_coordinates, pt_to_px
+from promotions.utils import user_is_professor, insertion_sort_file, all_different, generate_pdf, generate_coordinates, pt_to_px, pdf2png
 from .forms import ImportCopyForm
 from django.utils.encoding import smart_str
 from wsgiref.util import FileWrapper
+from PyPDF2 import PdfFileWriter, PdfFileReader
+from django.core.files.storage import default_storage
+
+
+
 
 @user_is_professor
 def lesson_test_from_scan_match(request, lesson_pk, pk):
@@ -280,8 +285,11 @@ def lesson_test_from_scan_detail(request, lesson_pk, pk):
         if 'questions' in request.POST:
             request.session['sort_question'] = int(request.POST.get('questions'))
         elif 'copy' in request.FILES:
+
             form = ImportCopyForm(request.POST, request.FILES)
+            print(form.is_valid())
             if form.is_valid():
+
                 copy = request.FILES.getlist('copy', False)
 
                 if not os.path.isdir(settings.STATIC_ROOT +"/tests/"+pk) and copy:
@@ -289,56 +297,121 @@ def lesson_test_from_scan_detail(request, lesson_pk, pk):
 
                 insertion_sort_file(copy)
 
-                """last_answer = TestAnswerFromScan.objects.order_by('-id')
-                if (len(last_answer) == 0):
-                    i = 1
-                else:
-                    i = last_answer[0].id"""
+
                 i=1
                 count_question = 0
                 cont = json.loads(test.content)
                 count_page = 1
+                count = 0
+                format = ["png","PNG","jpg","jpeg","JPG","JPEG"]
+
+
                 for c in copy:
-                    img = Image.open(c)
 
-                    dpi = int(round(img.size[0]/(21*0.3937008)))
-                    #qr = qrtools.QR()
-                    #qr.decode(c)
+                    split = str(c).split(".")
 
+                    if split[1] in format:
 
-                    if str(count_page) not in cont:
-                        count_page = 1
-                    numpage = str(count_page)
+                        img = Image.open(c)
 
-                    if count_page == 1:
-
-                        ran = range(2,len(cont[numpage][0]),2)
+                        dpi = int(round(img.size[0]/(21*0.3937008)))
 
 
-                        x1 = pt_to_px(dpi,cont[numpage][0][0])
-                        y1 = pt_to_px(dpi,cont[numpage][1][0],1)
-                        x2 = pt_to_px(dpi,cont[numpage][0][1])
-                        y2 = pt_to_px(dpi,cont[numpage][1][1],1)
+                        if str(count_page) not in cont:
+                            count_page = 1
+                        numpage = str(count_page)
 
-                        name = img.crop((x1, y1, x2, y2))
-                        ref_name = "/tests/"+ pk + "/name"+str(i)+".png"
-                        name.save(settings.STATIC_ROOT +"/tests/"+ pk + "/name"+str(i)+".png")
-                        count_question = 0
+                        if count_page == 1:
+
+                            ran = range(2,len(cont[numpage][0]),2)
+
+                            x1 = pt_to_px(dpi,cont[numpage][0][0])
+                            y1 = pt_to_px(dpi,cont[numpage][1][0],1)
+                            x2 = pt_to_px(dpi,cont[numpage][0][1])
+                            y2 = pt_to_px(dpi,cont[numpage][1][1],1)
+
+                            name = img.crop((x1, y1, x2, y2))
+                            ref_name = "/tests/"+ pk + "/name"+str(i)+".png"
+                            name.save(settings.STATIC_ROOT +"/tests/"+ pk + "/name"+str(i)+".png")
+                            count_question = 0
+                        else:
+                            ran = range(0,len(cont[numpage][0]),2)
+
+                        for answ in ran:
+                            answer = TestAnswerFromScan(test_id=pk, question_id=questions[count_question].id, reference_name=ref_name, reference='/tests/'+pk+'/crop'+str(i)+'.png')
+                            answer.save()
+
+                            x1 = pt_to_px(dpi,cont[numpage][0][answ])
+                            y1 = pt_to_px(dpi,cont[numpage][1][answ],1)
+                            x2 = pt_to_px(dpi,cont[numpage][0][answ+1])
+                            y2 = pt_to_px(dpi,cont[numpage][1][answ+1],1)
+                            img2 = img.crop((x1, y1, x2, y2))
+                            img2.save(settings.STATIC_ROOT +"/tests/"+ pk + "/crop" + str(i) + ".png")
+                            i += 1
+                            count_question +=1
+                    # It's a pdf
+                    elif split[1] == "pdf":
+
+
+                        # number of page per test
+                        pages_per_test = PdfFileReader(settings.STATIC_ROOT +"/tests/pdf/"+pk+".pdf").getNumPages();
+
+                        # Read the pdf file
+                        reader = PdfFileReader(c, 'r')
+
+                        default_storage.save(pk+".pdf", c)
+
+                        all_pages = reader.getNumPages()
+
+                        os.system("convert -density 150 %s %s"%(settings.MEDIA_ROOT+"/"+pk+".pdf",settings.STATIC_ROOT+"/tests/tmp/"+pk+".jpg"))
+
+                        default_storage.delete(pk+".pdf")
+
+                        for i in range(all_pages):
+
+                            img = Image.open(settings.STATIC_ROOT+"/tests/tmp/"+pk+"-"+str(i)+".jpg")
+
+                            dpi = int(round(img.size[0]/(21*0.3937008)))
+
+
+                            if (i%pages_per_test) == 0:
+
+                                ran = range(2,len(cont[str((i%pages_per_test)+1)][0]),2)
+
+                                x1 = pt_to_px(dpi,cont[str((i%pages_per_test)+1)][0][0])
+                                y1 = pt_to_px(dpi,cont[str((i%pages_per_test)+1)][1][0],1)
+                                x2 = pt_to_px(dpi,cont[str((i%pages_per_test)+1)][0][1])
+                                y2 = pt_to_px(dpi,cont[str((i%pages_per_test)+1)][1][1],1)
+
+                                name = img.crop((x1, y1, x2, y2))
+                                ref_name = "/tests/"+ pk + "/name"+str(count)+".png"
+                                name.save(settings.STATIC_ROOT +"/tests/"+ pk + "/name"+str(count)+".png")
+                                count_question = 0
+                            else:
+                                ran = range(0,len(cont[str((i%pages_per_test)+1)][0]),2)
+
+                            for answ in ran:
+
+                                answer = TestAnswerFromScan(test_id=pk, question_id=questions[count_question].id, reference_name=ref_name, reference='/tests/'+pk+'/crop'+str(count)+'.png')
+                                answer.save()
+
+                                x1 = pt_to_px(dpi,cont[str((i%pages_per_test)+1)][0][answ])
+                                y1 = pt_to_px(dpi,cont[str((i%pages_per_test)+1)][1][answ],1)
+                                x2 = pt_to_px(dpi,cont[str((i%pages_per_test)+1)][0][answ+1])
+                                y2 = pt_to_px(dpi,cont[str((i%pages_per_test)+1)][1][answ+1],1)
+                                img2 = img.crop((x1, y1, x2, y2))
+                                img2.save(settings.STATIC_ROOT +"/tests/"+ pk + "/crop" + str(count) + ".png")
+                                count_question +=1
+                                count+=1
+
+
+
+
+
                     else:
-                        ran = range(0,len(cont[numpage][0]),2)
+                        messages.error(request,"Le format ne correspond pas à la norme")
+                        return HttpResponseRedirect('/professor/lesson/'+str(lesson_pk)+'/test/from-scan/'+str(pk)+'/')
 
-                    for answ in ran:
-                        answer = TestAnswerFromScan(test_id=pk, question_id=questions[count_question].id, reference_name=ref_name, reference='/tests/'+pk+'/crop'+str(i)+'.png')
-                        answer.save()
-
-                        x1 = pt_to_px(dpi,cont[numpage][0][answ])
-                        y1 = pt_to_px(dpi,cont[numpage][1][answ],1)
-                        x2 = pt_to_px(dpi,cont[numpage][0][answ+1])
-                        y2 = pt_to_px(dpi,cont[numpage][1][answ+1],1)
-                        img2 = img.crop((x1, y1, x2, y2))
-                        img2.save(settings.STATIC_ROOT +"/tests/"+ pk + "/crop" + str(i) + ".png")
-                        i += 1
-                        count_question +=1
                     count_page+=1
         return HttpResponseRedirect('/professor/lesson/'+str(lesson_pk)+'/test/from-scan/'+str(pk)+'/')
 
