@@ -12,7 +12,10 @@ from datetime import datetime
 
 def init_driver():
     driver = webdriver.Chrome()
-    driver.maximize_window()
+    driver.set_window_size(1440,900)
+
+
+    #driver.maximize_window()
     driver.implicitly_wait(15)
     driver.set_page_load_timeout(60)
     return driver

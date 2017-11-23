@@ -3,41 +3,59 @@ var xhr = new XMLHttpRequest();
 var maxId = 0
 
 function updateAutoGeneration(id){
-    console.log(typeof(id));
-    console.log(id);
-    var typeBox = document.getElementById("typebox");
-    var type = typeBox.options[typeBox.selectedIndex].value;
+
+    if(document.getElementById("typebox")){
+        var typeBox = document.getElementById("typebox");
+        var type = typeBox.options[typeBox.selectedIndex].value;
+    }
     var idstring = id.toString()
-    var varleft = document.getElementById("vl".concat(id)).checked;
-    var varright = document.getElementById("vr".concat(id)).checked;
-    var coefmini = document.getElementById("cmini".concat(id)).value;
-    var coefmaxi = document.getElementById("cmaxi".concat(id)).value;
-    var smini = document.getElementById("smini".concat(id)).value;
-    var smaxi = document.getElementById("smaxi".concat(id)).value;
-    var varVar = document.getElementById("var".concat(id)).value;
-    var frac = document.getElementById("frac".concat(id)).checked;
-    var sint = document.getElementById("sint".concat(id)).checked;
-    console.log(idstring)
-    console.log(varleft)
-    console.log(varright)
-    console.log(coefmini)
-    console.log(coefmaxi)
-    console.log(smini)
-    console.log(smaxi)
-    console.log(varVar)
-    console.log(frac)
-    console.log(sint)
+    if(document.getElementById("vl".concat(id))){
+        var varleft = document.getElementById("vl".concat(id)).checked;
+    }
+    if(document.getElementById("vr".concat(id))){
+        var varright = document.getElementById("vr".concat(id)).checked;
+    }
+    if(document.getElementById("cmini".concat(id))){
+        var coefmini = document.getElementById("cmini".concat(id)).value;
+    }
+    if(document.getElementById("cmaxi".concat(id))){
+        var coefmaxi = document.getElementById("cmaxi".concat(id)).value;
+    }
+    if(document.getElementById("smini".concat(id))){
+        var smini = document.getElementById("smini".concat(id)).value;
+    }
+    if(document.getElementById("smaxi".concat(id))){
+        var smaxi = document.getElementById("smaxi".concat(id)).value;
+    }
+    if( document.getElementById("var".concat(id))){
+        var varVar = document.getElementById("var".concat(id)).value;
+    }
+    if( document.getElementById("frac".concat(id))){
+        var frac = document.getElementById("frac".concat(id)).checked;
+    }
+    if( document.getElementById("sint".concat(id))){
+        var sint = document.getElementById("sint".concat(id)).checked;
+    }
+    if( document.getElementById("more".concat(id))){
+        if(type == "algebraicSystem"){
+            var more = document.getElementById("more".concat(id)).value;
+        }
+        else{
+            var more = document.getElementById("more".concat(id)).checked;
+        }
+    }
+    console.log(more);
 
    if(type == "algebraicSystem") {
 
-        sendRequest(idstring, type+"/"+varleft+"/"+varright+"/"+coefmini+"/"+coefmaxi+"/"+smini+"/"+smaxi+"/"+varVar+"/"+frac+"/"+sint+"/");
+        sendRequest(idstring, type+"/"+"0/0/"+coefmini+"/"+coefmaxi+"/"+smini+"/"+smaxi+"/"+varVar+"/"+frac+"/"+sint+"/"+more+"/");
    }
    else if (type == "algebraicExpression"){
-       sendRequest(idstring, type+"/"+varleft+"/"+varright+"/"+coefmini+"/"+coefmaxi+"/"+smini+"/"+smaxi+"/"+varVar+"/"+frac+"/"+sint+"/");
+       sendRequest(idstring, type+"/"+varleft+"/"+varright+"/"+coefmini+"/"+coefmaxi+"/"+smini+"/"+smaxi+"/"+varVar+"/"+frac+"/"+sint+"/"+more+"/");
 
    }
    else{
-       sendRequest(idstring, type+"/"+varleft+"/"+varright+"/"+coefmini+"/"+coefmaxi+"/"+smini+"/"+smaxi+"/"+varVar+"/"+frac+"/"+sint+"/");
+       sendRequest(idstring, type+"/"+varleft+"/"+varright+"/"+coefmini+"/"+coefmaxi+"/"+smini+"/"+smaxi+"/"+varVar+"/"+frac+"/"+sint+"/"+"0/");
 
    }
 
@@ -53,8 +71,18 @@ function processRequest(e) {
     if (xhr.readyState == 4 && xhr.status == 200) {
         //var response = JSON.parse(xhr.responseText);
         spl = xhr.responseText.split(":");
-        document.getElementById("generatedEquation".concat(spl[0])).value = spl[1];
-        angular.element(document.getElementById("generatedEquation".concat(spl[0]))).triggerHandler('change');
+        if(spl[1] == "algebraicSystem"){
+            document.getElementById("generatedEquation1".concat(spl[0])).value = spl[2].split(";")[0];
+            document.getElementById("generatedEquation2".concat(spl[0])).value = spl[2].split(";")[1];
+            angular.element(document.getElementById("generatedEquation1".concat(spl[0]))).triggerHandler('change');
+            angular.element(document.getElementById("generatedEquation2".concat(spl[0]))).triggerHandler('change');
+
+        }
+        else{
+            document.getElementById("generatedEquation".concat(spl[0])).value = spl[2];
+            angular.element(document.getElementById("generatedEquation".concat(spl[0]))).triggerHandler('change');
+
+        }
 
 
     }
