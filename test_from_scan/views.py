@@ -1,7 +1,6 @@
 # encoding: utf-8
 
 import json
-import qrtools
 from datetime import datetime
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
@@ -72,9 +71,20 @@ def lesson_test_from_scan_add(request, pk):
 
     if request.method == "POST":
         form = request.POST.items()
+
         title = request.POST.get('titre')
 
-        scan = TestFromScan(lesson_id=pk,name=title)
+        scan = TestFromScan.objects.create(
+            lesson = lesson,
+            name = title,
+        )
+        skills = request.POST.get('skills-scan').split(",")
+        for skill_id in skills:
+            scan.skills.add(Skill.objects.get(code=skill_id))
+
+        """for student in lesson.students.all():
+            scan.add_student(student)"""
+
 
         try:
             scan.save()
@@ -96,7 +106,7 @@ def lesson_test_from_scan_add(request, pk):
             return HttpResponseRedirect('/professor/lesson/'+str(pk)+'/test/from-scan/add/')
 
         for i in form:
-            if not i[0] in "csrfmiddlewaretoken" and not i[0] in "titre":
+            if not i[0] in "skills-scan" and not i[0] in "csrfmiddlewaretoken" and not i[0] in "titre":
                 question = TestQuestionFromScan(question_num=int(i[0])+1, contexte=i[1], test_id=scan.id)
                 try:
                     question.save()
@@ -105,11 +115,11 @@ def lesson_test_from_scan_add(request, pk):
                     return HttpResponseRedirect('/professor/lesson/'+str(pk)+'/test/from-scan/add/')
 
 
-
         return HttpResponseRedirect('/professor/lesson/'+str(pk)+'/test/')
 
     return render(request, "professor/lesson/test/from-scan/add.haml", {
         "lesson": lesson,
+        "stages": lesson.stages_in_unchronological_order(),
     })
 
 @user_is_professor

@@ -564,7 +564,6 @@ class TestFromClass(BaseTest):
         Its purpose is to encode the results online.
 
     """
-
     def get_skills_with_encoded_values(self):
         result = []
 

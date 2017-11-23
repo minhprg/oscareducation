@@ -92,8 +92,7 @@ def generate_pdf(list,id):
 
     # Add 10 questions with boxes below
     for i in list:
-
-        if not i[0] in "csrfmiddlewaretoken" and not i[0] in "titre":
+        if not i[0] in "skills-scan" and not i[0] in "csrfmiddlewaretoken" and not i[0] in "titre":
             tmp = int(i[0])+1
             bogustext = (str(tmp)+". %s" %  i[1])
             p = Paragraph(bogustext, styles['default'])
