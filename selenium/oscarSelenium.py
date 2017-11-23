@@ -47,7 +47,7 @@ def lookup(driver):
     # Lunch oscar
     driver.get("http://127.0.0.1:8000/")
 
-    t = 1 # delay for demo
+    t = 0 # delay for demo
 
     try:
 
@@ -249,12 +249,12 @@ def lookup(driver):
         element = driver.find_element_by_class_name("icon")
         element.click()
 
-
         if verif :
             print ("Correct")
         else:
             print ("Error")
 
+        driver.quit()
 
 
     except TimeoutException:
