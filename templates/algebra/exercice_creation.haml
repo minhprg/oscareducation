@@ -35,7 +35,7 @@
           .row
            %span
              %textarea.keyboard
-             %span.mathquill{data-keyboard-type: "math-advanced"}
+             %span.mathquill{data-keyboard-type: "math-advanced", :id => "leftSideMath"}
              %input.form-control.hidden-math-form{:id => "leftSide", :name => 'leftSide'}
         .col-md-1{:align => "center"}
           .row
@@ -52,7 +52,7 @@
           .row
            %span
              %textarea.keyboard
-             %span.mathquill{data-keyboard-type: "math-advanced"}
+             %span.mathquill{data-keyboard-type: "math-advanced", :id => "rightSideMath"}
              %input.form-control.hidden-math-form{:id => "rightSide", :name => 'rightSide'}
         .col-md-2{:align => "center"}
           .row
@@ -61,7 +61,7 @@
            .col-md-11.offset-md-1
             %span
               %textarea.keyboard
-              %span.mathquill{data-keyboard-type: "math-advanced"}
+              %span.mathquill{data-keyboard-type: "math-advanced", :id => "solutionMath"}
               %input.form-control.hidden-math-form{:id => "solution", :name => 'solution'}
         .col-md-1{:align => "center"}
           .row
