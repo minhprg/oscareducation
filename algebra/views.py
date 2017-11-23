@@ -38,9 +38,9 @@ class TrainingSession(View):
 
 	i=0
 	tab = []
-	while i!=number :
+	while i!=number and i<10 :
 		print "test4"
-		myrandom = choice(range(0, number-1))
+		myrandom = choice(range(0, number))
 		while myrandom in tab:
 			print tab
 			myrandom = choice(range(0, number))
