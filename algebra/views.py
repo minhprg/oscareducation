@@ -167,7 +167,7 @@ class ExerciceCreation(View):
                 created=created,
                 updated=created,
                 solution=str(solution),
-                level=1
+                level=json.loads(request.body)["level"]
             )
             testExist = AlgebraicExercice.objects.filter(expression=str(expr))
             i = 0
