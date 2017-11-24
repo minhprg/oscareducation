@@ -23,7 +23,7 @@ DEBUG = True
 DEBUG_PROPAGATE_EXCEPTIONS = False
 
 
-ALLOWED_HOSTS = ["127.0.0.1", "0.0.0.0", "localhost"]
+ALLOWED_HOSTS = ["127.0.0.1", "0.0.0.0", "localhost", "oscar.findot.me", u'testserver']
 
 LOGIN_REDIRECT_URL = "/"
 
@@ -112,7 +112,7 @@ DATABASES = {
         'NAME': 'oscar',
         'USER': 'oscar',
         'PASSWORD': 'oscar',
-        'HOST': '100.0.0.20',
+        'HOST': '23.20.2.1',
         'PORT': '5432',
     }
 }

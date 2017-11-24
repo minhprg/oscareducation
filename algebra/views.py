@@ -31,27 +31,26 @@ class List(View):
 class TrainingSession(View):
 
     def get(self, request):
-	expressions = AlgebraicExercice.objects.filter(level=1)
+    	expressions = AlgebraicExercice.objects.filter(level=1)
+    	number = expressions.count()
 
-	number = expressions.count()
+    	i=0
+    	tab = []
+    	while i!=10 :
+    		myrandom = choice(range(0, number-1))
+    		while myrandom in tab:
+    			myrandom = choice(range(0, number-1))
+    		tab.append(myrandom)
+    		i+=1
+    	print tab
 
-	i=0
-	tab = []
-	while i!=10 :
-		myrandom = choice(range(0, number-1))
-		while myrandom in tab:
-			myrandom = choice(range(0, number-1))
-		tab.append(myrandom)
-		i+=1
-	print tab
-
-	i=0
-	TabExpressions = []
-	for expression in expressions:
-		if i in tab:
-			print i
-			TabExpressions.append(expression)
-		i+=1
+    	i=0
+    	TabExpressions = []
+    	for expression in expressions:
+    		if i in tab:
+    			print i
+    			TabExpressions.append(expression)
+    		i+=1
 
         context = {
             'expressions': TabExpressions
