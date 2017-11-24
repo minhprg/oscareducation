@@ -80,6 +80,7 @@
               .form-group
                 %label.control-label= stage.name
                 .form-group
+
                   %select.form-control{ng-model: "stage{{ stage.id }}SelectedSkill"}
                     -regroup stage.skills_by_id by section as sections
                     -for section in sections
@@ -99,6 +100,7 @@
           .pull-right
             %button.btn.btn-primary{type: "submit", id:"addScan"}
               Valider
+
 
 
 -block javascript

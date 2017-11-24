@@ -75,28 +75,41 @@ def lesson_test_from_scan_add(request, pk):
     lesson = get_object_or_404(Lesson, pk=pk)
 
     if request.method == "POST":
-        print("111111111111111111111111 \n")
         form = request.POST.items()
 
         title = request.POST.get('titre')
-        print("222222222222222222222222222 \n")
 
-        scan = TestFromScan.objects.create(lesson = lesson,name = title)
-        print("33333333333333333333333333333 \n")
-        skills = request.POST.get('skills-scan').split(",")
-        for skill_id in skills:
-            scan.skills.add(Skill.objects.get(code=skill_id))
+        scan = TestFromScan.objects.create(
+            lesson = lesson,
+            name = title,
+        )
+
+        skills_string = request.POST.get('skills-scan')
+        if(skills_string != ""):
+            skills = skills_string.split(",")
+            for skill_id in skills:
+                print("heuu")
+                print(skill_id)
+                s = Skill.objects.get(code=skill_id)
+                if(s is not None):
+                    scan.skills.add()
+                else :
+                    messages.error(request, "Aucune compétence sélectionnée.")
+                    return HttpResponseRedirect('/professor/lesson/' + str(pk) + '/test/from-scan/add/')
+        else :
+            messages.error(request, "Aucune compétence sélectionnée.")
+            return HttpResponseRedirect('/professor/lesson/' + str(pk) + '/test/from-scan/add/')
+
 
         """for student in lesson.students.all():
             scan.add_student(student)"""
 
-        print("4444444444444444444444444 \n")
         try:
             scan.save()
         except Exception as e:
             messages.error(request, "Une erreur s'est produite durant la création.")
             return HttpResponseRedirect('/professor/lesson/'+str(pk)+'/test/from-scan/add/')
-        print("55555555555555555555555555555555 \n")
+
         form = sorted(form, key=lambda tup: tup[0])
 
         file = generate_pdf(form,scan.id)
@@ -352,6 +365,9 @@ def lesson_test_from_scan_detail(request, lesson_pk, pk):
                     # It's a pdf
                     elif split[1] == "pdf":
 
+                        if not os.path.isdir(settings.STATIC_ROOT + "/tests/tmp"):
+                            print(settings.STATIC_ROOT + "/tests/tmp")
+                            os.makedirs(settings.STATIC_ROOT + "/tests/tmp")
 
                         # number of page per test
                         pages_per_test = PdfFileReader(settings.STATIC_ROOT +"/tests/pdf/"+pk+".pdf").getNumPages();
@@ -370,6 +386,7 @@ def lesson_test_from_scan_detail(request, lesson_pk, pk):
 
                         if not os.path.isdir(settings.STATIC_ROOT +"/tests/tmp"):
                             os.makedirs(settings.STATIC_ROOT +"/tests/tmp")
+
                         os.system("convert -density 150 %s %s"%(settings.MEDIA_ROOT+"/"+pk+".pdf",dir))
 
                         default_storage.delete(pk+".pdf")
