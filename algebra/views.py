@@ -167,7 +167,7 @@ class ExerciceCreation(View):
                 expression_type=expr._db_type,
                 created=created,
                 updated=created,
-                solution=str(expr.solution),
+                solution=str(solution),
                 level=1
             )
             db_expr.save()
