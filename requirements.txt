@@ -12,3 +12,8 @@ ruamel.yaml
 django-crispy-forms
 mechanize
 django-compressor
+ghostscript
+PyPDF2
+pdfminer
+reportlab
+

@@ -81,8 +81,7 @@ PAGE_HEIGHT=defaultPageSize[1]; PAGE_WIDTH=defaultPageSize[0]
 styles = getSampleStyleSheet()
 Title = "Mon test"
 def generate_pdf(list,id):
-    print(list)
-    print(id)
+
     if not os.path.isdir(settings.STATIC_ROOT +"/tests/pdf"):
         os.makedirs(settings.STATIC_ROOT +"/tests/pdf")
 
@@ -114,7 +113,6 @@ def generate_pdf(list,id):
             Title = i[1]
     # build the document by inserting the whole story
     doc.build(Story, onFirstPage=myFirstPage, onLaterPages=myLaterPages)
-    print(str(id)+".pdf")
     return str(id)+".pdf"
 
 
