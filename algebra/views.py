@@ -28,7 +28,6 @@ class List(View):
         }
         return TemplateResponse(request, "algebra/list.haml", context)
 
-
 class TrainingSession(View):
 
     def get(self, request):
@@ -88,7 +87,7 @@ class TrainingSession(View):
 
         try:
 
-            expr, solution = self._parse(json.loatreeds(request.body))
+            expr, solution = self._parse(json.loads(request.body))
             created = datetime.now()
             db_expr = AlgebraicExercice(
                 expression=str(expr),
@@ -121,32 +120,6 @@ class TrainingSession(View):
 
 class ExerciceCreation(View):
 
-    def get(self, request):
-
-        if request.content_type is "application/json":
-            return HttpResponse(status=415)
-        else:
-            return TemplateResponse(request, "algebra/exercice_creation.haml")
-
-
-class AssessmentCreation(View):
-
-    def get(self, request):
-        return TemplateResponse(request, "algebra/assessment_creation.haml")
-
-
-class APIExpressions(View):
-
-    def get(self, request):
-        query_set = AlgebraicExercice.objects.values_list('id', flat=True)
-        ids = [id for id in query_set]
-
-        return JsonResponse({
-            'nb': ids
-        }, status=200)
-
-class APIExpression(View):
-
     def _parse(self, json):
 
         if not all(k in json.keys() for k in ("expression",
@@ -168,20 +141,14 @@ class APIExpression(View):
 
         return expr, solution
 
-    def get(self, request, id):
-        expr = {}
+    def get(self, request):
 
-        try:
-            expr = AlgebraicExercice.objects.get(id=id)
-        except ObjectDoesNotExist:
-            return JsonResponse({}, status=404)
+        if request.content_type is "application/json":
+            return HttpResponse(status=415)
+        else:
+            return TemplateResponse(request, "algebra/exercice_creation.haml")
 
-        expr = model_to_dict(expr)
-        return JsonResponse({
-            'expression': expr
-        }, status=200)
-
-    def post(self, request, id = 0):
+    def post(self, request):
 
         if request.content_type != "application/json":
             return HttpResponse(status=415)
@@ -189,6 +156,21 @@ class APIExpression(View):
         try:
 
             expr, solution = self._parse(json.loads(request.body))
+            created = datetime.now()
+            db_expr = AlgebraicExercice(
+                expression=str(expr),
+                expression_type=expr._db_type,
+                created=created,
+                updated=created,
+                solution=str(expr.solution),
+                level=1
+            )
+            db_expr.save()
+
+            return JsonResponse({
+                'status': True,
+                'message': "Ok"
+            }, status=200)
 
         except ValueError as e:
 
@@ -204,42 +186,34 @@ class APIExpression(View):
                 'message': 'Malformed algebraic expression or solution'
             }, status=422)
 
-        now = datetime.now()
 
-        if (0 == id):
+class AssessmentCreation(View):
 
-            db_expr = AlgebraicExercice(
-                expression=str(expr),
-                expression_type=expr._db_type,
-                created=now,
-                updated=now,
-                solution=str(expr.solution),
-                level=1
-            )
-            db_expr.save()
+    def get(self, request):
+        return TemplateResponse(request, "algebra/assessment_creation.haml")
 
-        else:
 
-            try:
-                db_expr = AlgebraicExercice.objects.get(id=id)
-            except ObjectDoesNotExist:
-                return JsonResponse({
-                    'status': False,
-                    'message': "Expression does not exist"
-                }, status=404)
+class APIExpressions(View):
 
-            db_expr.expression = str(expr)
-            db_expr.updated = now
-            db_expr.solution = str(expr.solution)
-            db_expr.save()
+    def get(self, request):
+        query_set = AlgebraicExercice.objects.values_list('id', flat=True)
+        ids = [id for id in query_set]
 
         return JsonResponse({
-            'status': True,
-            'message': "Ok",
-        }, status=201)
+            'nb': ids
+        }, status=200)
 
-    def delete(self, request, id):
+class APIExpression(View):
+
+    def get(self, request, id):
+        expr = {}
+
+        try:
+            expr = AlgebraicExercice.objects.get(id=id)
+        except ObjectDoesNotExist:
+            return JsonResponse({}, status=404)
+
+        expr = model_to_dict(expr)
         return JsonResponse({
-            'id': id,
-            'request': request
+            'expression': expr
         }, status=200)

@@ -129,18 +129,22 @@ class Expression(object):
 
     @staticmethod
     def _sanitize(expression):
-        e = expression.replace(' ', '')
-        e = e.replace('--', '+')
+        e = expression.replace(' ', '') 
         e = e.replace('+-', '-')
         e = e.replace('-+', '-')
+        e = e.replace('--', '+')
+        e = e.replace('++', '+')
+        e = e.replace('cdot', '*')
+        sqrt_index = e.find("sqrt")
+        if sqrt_index!=-1:
+            sqrt_stri = e[0:sqrt_index]+e[sqrt_index+4]+"**0.5"+e[sqrt_index+5:]
+            e = sqrt_stri
 
         sym = reg.compile('[a-zA-Z(]')
         op = reg.compile('[-+*^/%=)(]') # add operators here
         targets = []
-
         start = lambda r: r.start() == 0
         end = lambda r, expr: r.start() == len(expr) -1
-
         for c in sym.finditer(e):
             if (start(c) or op.match(e[c.start() - 1])) \
             and (end(c, e) or op.match(e[c.start() + 1])):
@@ -152,11 +156,9 @@ class Expression(object):
             if not end(c, e) and not op.match(e[c.start() + 1]):
                 if not c.group() == "(":
                     targets.append(c.start() + 1)
-
         for i, target in enumerate(targets):
             e = e[0:target + 1] + '*' + e[target + 1:len(e)]
             targets[i+1:] = map(lambda x: x + 1, targets[i+1:])
-
         return e
 
     @staticmethod
