@@ -31,6 +31,7 @@ class Expression(View):
         """
         TODO
         """
+        print(e_json)
         cls = e_json["type"].title().replace(" ", "")
 
         if not all(k in e_json.keys() for k in self.expression_dict_keys):
@@ -41,8 +42,9 @@ class Expression(View):
         cls = eval("engine." + cls)
 
         expression = cls(e_json["expression"])
+        solution = cls(e_json["solution"])
 
-        if expression.solution != e_json["solution"]:
+        if expression.solution != solution.solution:
             raise engine.ExpressionError("Incorrect expression solution")
 
         return expression
@@ -58,7 +60,7 @@ class Expression(View):
             'expression': model_to_dict(expression)
         }, status=200)
 
-    def post(self, request):
+    def post(self, request, id=0):
         """
         TODO
         """
@@ -73,12 +75,12 @@ class Expression(View):
         now = datetime.now()
 
         db_expression = AM(
-            expression=str(expression),
+            expression=e_json["expression"],
             expression_type=expression._db_type,
             created=now,
             updated=now,
-            solution=str(expression.solution),
-            level=1 # TODO - dynamise
+            solution=str(e_json["solution"]),
+            level=e_json["level"]
         )
         db_expression.save()
 

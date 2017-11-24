@@ -21,9 +21,29 @@ body #main-content {
   text-align: center;
   overflow-y: scroll;
 }
+#expression-list a {
+  cursor: pointer;
+}
+#expression-list a .mq-algebra-expression {
+  font-weight: bold;
+}
+#expression-list-new {
+  background-color: #fff;
+  color: #5cb85c;
+  font-size: 1.2em;
+}
 #expression-list-header {
-  color: #fff;
-  background-color: #f58025;
+  background-color: #eee;
+  color: #999;
+  border: none;
+}
+#expression-list-new,
+#expression-list-header {
+  width: 100%;
+  padding: 20px;
+  font-weight: bold;
+  text-align: center;
+  outline: none;
 }
 #algebra-content {
   height: 100%;
@@ -44,7 +64,7 @@ body #main-content {
   padding: 0;
 }
 #algebra-content .col-md-9 {
-  background: #f1f1f1;
+  background: #eee;
 }
 #expression-form {
   padding: 30px 20px;

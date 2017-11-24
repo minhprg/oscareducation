@@ -6,8 +6,9 @@
 -block algebra_content
   .row
     .col-md-3
+      #expression-list-header Expressions
       #expression-list.list-group
-        %a#expression-list-header.list-group-item Expressions
+        %a#expression-list-new.list-group-item{:onclick => "makeForm(this, true)"} New expression
     .col-md-9
       #expression-form
         #expression-form-placeholder

@@ -4,6 +4,8 @@
 @second: #fafafa;
 @third: #f58025;
 @fourth: #eee;
+@fifth: #B6D8C0;
+
 @carbon: #424242;
 
 /* ----------------------------------------------------------------- /COLORS */
@@ -44,10 +46,36 @@ body #main-content
     overflow-y: scroll;
 }
 
+#expression-list a
+{
+    cursor: pointer;
+
+    .mq-algebra-expression { font-weight: bold; }
+}
+
+#expression-list-new
+{
+  background-color: @main;
+  color: #5cb85c;
+  font-size: 1.2em;
+}
+
 #expression-list-header
 {
-    color: @main;
-    background-color: @third;
+  background-color: #eee;
+  color: #999;
+  border: none;
+}
+
+#expression-list-new, #expression-list-header
+{
+    width: 100%;
+    padding: 20px;
+
+    font-weight: bold;
+    text-align: center;
+
+    outline: none;
 }
 
 #algebra-content
@@ -70,7 +98,7 @@ body #main-content
 
   .col-md-9
   {
-      background: #f1f1f1;
+      background: #eee;
   }
 }
 
