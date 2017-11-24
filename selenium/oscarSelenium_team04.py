@@ -24,7 +24,7 @@ def init_driver():
     driver = webdriver.Chrome()
 
 
-    driver.set_window_size(1800, 1000)
+    driver.set_window_size(1800, 1100)
     driver.implicitly_wait(15)
     driver.set_page_load_timeout(60)
     return driver
@@ -32,19 +32,19 @@ def init_driver():
 
 def lookup(driver):
     # Equation type
-    exType = ("algebraicExpression", "algebraicEquation", "algebraicEquation", "algebraicInequation", "algebraicInequation",
+    exType = ("algebraicEquation", "algebraicExpression", "algebraicEquation", "algebraicInequation", "algebraicInequation",
               "algebraicSystem", "algebraicSystem")
     # Instruction for exercices
-    instruction = ("Expr","Eq1", "Eq2", "Ineq1", "Ineq2", "Syst1", "Syst2")
+    instruction = ("AutoEq", "Expr", "Eq2", "Ineq1", "Ineq2", "Syst1", "Syst2")
 
-    equations = ("8*(3+1)","4*x + 10 = 14", "2*x + 2 = 22", "x + 2 < 10", "2*x > 5", "x=1", "x+y=3")
+    equations = ("no","8*(3+1)", "2*x + 2 = 22", "x + 2 < 10", "2*x > 5", "x=1", "x+y=3")
     secondEquations = ("no", "no", "no", "no", "no", "y=10", "y=1") # only for system of equation
 
-    solutionTentative = ("32", "x=1", "x=42", "x<8", "x<=42", "x=1","x=5")
-    secondSolution = ("no", "no", "no", "no", "no", "y=10", "y=1") # only for system of equation
+    solutionTentative = ("x=1000","32", "x=42", "x<8", "x<=42", "x=1","x=5")
+    secondSolution = ("no", "no" "no", "no", "no", "y=10", "y=1") # only for system of equation
 
     # True if we expect a good answer, False otherwise
-    exact = (True, True,False,True,False,True,False)
+    exact = (False, True,False,True,False,True,False)
 
     # Lunch oscar
     driver.get("http://127.0.0.1:8000/")
@@ -99,12 +99,26 @@ def lookup(driver):
         element = driver.find_element_by_partial_link_text("NOUVEAU")
         element.click()
 
-        element = driver.find_element_by_xpath("//input[@ng-model='question.instructions']")
-        element.send_keys(instruction[0])
-        select = Select(driver.find_element_by_xpath("//select[@ng-model='question.type']"))
+        elements = driver.find_elements_by_xpath("//input[@ng-model='question.instructions']")
+        elements[0].send_keys(instruction[0])
+        elements = driver.find_elements_by_xpath("//select[@ng-model='question.type']")
+        select = Select(elements[0])
         select.select_by_value(exType[0])
-        element = driver.find_element_by_xpath("//input[@ng-model='question.eq1']")
-        element.send_keys(equations[0], Keys.ENTER)
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+
+        element = driver.find_element_by_xpath("/html/body/div[2]/div[2]/div/div[2]/form/ul/li/ul/li/div[1]/input")
+        element.click()
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+
+        element = driver.find_element_by_xpath("//*[@id='buttongen0']")
+        element.click()
+
+        # element = driver.find_element_by_xpath("//input[@ng-model='question.instructions']")
+        # element.send_keys(instruction[0])
+        # select = Select(driver.find_element_by_xpath("//select[@ng-model='question.type']"))
+        # select.select_by_value(exType[0])
+        # element = driver.find_element_by_xpath("//input[@ng-model='question.eq1']")
+        # element.send_keys(equations[0], Keys.ENTER)
 
 
         for i in range(1,7):
@@ -125,13 +139,17 @@ def lookup(driver):
 
         # Submit the test
         time.sleep(t)
-        element = driver.find_element_by_xpath("//button[@ng-click='proposeToOscar()']")
+        # element = driver.find_element_by_xpath("//button[@ng-click='proposeToOscar()']")
+        # h = driver.execute_script("return document.body.scrollHeight")
+        # script = "window.scrollTo(0, " + str(h-500) + ");"
+
+        element = driver.find_element_by_xpath("//*[@id='submit-pull-request']/span")
         element.click()
 
-        # element = driver.find_element_by_partial_link_text("capitulatif du test")
-        element = driver.find_element_by_xpath("/html/body/div[2]/div[2]/div[2]/a")
-        time.sleep(t)
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        element = driver.find_element_by_partial_link_text("capitulatif du test")
+        # element = driver.find_element_by_xpath("/html/body/div[2]/div[2]/div[2]/a")
+        time.sleep(t)
         element.click()
 
         time.sleep(t)
