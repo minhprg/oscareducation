@@ -32,19 +32,19 @@ def init_driver():
 
 def lookup(driver):
     # Equation type
-    exType = ("algebraicEquation", "algebraicEquation", "algebraicInequation", "algebraicInequation",
+    exType = ("algebraicExpression", "algebraicEquation", "algebraicEquation", "algebraicInequation", "algebraicInequation",
               "algebraicSystem", "algebraicSystem")
     # Instruction for exercices
-    instruction = ("Eq1", "Eq2", "Ineq1", "Ineq2", "Syst1", "Syst2")
+    instruction = ("Expr","Eq1", "Eq2", "Ineq1", "Ineq2", "Syst1", "Syst2")
 
-    equations = ("4*x + 10 = 14", "2*x + 2 = 22", "x + 2 < 10", "2*x > 5", "x=1", "x+y=3")
-    secondEquations = ("no", "no", "no", "no", "y=10", "y=1") # only for system of equation
+    equations = ("8*(3+1)","4*x + 10 = 14", "2*x + 2 = 22", "x + 2 < 10", "2*x > 5", "x=1", "x+y=3")
+    secondEquations = ("no", "no", "no", "no", "no", "y=10", "y=1") # only for system of equation
 
-    solutionTentative = ("x=1", "x=42", "x<8", "x<=42", "x=1","x=5")
-    secondSolution = ("no", "no", "no", "no", "y=10", "y=1") # only for system of equation
+    solutionTentative = ("32", "x=1", "x=42", "x<8", "x<=42", "x=1","x=5")
+    secondSolution = ("no", "no", "no", "no", "no", "y=10", "y=1") # only for system of equation
 
     # True if we expect a good answer, False otherwise
-    exact = (True,False,True,False,True,False)
+    exact = (True, True,False,True,False,True,False)
 
     # Lunch oscar
     driver.get("http://127.0.0.1:8000/")
@@ -107,7 +107,7 @@ def lookup(driver):
         element.send_keys(equations[0], Keys.ENTER)
 
 
-        for i in range(1,6):
+        for i in range(1,7):
             driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             element = driver.find_element_by_xpath("/html/body/div[2]/div[2]/div/div[2]/form/div[1]/button")
             element.click()
@@ -120,7 +120,7 @@ def lookup(driver):
             elements[i].send_keys(equations[i], Keys.ENTER)
             if "Syst" in exType[i]:
                 elements = driver.find_elements_by_xpath("//input[@ng-model='question.eq2']")
-                elements[i-4].send_keys(secondEquations[i], Keys.ENTER)
+                elements[i-5].send_keys(secondEquations[i], Keys.ENTER)
             # print ("Question "+str(i+1)+" ok")
 
         # Submit the test
@@ -174,7 +174,7 @@ def lookup(driver):
 
         h = driver.execute_script("return document.body.scrollHeight")
 
-        for i in range(0,6):
+        for i in range(0,7):
             button= "buttonAlgebraic"+str(i)
             if "Syst" in exType[i]:
                 element = driver.find_element_by_id("textEq1" + str(i))
