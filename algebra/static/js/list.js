@@ -39,6 +39,7 @@ function makeForm( link )
     `);
 
     $("#expression-form form").remove();
+    $("#expression-form #expression-form-placeholder").remove();
     $("#expression-form").append($form);
 }
 

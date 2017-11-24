@@ -12,6 +12,9 @@ body #main-content {
 }
 /* ------------------------------------------------------------------ /OSCAR */
 /* ----------------------------------------------------------------- ALGEBRA */
+#main-content .nav {
+  background: #f58025;
+}
 #expression-list {
   height: 100%;
   font-weight: bold;
@@ -36,8 +39,15 @@ body #main-content {
 #algebra-content > .row > div {
   height: 100%;
 }
+#algebra-content .col-md-3,
+#algebra-content .col-md-9 {
+  padding: 0;
+}
+#algebra-content .col-md-9 {
+  background: #f1f1f1;
+}
 #expression-form {
-  padding: 20px;
+  padding: 30px 20px;
 }
 #expression-form label,
 #expression-form input {
@@ -45,5 +55,14 @@ body #main-content {
 }
 #expression-form input {
   padding: 10px;
+}
+#expression-form-placeholder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: .3;
+  font-size: 3em;
+  text-align: center;
 }
 /* ---------------------------------------------------------------- /ALGEBRA */
