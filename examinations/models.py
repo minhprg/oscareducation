@@ -568,6 +568,8 @@ class TestFromClass(BaseTest):
         result = []
 
         students = self.lesson.students.all()
+        print("ALO")
+        print(len(students))
         skills = self.skills.all()
         encoded_values = {(x.student, x.skill): x for x in
                           self.testskillfromclass_set.all().select_related("skill", "student").order_by("id")}
@@ -609,6 +611,18 @@ class TestFromScan(BaseTest):
     """
     content = JSONField()
     reference = models.CharField(max_length=50, default="")
+
+    def get_skills_with_encoded_values(self):
+        result = []
+
+        students = self.lesson.students.all()
+        skills = self.skills.all()
+        encoded_values = {(x.student, x.skill): x for x in
+                          self.testskillfromscan_set.all().select_related("skill", "student").order_by("id")}
+        for student in students:
+            result.append((student, [(skill, encoded_values.get((student, skill))) for skill in skills]))
+
+        return result
 
 
 class TestSkillFromScan(models.Model):

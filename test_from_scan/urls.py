@@ -18,6 +18,5 @@ urlpatterns = [
     url(r'^lesson/(?P<lesson_pk>\d+)/test/from-scan/(?P<pk>\d+)/modify/$',
         user_is_professor(TestFromScanDetailView.as_view(template_name="professor/lesson/test/from-scan/exercices.haml")),
         name='lesson_test_from_scan_modify'),
-    url(r'^add_test_from_scan_for_lesson/$', views.lesson_test_from_scan_add_json, name='lesson_test_from_scan_add_json'),
 
 ]

@@ -453,6 +453,8 @@ def lesson_test_from_scan_fill(request, lesson_pk, pk):
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
     test_from_scan = get_object_or_404(TestFromScan, pk=pk)
 
+    print(test_from_scan)
+    print(test_from_scan.skills.all)
     if request.method == "POST":
         second_run = []
 
@@ -478,7 +480,7 @@ def lesson_test_from_scan_fill(request, lesson_pk, pk):
 
                 reasons = {
                     "who": request.user,
-                    "reason": "Évaluation libre",
+                    "reason": "Évaluation scan",
                     "reason_object": test_from_scan,
                 }
                 if result == "good":
@@ -517,32 +519,5 @@ def lesson_test_from_scan_fill(request, lesson_pk, pk):
 
     return render(request, "professor/lesson/test/from-scan/fill.haml", {
         "lesson": lesson,
-        "test_from_scan": test_from_scan,
+        "test_from_class": test_from_scan,
     })
-
-
-@require_POST
-@user_is_professor
-def lesson_test_from_scan_add_json(request):
-    # TODO: a professor can only do this on one of his lesson
-    # TODO: use django form
-
-    data = json.load(request)
-
-    lesson = get_object_or_404(Lesson, id=data["lesson"])
-
-    if request.user.professor not in lesson.professors.all():
-        raise PermissionDenied()
-
-    with transaction.atomic():
-        test = TestFromScan.objects.create(
-            lesson=lesson,
-            name=data["name"],
-        )
-
-        for skill_id in data["skills"]:
-            test.skills.add(Skill.objects.get(code=skill_id))
-
-        test.save()
-
-    return HttpResponse(str(test.id))
