@@ -1,26 +1,12 @@
 -extends "algebra/base.haml"
+
 -block bootstrap3_title
   Algebra list
--block breadcrumb
-  %br
-  %br
-  %ol.breadcrumb
-    %li
-      %a{ :href => "{% url 'home' %}", :title => "Home" }
-        Home
-    %li.active
-      Algebra
+
 -block algebra_content
-  %table.table.expression-list
-    %thead
-      %tr
-        %th Expression
-        %th Level
-        %th Solution
-        %th Type
-        %th Hide
-        %th Edit
-        %th Delete
-    %tbody
-  -# -for i in number
-  -#   %p=i
+  .row
+    .col-md-3
+      #expression-list.list-group
+        %a#expression-list-header.list-group-item Expressions
+    .col-md-9
+      #expression-form
