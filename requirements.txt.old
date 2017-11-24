@@ -1,0 +1,14 @@
+django
+django-bootstrap3
+django-extensions
+django-debug-toolbar
+git+https://github.com/tomchristie/django-pdb
+django-hamlpy
+werkzeug
+pyyaml
+yamlordereddictloader
+requests
+ruamel.yaml
+django-crispy-forms
+mechanize
+django-compressor

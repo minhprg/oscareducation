@@ -1,11 +1,14 @@
 from django.test import TestCase
 from django.test import LiveServerTestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 import time
 from django.conf import settings
 from selenium.webdriver.support.ui import Select
 import os
 from promotions.utils import *
+from django.contrib.auth.models import User
+from users.models import Professor, Student
 # Create your tests here.
 
 from promotions.utils import insertion_sort_file
@@ -86,31 +89,40 @@ class UploadingCopiesTest(TestCase):
         self.assertEqual(pt_to_px(50, 500, 1), 237) #Y
 
 
-class ScanTestCase(LiveServerTestCase):
-
+class ScanTestCase(StaticLiveServerTestCase):
+    fixtures = ['initial_data.json']
     def setUp(self):
+
+
 
         driver = webdriver.Chrome('/bin/chromedriver')  # Optional argument, if not specified will search path.
         driver.get('http://www.google.com/xhtml');
 
+
+
         self.selenium = driver
 
         selenium = self.selenium
-        selenium.get('http://127.0.0.1:8000/accounts/usernamelogin/')
 
-        selenium.find_element_by_id('djHideToolBarButton').click()
+        selenium.get('%s%s' % (self.live_server_url,'/accounts/usernamelogin/'))
+
+
         username = selenium.find_element_by_id('id_username')
-        username.send_keys('Michael')
+        username.send_keys('professor')
+        time.sleep(2)
 
 
         selenium.find_element_by_css_selector(".btn-primary").click()
-
         passwd = selenium.find_element_by_id('id_password')
+        time.sleep(2)
         passwd.send_keys('oscar')
 
         selenium.find_element_by_css_selector(".btn-primary").click()
 
+
         super(ScanTestCase, self).setUp()
+
+
 
     def tearDown(self):
 
@@ -124,68 +136,80 @@ class ScanTestCase(LiveServerTestCase):
         #Connect
 
         #Create a test
-        selenium.get('http://127.0.0.1:8000/professor/lesson/1/test/from-scan/add/')
+        selenium.get('%s%s' % (self.live_server_url,'/professor/lesson/1/test/from-scan/add/'))
+        time.sleep(2)
 
-
+        selenium.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(1)
+        selenium.find_element_by_id('addSkillToTestButtonForStage1').click()
+        time.sleep(1)
+        selenium.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(2)
         for i in range(0,3):
+
             selenium.find_element_by_name('addQuestion').click()
+            time.sleep(1)
 
         selenium.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         selenium.find_element_by_name('addQuestion').click()
 
         selenium.find_element_by_name('titre').send_keys('Titre test')
-
+        time.sleep(2)
         for i in range(0,5):
             selenium.find_element_by_name(str(i)).send_keys('Question'+str(i+1))
+            time.sleep(1)
+
 
 
         selenium.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         selenium.find_element_by_id('addScan').click()
+        time.sleep(2)
 
         selenium.find_element_by_link_text("Titre test").click()
-
+        time.sleep(1)
         upload = selenium.find_element_by_id("upload_file")
-
+        time.sleep(1)
         upload.send_keys(settings.STATIC_ROOT +"/tests/selenium/scan1.png"+"\n"+settings.STATIC_ROOT +"/tests/selenium/scan2.png"+"\n"+settings.STATIC_ROOT +"/tests/selenium/scan3.png")
-
+        time.sleep(1)
         selenium.find_element_by_id('import').click()
-
+        time.sleep(2)
         #Test Sort by question
         listbox = Select(selenium.find_element_by_id("select_q"));
         listbox.select_by_visible_text('Question 2')
+        time.sleep(1)
         selenium.find_element_by_id("sort_q").click()
-
+        time.sleep(2)
 
         #Go to the associate students page
         selenium.find_element_by_id("match").click()
-
+        time.sleep(2)
         #Click to match names
         selenium.find_element_by_id("match").click()
-
+        time.sleep(2)
         #Go back to the detail
         selenium.find_element_by_id("previous").click()
 
         #Correct a question
         selenium.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-
+        time.sleep(1)
         selenium.find_element_by_id('img').click()
         selenium.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-
+        time.sleep(1)
         selenium.find_element_by_class_name('fa-check').click()
-
+        time.sleep(1)
         selenium.find_element_by_name('annotation').send_keys('Pretty Nice answer kiddo')
-
+        time.sleep(1)
         #Validate correction
         selenium.find_element_by_id("correct").click()
-
+        time.sleep(1)
         #return to the detail of the test
         selenium.find_element_by_id("previous").click()
-
+        time.sleep(2)
         #return to test summary
         selenium.find_element_by_id("previous").click()
 
         selenium.find_element_by_css_selector("img[src='/static/img/icons/delete.png']").click()
-
+        time.sleep(2)
         #Delete the test
         selenium.find_element_by_class_name('btn-danger').click()
 

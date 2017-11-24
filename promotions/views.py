@@ -585,10 +585,6 @@ def lesson_test_list(request, pk):
                 test.testfromscan.progress = "Pas encore encodé"
             else:
                 test.testfromscan.progress = str(tmp)+"/"+str(len(answers))+" élève(s) corrigé(s)"
-
-
-
-
     return render(request, "professor/lesson/test/list.haml", {
         "lesson": lesson,
         "all_tests": temp,

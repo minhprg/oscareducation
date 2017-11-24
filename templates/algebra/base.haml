@@ -1,0 +1,19 @@
+-extends "algebra/layout.haml"
+-block content
+  .well
+    %ul.nav.nav-tabs
+      %li
+        %a{ :href => "{% url 'algebra:list' %}", :title => "Lister exercice" }
+          %i.fa.fa-list
+          Liste
+      %li
+        %a{ :href => "{% url 'algebra:exercice_creation' %}", :title => "Créer exercice" }
+          Création exercice
+      %li
+        %a{ :href => "{% url 'algebra:assessment_creation' %}", :title => "Créer évaluation" }
+          Création évaluation
+      %li
+        %a{ :href => "{% url 'algebra:training_session_student' %}", :title => "Training session" }
+          Training session
+    -block algebra_content
+-block javascript

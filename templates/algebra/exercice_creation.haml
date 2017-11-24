@@ -1,0 +1,106 @@
+-extends "algebra/base.haml"
+-block bootstrap3_title
+  Créer exercice
+-block breadcrumb
+  %br
+  %br
+  %ol.breadcrumb
+    %li
+      %a{ :href => "{% url 'home' %}", :title => "Home" }
+        Home
+    %li
+      %a{ :href => "{% url 'algebra:list' %}", :title => "Liste exercice" }
+        Algebra
+    %li.active
+      Créer exercice
+
+-block algebra_content
+  %form.formgroup
+    .well
+      .row
+        .col-md-4
+          %label{:for => 'exercice_level'} Choose level
+        .col-md-4{:align => "center"}
+          .btn-group.btn-group-lg
+            %select.form-control{:id => 'exercice_level', :name => 'exercice_level'}
+              %option 1
+              %option 2
+              %option 3
+              %option 4
+              %option 5
+      %hr
+      .row
+        .col-md-4
+          %label{:for => 'var'} Choose variable
+        .col-md-4{:align => "center"}
+          .btn-group.btn-group-lg
+            %select.form-control{:id => 'var'}
+              %option X
+              %option A
+              %option B
+      %hr
+      .row
+        .col-md-6
+          %a.btn.btn-block.btn-lg.radio-side.btn-primary{:id => "leftButton"} Write left side
+        .col-md-6
+          %a.btn.btn-block.btn-lg.radio-side{:id => "rightButton"} Write right slide
+      .row
+        .col-md-12
+          %hr
+      .row
+        .col-md-4
+          %label{:for => 'termWithVariable'} Term with variable :
+        .col-md-4
+          .col-md-12
+            %input.form-control{:id => "termWithVariable",  :type=>"number" ,:placeholder => "Only integer"}/
+            %br/
+        .col-md-4
+          %a.btn.btn-primary.btn-block.btn-lg{:id => "addTermWithVariable"} ADD
+      .row
+        .col-md-4
+          %label{:for => 'termWithoutVariable'} Term without variable :
+        .col-md-4
+          .col-md-12
+            %input.form-control{:id => "termWithoutVariable", :type=>"number", :placeholder => "Only integer"}/
+            %br/
+        .col-md-4
+          %a.btn.btn-primary.btn-block.btn-lg{:id => "addTermWithoutVariable"} ADD
+      .row
+        .col-md-4
+          %label{:for => 'operator'} Choose operator :
+        .col-md-4{:align => "center"}
+          .btn-group.btn-group-lg
+            %select.form-control{:id => 'operator'}
+              %option +
+              %option -
+              %option *
+              %option /
+        .col-md-4
+          %a.btn.btn-primary.btn-block.btn-lg{:id => "addOperator"} ADD
+      %hr
+      .row
+        .col-md-5
+          %input.form-control{:id => "leftSide", :name => 'leftSide', :value=>'2X'}
+          %br/
+        .col-md-2{:align => "center"}
+          .btn-group.btn-group-lg
+            %select.form-control{:id => "signe", :name => 'signe'}
+              %option =
+              %option >
+              %option <
+        .col-md-5
+          %input.form-control{:id => "rightSide", :name => 'rightSide', :value=>'1'}
+          %br/
+      %hr
+      .row
+        .col-md-4
+          %label{:for => 'solution'} Solution:
+        .col-md-4
+          %input.form-control{:id => "solution", :name => 'solution', :value=>'x=5'}
+          %br/
+      .row
+        .col-md-12
+          #status
+    .row
+      .col-md-4
+          %button.btn.btn-primary{:id=> "concat"} Check
