@@ -10,16 +10,6 @@ from selenium.webdriver.support.ui import Select
 from datetime import datetime
 
 
-# On se connect en tant que prof et on creer un test
-# Pour ce test on donne deux equations inequations et systemes.
-# On publie le test et on se connecte en tant qu'etudiant
-# L'etudiant selectionne le test et le rempli en donnant la bonne reponse au numero impairs et la mauvaise au numero pairs:
-# Il soumet ses reponseetse deconnecte
-# Le prof se connect et regarde les resultat du tests pour cet etudiant
-# On verifie avec les couleurs que on a bien une sequence vrai/faux/vrai...
-# on quitte la page de l'eleve,on supprime le test pour que se soit propre et on se deconnecte.
-
-
 def init_driver():
     driver = webdriver.Chrome()
 
@@ -32,19 +22,19 @@ def init_driver():
 
 def lookup(driver):
     # Equation type
-    exType = ("algebraicExpression", "algebraicEquation", "algebraicEquation", "algebraicInequation", "algebraicInequation",
+    exType = ("algebraicEquation", "algebraicExpression", "algebraicEquation", "algebraicInequation", "algebraicInequation",
               "algebraicSystem", "algebraicSystem")
     # Instruction for exercices
-    instruction = ("Expr","Eq1", "Eq2", "Ineq1", "Ineq2", "Syst1", "Syst2")
+    instruction = ("Eq1Auto", "Expr", "Eq2", "Ineq1", "Ineq2", "Syst1", "Syst2")
 
-    equations = ("8*(3+1)","4*x + 10 = 14", "2*x + 2 = 22", "x + 2 < 10", "2*x > 5", "x=1", "x+y=3")
+    equations = ("no", "8*(3+1)", "2*x + 2 = 22", "x + 2 < 10", "2*x > 5", "x=1", "x+y=3")
     secondEquations = ("no", "no", "no", "no", "no", "y=10", "y=1") # only for system of equation
 
-    solutionTentative = ("32", "x=1", "x=42", "x<8", "x<=42", "x=1","x=5")
+    solutionTentative = ("x = 1000", "32", "x=10", "x<8", "x<=42", "x=1","x=5")
     secondSolution = ("no", "no", "no", "no", "no", "y=10", "y=1") # only for system of equation
 
     # True if we expect a good answer, False otherwise
-    exact = (True, True,False,True,False,True,False)
+    exact = (False, True, True ,True,False,True,False)
 
     # Lunch oscar
     driver.get("http://127.0.0.1:8000/")
@@ -103,8 +93,11 @@ def lookup(driver):
         element.send_keys(instruction[0])
         select = Select(driver.find_element_by_xpath("//select[@ng-model='question.type']"))
         select.select_by_value(exType[0])
-        element = driver.find_element_by_xpath("//input[@ng-model='question.eq1']")
-        element.send_keys(equations[0], Keys.ENTER)
+        element = driver.find_element_by_xpath("/html/body/div[2]/div[2]/div/div[2]/form/ul/li/ul/li/div[1]/input")
+        element.click()
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        element = driver.find_element_by_id("buttongen0")
+        element.click()
 
 
         for i in range(1,7):
