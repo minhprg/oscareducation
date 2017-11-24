@@ -19,6 +19,8 @@ class AlgebraicExercice(models.Model):
     updated                     = models.DateField()
     solution                    = models.CharField(max_length=30)
     level                       = models.PositiveSmallIntegerField()
+    #complexity                  = models.PositiveSmallIntegerField()
+    #domain                      = models.CharField(max_length=30)
 
     class Meta:
         db_table = 'algebraic_expression'
