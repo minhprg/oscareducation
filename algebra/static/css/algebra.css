@@ -49,10 +49,6 @@ body #main-content {
 #expression-form {
   padding: 30px 20px;
 }
-#expression-form label,
-#expression-form input {
-  display: inline-block;
-}
 #expression-form input {
   padding: 10px;
 }
