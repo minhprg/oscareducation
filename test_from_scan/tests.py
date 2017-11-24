@@ -1,11 +1,14 @@
 from django.test import TestCase
 from django.test import LiveServerTestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 import time
 from django.conf import settings
 from selenium.webdriver.support.ui import Select
 import os
 from promotions.utils import *
+from django.contrib.auth.models import User
+from users.models import Professor, Student
 # Create your tests here.
 
 from promotions.utils import insertion_sort_file
@@ -86,31 +89,38 @@ class UploadingCopiesTest(TestCase):
         self.assertEqual(pt_to_px(50, 500, 1), 237) #Y
 
 
-class ScanTestCase(LiveServerTestCase):
-
+class ScanTestCase(StaticLiveServerTestCase):
+    fixtures = ['initial_data.json']
     def setUp(self):
+
+
 
         driver = webdriver.Chrome('/bin/chromedriver')  # Optional argument, if not specified will search path.
         driver.get('http://www.google.com/xhtml');
 
+
+
         self.selenium = driver
 
         selenium = self.selenium
-        selenium.get('http://127.0.0.1:8000/accounts/usernamelogin/')
 
-        selenium.find_element_by_id('djHideToolBarButton').click()
+        selenium.get('%s%s' % (self.live_server_url,'/accounts/usernamelogin/'))
+
+
         username = selenium.find_element_by_id('id_username')
-        username.send_keys('Michael')
+        username.send_keys('professor')
 
 
         selenium.find_element_by_css_selector(".btn-primary").click()
-
         passwd = selenium.find_element_by_id('id_password')
         passwd.send_keys('oscar')
 
         selenium.find_element_by_css_selector(".btn-primary").click()
 
+
         super(ScanTestCase, self).setUp()
+
+
 
     def tearDown(self):
 
@@ -124,10 +134,15 @@ class ScanTestCase(LiveServerTestCase):
         #Connect
 
         #Create a test
-        selenium.get('http://127.0.0.1:8000/professor/lesson/1/test/from-scan/add/')
+        selenium.get('%s%s' % (self.live_server_url,'/professor/lesson/1/test/from-scan/add/'))
 
+        selenium.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
+        selenium.find_element_by_id('addSkillToTestButtonForStage1').click()
+
+        selenium.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         for i in range(0,3):
+
             selenium.find_element_by_name('addQuestion').click()
 
         selenium.execute_script("window.scrollTo(0, document.body.scrollHeight);")
@@ -139,8 +154,10 @@ class ScanTestCase(LiveServerTestCase):
             selenium.find_element_by_name(str(i)).send_keys('Question'+str(i+1))
 
 
+
         selenium.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         selenium.find_element_by_id('addScan').click()
+
 
         selenium.find_element_by_link_text("Titre test").click()
 
@@ -187,7 +204,7 @@ class ScanTestCase(LiveServerTestCase):
         selenium.find_element_by_css_selector("img[src='/static/img/icons/delete.png']").click()
 
         #Delete the test
-        selenium.find_element_by_class_name('btn-danger').click()
+        #selenium.find_element_by_class_name('btn-danger').click()
 
 
 

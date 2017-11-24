@@ -75,14 +75,14 @@ def lesson_test_from_scan_add(request, pk):
     lesson = get_object_or_404(Lesson, pk=pk)
 
     if request.method == "POST":
+        print("111111111111111111111111 \n")
         form = request.POST.items()
 
         title = request.POST.get('titre')
+        print("222222222222222222222222222 \n")
 
-        scan = TestFromScan.objects.create(
-            lesson = lesson,
-            name = title,
-        )
+        scan = TestFromScan.objects.create(lesson = lesson,name = title)
+        print("33333333333333333333333333333 \n")
         skills = request.POST.get('skills-scan').split(",")
         for skill_id in skills:
             scan.skills.add(Skill.objects.get(code=skill_id))
@@ -90,15 +90,15 @@ def lesson_test_from_scan_add(request, pk):
         """for student in lesson.students.all():
             scan.add_student(student)"""
 
-
+        print("4444444444444444444444444 \n")
         try:
             scan.save()
         except Exception as e:
             messages.error(request, "Une erreur s'est produite durant la création.")
             return HttpResponseRedirect('/professor/lesson/'+str(pk)+'/test/from-scan/add/')
-
+        print("55555555555555555555555555555555 \n")
         form = sorted(form, key=lambda tup: tup[0])
-        print(form)
+
         file = generate_pdf(form,scan.id)
 
         content = generate_coordinates(file)
@@ -363,9 +363,14 @@ def lesson_test_from_scan_detail(request, lesson_pk, pk):
 
                         all_pages = reader.getNumPages()
 
+                        if all_pages == 1:
+                            dir = settings.STATIC_ROOT+"/tests/tmp/"+pk+"-0.jpg"
+                        else:
+                            dir = settings.STATIC_ROOT+"/tests/tmp/"+pk+".jpg"
+
                         if not os.path.isdir(settings.STATIC_ROOT +"/tests/tmp"):
                             os.makedirs(settings.STATIC_ROOT +"/tests/tmp")
-                        os.system("convert -density 150 %s %s"%(settings.MEDIA_ROOT+"/"+pk+".pdf",settings.STATIC_ROOT+"/tests/tmp/"+pk+".jpg"))
+                        os.system("convert -density 150 %s %s"%(settings.MEDIA_ROOT+"/"+pk+".pdf",dir))
 
                         default_storage.delete(pk+".pdf")
 
@@ -405,9 +410,6 @@ def lesson_test_from_scan_detail(request, lesson_pk, pk):
                                 img2.save(settings.STATIC_ROOT +"/tests/"+ pk + "/crop" + str(count) + ".png")
                                 count_question +=1
                                 count+=1
-
-
-
 
 
                     else:

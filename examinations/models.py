@@ -607,7 +607,7 @@ class TestFromScan(BaseTest):
         Its purpose is to encode the results online.
 
     """
-    content = JSONField()
+    content = JSONField(default="")
     reference = models.CharField(max_length=50, default="")
 
 
@@ -646,12 +646,12 @@ class TestAnswerFromScan(models.Model):
     question = models.ForeignKey("TestQuestionFromScan")
     """A Skill tested by the offline Test"""
     created_at = models.DateTimeField(auto_now_add=True)
-    student = models.ForeignKey("users.Student")
+    student = models.ForeignKey("users.Student",null=True)
     """The student that passed the offline Test"""
     """The offline test date of creation"""
     reference = models.CharField(max_length=50)
     reference_name = models.CharField(max_length=50)
-    is_correct = models.BooleanField()
+    is_correct = models.NullBooleanField(null=True)
     annotation = models.CharField(max_length=150)
 
 class TestQuestionFromScan(models.Model):
