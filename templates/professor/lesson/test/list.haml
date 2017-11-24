@@ -129,21 +129,17 @@
                 %a{href: "{% url 'professor:lesson_test_from_scan_detail' lesson.pk basetest.pk %}"}
                   =basetest.name
               %td
-                -if not basetest.testfromscan.testskillfromclass_set.exists
-                  %span.status.alert.alert-info
-                    Pas encore encodé
-                -else
-                  %span.status.alert.alert-info
-                    Encodé
+                %span.status.alert.alert-info
+                  =basetest.testfromscan.progress
+
 
               %td.align-right
                 -if not basetest.testfromscan.testskillfromscan_set.exists
-                  %a{href: "{% url 'professor:lesson_test_from_scan_fill' lesson.pk basetest.pk %}"}
-                    %img.icon{src: "{% static 'img/icons/encode.png' %}", data-toggle: "tooltip", data-placement: "top", title: "Encoder"}
-                %a{href: "{% url 'professor:lesson_test_from_scan_modify' lesson.pk basetest.pk %}"}
-                  %img.icon{src: "{% static 'img/icons/modify.png' %}", data-toggle: "tooltip", data-placement: "top", title: "Modifier"}
+                %a{href: "{% url 'professor:lesson_test_from_scan_download' lesson.pk basetest.pk %}", target:"_blank"}
+                  %i.fa.fa-floppy-o
                 %a{href: "{% url 'professor:lesson_test_delete' lesson.pk basetest.pk %}"}
                   %img.icon{src: "{% static 'img/icons/delete.png' %}", data-toggle: "tooltip", data-placement: "top", title: "Supprimer"}
+
 
     -else
       %p

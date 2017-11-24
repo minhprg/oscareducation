@@ -2,6 +2,7 @@ function severalQuestionsController($scope, $window) {
     $scope.questions = [1];
 
     $scope.addMoreQuestion = function(number) {
+
         if ($scope.questions.length > 0) {
             var new_number = $scope.questions[$scope.questions.length - 1] + 1;
         } else {
@@ -19,3 +20,4 @@ function severalQuestionsController($scope, $window) {
         }
     }
 }
+

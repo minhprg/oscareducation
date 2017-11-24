@@ -1,7 +1,6 @@
 # encoding: utf-8
 
 import json
-import qrtools
 from datetime import datetime
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
@@ -12,17 +11,24 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.db import transaction
 from PIL import Image
 from skills.models import Skill, StudentSkill, SkillHistory
-from examinations.models import TestFromScan, TestSkillFromScan, TestAnswerFromScan, TestQuestionFromScan
+from examinations.models import TestFromScan, TestSkillFromScan, TestAnswerFromScan, TestQuestionFromScan, BaseTest
 from django.contrib import messages
-import os
+import os, tempfile, zipfile
 from promotions.models import Lesson, Students
 from users.models import Student
-from promotions.utils import user_is_professor, insertion_sort_file, all_different
+from promotions.utils import user_is_professor, insertion_sort_file, all_different, generate_pdf, generate_coordinates, pt_to_px, pdf2png
 from .forms import ImportCopyForm
+from django.utils.encoding import smart_str
+from wsgiref.util import FileWrapper
+from PyPDF2 import PdfFileWriter, PdfFileReader
+from django.core.files.storage import default_storage
+
+
+
 
 @user_is_professor
 def lesson_test_from_scan_match(request, lesson_pk, pk):
-    is_exist = TestAnswerFromScan.objects.filter(id__isnull=False).count()
+    is_exist = TestAnswerFromScan.objects.filter(test_id=pk).count()
     nb_not_match = TestAnswerFromScan.objects.filter(student_id__isnull=True).count()
     if is_exist == 0:
         messages.error(request, "Importez un test avant de pouvoir associer vos élèves")
@@ -65,17 +71,93 @@ def lesson_test_from_scan_match(request, lesson_pk, pk):
     })
 
 @user_is_professor
+def lesson_test_from_scan_add(request, pk):
+    lesson = get_object_or_404(Lesson, pk=pk)
+
+    if request.method == "POST":
+        form = request.POST.items()
+
+        title = request.POST.get('titre')
+
+        scan = TestFromScan.objects.create(
+            lesson = lesson,
+            name = title,
+        )
+
+        skills_string = request.POST.get('skills-scan')
+        if(skills_string != ""):
+            skills = skills_string.split(",")
+            for skill_id in skills:
+                print("heuu")
+                print(skill_id)
+                s = Skill.objects.get(code=skill_id)
+                if(s is not None):
+                    scan.skills.add()
+                else :
+                    messages.error(request, "Aucune compétence sélectionnée.")
+                    return HttpResponseRedirect('/professor/lesson/' + str(pk) + '/test/from-scan/add/')
+        else :
+            messages.error(request, "Aucune compétence sélectionnée.")
+            return HttpResponseRedirect('/professor/lesson/' + str(pk) + '/test/from-scan/add/')
+
+
+        """for student in lesson.students.all():
+            scan.add_student(student)"""
+
+        try:
+            scan.save()
+        except Exception as e:
+            messages.error(request, "Une erreur s'est produite durant la création.")
+            return HttpResponseRedirect('/professor/lesson/'+str(pk)+'/test/from-scan/add/')
+
+        form = sorted(form, key=lambda tup: tup[0])
+
+        file = generate_pdf(form,scan.id)
+
+        content = generate_coordinates(file)
+
+        try:
+
+            TestFromScan.objects.filter(pk=scan.id).update(reference=file, content=json.dumps(content))
+        except Exception as e:
+            messages.error(request, "Une erreur s'est produite durant la création.")
+            return HttpResponseRedirect('/professor/lesson/'+str(pk)+'/test/from-scan/add/')
+
+        for i in form:
+            if not i[0] in "skills-scan" and not i[0] in "csrfmiddlewaretoken" and not i[0] in "titre":
+                question = TestQuestionFromScan(question_num=int(i[0])+1, contexte=i[1], test_id=scan.id)
+                try:
+                    question.save()
+                except Exception as e:
+                    messages.error(request, "Une erreur s'est produite durant la création.")
+                    return HttpResponseRedirect('/professor/lesson/'+str(pk)+'/test/from-scan/add/')
+
+
+        return HttpResponseRedirect('/professor/lesson/'+str(pk)+'/test/')
+
+    return render(request, "professor/lesson/test/from-scan/add.haml", {
+        "lesson": lesson,
+        "stages": lesson.stages_in_unchronological_order(),
+    })
+
+@user_is_professor
 def lesson_test_from_scan_correct_one(request, lesson_pk, test_pk, pk):
     is_exist = TestAnswerFromScan.objects.filter(id__isnull=False).count()
     nb_not_match = TestAnswerFromScan.objects.filter(student_id__isnull=True).count()
-    if nb_not_match > 0 or is_exist == 0:
+    """if nb_not_match > 0 or is_exist == 0:
         messages.error(request,"Associez vos élèves avant de pouvoir corriger la réponse")
-        return HttpResponseRedirect('/professor/lesson/' + str(lesson_pk) + '/test/from-scan/' + str(test_pk) + '/')
+        return HttpResponseRedirect('/professor/lesson/' + str(lesson_pk) + '/test/from-scan/' + str(test_pk) + '/')"""
 
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
     test = get_object_or_404(TestFromScan, pk=test_pk)
     answer = get_object_or_404(TestAnswerFromScan, pk=pk)
+    questions = TestQuestionFromScan.objects.all().filter(test_id=test_pk).order_by('question_num')
     students = TestAnswerFromScan.objects.all().filter(test_id=test_pk).distinct('student_id').order_by('student_id','-is_correct')
+
+    for st in students:
+        an =  TestAnswerFromScan.objects.all().filter(test_id=test_pk,student_id = st.student_id, is_correct__isnull=False).count()
+        st.pourcentage = str(an)+"/"+str(len(questions))
+
 
     if answer.annotation == None:
         answer.annotation = ""
@@ -98,24 +180,47 @@ def lesson_test_from_scan_correct_one(request, lesson_pk, test_pk, pk):
     })
 
 @user_is_professor
+def lesson_test_from_scan_download(request, lesson_pk, pk):
+
+    test = get_object_or_404(BaseTest, pk=pk)
+    t = get_object_or_404(TestFromScan, pk=pk)
+
+    if not t.reference is None:
+        filename = settings.STATIC_ROOT+"/tests/pdf/"+str(pk)+".pdf" # Select your file here.
+        wrapper = FileWrapper(file(filename))
+        response = HttpResponse(wrapper, content_type='application/pdf')
+        response['Content-Disposition'] = "filename="+test.name+".pdf"
+        response['Content-Length'] = os.path.getsize(filename)
+        return response
+    else:
+        return HttpResponseRedirect('/professor/lesson/' + str(lesson_pk) + '/test/')
+
+@user_is_professor
 def lesson_test_from_scan_correct_by_student(request, lesson_pk, test_pk, pk):
-    is_exist = TestAnswerFromScan.objects.filter(id__isnull=False).count()
-    nb_not_match = TestAnswerFromScan.objects.filter(student_id__isnull=True).count()
+
+    is_exist = TestAnswerFromScan.objects.filter(id__isnull=False, test_id=test_pk).count()
+    nb_not_match = TestAnswerFromScan.objects.filter(student_id__isnull=True, test_id=test_pk).count()
     if nb_not_match > 0 or is_exist == 0:
         messages.error(request,"Associez vos élèves avant de pouvoir corriger la réponse")
         return HttpResponseRedirect('/professor/lesson/' + str(lesson_pk) + '/test/from-scan/' + str(test_pk) + '/')
 
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
     test = get_object_or_404(TestFromScan, pk=test_pk)
-    if request.session['sort_answer'] is None or request.session['sort_answer'] == 0:
-        answers = TestAnswerFromScan.objects.all().filter(student_id=pk).order_by('id')
+    if (not 'sort_answer' in request.session) or (request.session['sort_answer'] is None or request.session['sort_answer'] == 0):
+        request.session['sort_answer'] = 0;
+        answers = TestAnswerFromScan.objects.all().filter(student_id=pk, test_id=test_pk).order_by('id')
     elif request.session['sort_answer'] == 1:
-        answers = TestAnswerFromScan.objects.all().filter(student_id=pk,is_correct__isnull=True).order_by('id')
+        answers = TestAnswerFromScan.objects.all().filter(student_id=pk,is_correct__isnull=True, test_id=test_pk).order_by('id')
     elif request.session['sort_answer'] == 2:
-        answers = TestAnswerFromScan.objects.all().filter(student_id=pk, is_correct__isnull=False).order_by('id')
+        answers = TestAnswerFromScan.objects.all().filter(student_id=pk, is_correct__isnull=False, test_id=test_pk).order_by('id')
 
     questions = TestQuestionFromScan.objects.all().filter(test_id=test_pk).order_by('question_num')
     students = TestAnswerFromScan.objects.all().filter(test_id=test_pk).distinct('student_id').order_by('student_id','-is_correct')
+
+    for st in students:
+        an =  TestAnswerFromScan.objects.all().filter(test_id=test_pk,student_id = st.student_id, is_correct__isnull=False).count()
+        st.pourcentage = str(an)+"/"+str(len(questions))
+
 
     for answer in answers:
         if answer.annotation == None:
@@ -161,37 +266,43 @@ def lesson_test_from_scan_correct_by_student(request, lesson_pk, test_pk, pk):
     })
 
 
-@user_is_professor
-def lesson_test_from_scan_add(request, pk):
-    lesson = get_object_or_404(Lesson, pk=pk)
 
-    return render(request, "professor/lesson/test/from-scan/correct_by_student.haml", {
-        "lesson": lesson,
-        "stages": lesson.stages_in_unchronological_order(),
-    })
 
 
 @user_is_professor
 def lesson_test_from_scan_detail(request, lesson_pk, pk):
-    is_exist = TestAnswerFromScan.objects.filter(id__isnull=False).count()
+    is_exist = TestAnswerFromScan.objects.filter(test_id=pk).count()
     nb_not_match = TestAnswerFromScan.objects.filter(student_id__isnull=True).count()
 
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
     test = get_object_or_404(TestFromScan, pk=pk)
-    if request.session['sort_question'] == None or request.session['sort_question'] == -1:
+
+
+
+
+    if (not 'sort_question' in request.session) or (request.session['sort_question'] is None or request.session['sort_question'] == -1):
+        request.session['sort_question'] = -1;
         answers = TestAnswerFromScan.objects.all().filter(test_id=pk).order_by('id')
     else:
         answers = TestAnswerFromScan.objects.all().filter(test_id=pk, question_id=request.session['sort_question']).order_by('id')
     questions = TestQuestionFromScan.objects.all().filter(test_id=pk).order_by('question_num')
     students = TestAnswerFromScan.objects.all().filter(test_id=pk).distinct('student_id').order_by('student_id','-is_correct')
 
+
+    for st in students:
+        an =  TestAnswerFromScan.objects.all().filter(test_id=pk,student_id = st.student_id, is_correct__isnull=False).count()
+        st.pourcentage = str(an)+"/"+str(len(questions))
+
+
     if request.method == "POST":
-        print(request.POST)
         if 'questions' in request.POST:
             request.session['sort_question'] = int(request.POST.get('questions'))
         elif 'copy' in request.FILES:
+
             form = ImportCopyForm(request.POST, request.FILES)
+            print(form.is_valid())
             if form.is_valid():
+
                 copy = request.FILES.getlist('copy', False)
 
                 if not os.path.isdir(settings.STATIC_ROOT +"/tests/"+pk) and copy:
@@ -199,33 +310,130 @@ def lesson_test_from_scan_detail(request, lesson_pk, pk):
 
                 insertion_sort_file(copy)
 
-                last_answer = TestAnswerFromScan.objects.order_by('-id')
-                if (len(last_answer) == 0):
-                    i = 1
-                else:
-                    i = last_answer[0].id
+
+                i=1
                 count_question = 0
+                cont = json.loads(test.content)
+                count_page = 1
+                count = 0
+                format = ["png","PNG","jpg","jpeg","JPG","JPEG"]
+
+
                 for c in copy:
 
-                    img = Image.open(c)
+                    split = str(c).split(".")
 
-                    qr = qrtools.QR()
-                    qr.decode(c)
+                    if split[1] in format:
 
-                    if int(qr.data)==1:
-                        print("Page number 1 \n")
-                        name = img.crop((797, 145, 1176, 189))
-                        ref_name = "/tests/"+ pk + "/name"+str(i)+".png"
-                        name.save(settings.STATIC_ROOT +"/tests/"+ pk + "/name"+str(i)+".png")
-                        count_question = 0
+                        img = Image.open(c)
 
-                    for answ in test.content['a'][int(qr.data)-1]['y']:
-                        answer = TestAnswerFromScan(test_id=pk, question_id=questions[count_question].id, reference_name=ref_name, reference='/tests/'+pk+'/crop'+str(i)+'.png')
-                        answer.save()
-                        img2 = img.crop((64, answ, 1175, answ+409))
-                        img2.save(settings.STATIC_ROOT +"/tests/"+ pk + "/crop" + str(i) + ".png")
-                        i += 1
-                        count_question +=1
+                        dpi = int(round(img.size[0]/(21*0.3937008)))
+
+
+                        if str(count_page) not in cont:
+                            count_page = 1
+                        numpage = str(count_page)
+
+                        if count_page == 1:
+
+                            ran = range(2,len(cont[numpage][0]),2)
+
+                            x1 = pt_to_px(dpi,cont[numpage][0][0])
+                            y1 = pt_to_px(dpi,cont[numpage][1][0],1)
+                            x2 = pt_to_px(dpi,cont[numpage][0][1])
+                            y2 = pt_to_px(dpi,cont[numpage][1][1],1)
+
+                            name = img.crop((x1, y1, x2, y2))
+                            ref_name = "/tests/"+ pk + "/name"+str(i)+".png"
+                            name.save(settings.STATIC_ROOT +"/tests/"+ pk + "/name"+str(i)+".png")
+                            count_question = 0
+                        else:
+                            ran = range(0,len(cont[numpage][0]),2)
+
+                        for answ in ran:
+                            answer = TestAnswerFromScan(test_id=pk, question_id=questions[count_question].id, reference_name=ref_name, reference='/tests/'+pk+'/crop'+str(i)+'.png')
+                            answer.save()
+
+                            x1 = pt_to_px(dpi,cont[numpage][0][answ])
+                            y1 = pt_to_px(dpi,cont[numpage][1][answ],1)
+                            x2 = pt_to_px(dpi,cont[numpage][0][answ+1])
+                            y2 = pt_to_px(dpi,cont[numpage][1][answ+1],1)
+                            img2 = img.crop((x1, y1, x2, y2))
+                            img2.save(settings.STATIC_ROOT +"/tests/"+ pk + "/crop" + str(i) + ".png")
+                            i += 1
+                            count_question +=1
+                    # It's a pdf
+                    elif split[1] == "pdf":
+
+                        if not os.path.isdir(settings.STATIC_ROOT + "/tests/tmp"):
+                            print(settings.STATIC_ROOT + "/tests/tmp")
+                            os.makedirs(settings.STATIC_ROOT + "/tests/tmp")
+
+                        # number of page per test
+                        pages_per_test = PdfFileReader(settings.STATIC_ROOT +"/tests/pdf/"+pk+".pdf").getNumPages();
+
+                        # Read the pdf file
+                        reader = PdfFileReader(c, 'r')
+
+                        default_storage.save(pk+".pdf", c)
+
+                        all_pages = reader.getNumPages()
+
+                        if all_pages == 1:
+                            dir = settings.STATIC_ROOT+"/tests/tmp/"+pk+"-0.jpg"
+                        else:
+                            dir = settings.STATIC_ROOT+"/tests/tmp/"+pk+".jpg"
+
+                        if not os.path.isdir(settings.STATIC_ROOT +"/tests/tmp"):
+                            os.makedirs(settings.STATIC_ROOT +"/tests/tmp")
+
+                        os.system("convert -density 150 %s %s"%(settings.MEDIA_ROOT+"/"+pk+".pdf",dir))
+
+                        default_storage.delete(pk+".pdf")
+
+                        for i in range(all_pages):
+
+                            img = Image.open(settings.STATIC_ROOT+"/tests/tmp/"+pk+"-"+str(i)+".jpg")
+
+                            dpi = int(round(img.size[0]/(21*0.3937008)))
+
+
+                            if (i%pages_per_test) == 0:
+
+                                ran = range(2,len(cont[str((i%pages_per_test)+1)][0]),2)
+
+                                x1 = pt_to_px(dpi,cont[str((i%pages_per_test)+1)][0][0])
+                                y1 = pt_to_px(dpi,cont[str((i%pages_per_test)+1)][1][0],1)
+                                x2 = pt_to_px(dpi,cont[str((i%pages_per_test)+1)][0][1])
+                                y2 = pt_to_px(dpi,cont[str((i%pages_per_test)+1)][1][1],1)
+
+                                name = img.crop((x1, y1, x2, y2))
+                                ref_name = "/tests/"+ pk + "/name"+str(count)+".png"
+                                name.save(settings.STATIC_ROOT +"/tests/"+ pk + "/name"+str(count)+".png")
+                                count_question = 0
+                            else:
+                                ran = range(0,len(cont[str((i%pages_per_test)+1)][0]),2)
+
+                            for answ in ran:
+
+                                answer = TestAnswerFromScan(test_id=pk, question_id=questions[count_question].id, reference_name=ref_name, reference='/tests/'+pk+'/crop'+str(count)+'.png')
+                                answer.save()
+
+                                x1 = pt_to_px(dpi,cont[str((i%pages_per_test)+1)][0][answ])
+                                y1 = pt_to_px(dpi,cont[str((i%pages_per_test)+1)][1][answ],1)
+                                x2 = pt_to_px(dpi,cont[str((i%pages_per_test)+1)][0][answ+1])
+                                y2 = pt_to_px(dpi,cont[str((i%pages_per_test)+1)][1][answ+1],1)
+                                img2 = img.crop((x1, y1, x2, y2))
+                                img2.save(settings.STATIC_ROOT +"/tests/"+ pk + "/crop" + str(count) + ".png")
+                                count_question +=1
+                                count+=1
+
+
+                    else:
+                        messages.error(request,"Le format ne correspond pas à la norme")
+                        return HttpResponseRedirect('/professor/lesson/'+str(lesson_pk)+'/test/from-scan/'+str(pk)+'/')
+
+                    count_page+=1
         return HttpResponseRedirect('/professor/lesson/'+str(lesson_pk)+'/test/from-scan/'+str(pk)+'/')
 
     return render(request, "professor/lesson/test/from-scan/detail.haml", {

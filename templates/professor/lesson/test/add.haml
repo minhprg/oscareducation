@@ -1,8 +1,9 @@
 -extends "base.haml"
 
--block content
+-block breadcrumb
   .row.choose-test
-    .col-md-5.col-md-offset-1
+    .col-md-2
+    .col-md-2.col-md-offset-1
       .panel.panel-default
         .panel-heading
           Test en ligne
@@ -23,7 +24,7 @@
             %a.btn.btn-primary.center{href: "{% url 'professor:lesson_test_online_add' lesson.pk %}"}
               Ajouter un test en ligne
 
-    .col-md-5
+    .col-md-2
       .panel.panel-default
         .panel-heading
           Encoder un test fait hors ligne
@@ -37,4 +38,19 @@
 
           .center
             %a.btn.btn-primary{href: "{% url 'professor:lesson_test_from_class_add' lesson.pk %}"}
+              Ajouter une évaluation libre
+    .col-md-2
+      .panel.panel-default
+        .panel-heading
+          Encoder un test à imprimer
+
+        .panel-body
+          %p{style: "height: 111px"}
+            L'évaluation libre sert à mettre en ligne le résultat d'un test qui aura
+            été effectué préalablement en classe.
+
+          %br
+
+          .center
+            %a.btn.btn-primary{href: "{% url 'professor:lesson_test_from_scan_add' lesson.pk %}"}
               Ajouter une évaluation libre

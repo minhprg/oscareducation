@@ -1,8 +1,4 @@
 -extends "base.haml"
--load static
--load compress
-  -compress js
-    %script{type: "text/javascript", src: "{% static 'js/bootstrap-notify.min.js' %}"}
 
 -block breadcrumb
   %ol.breadcrumb
@@ -25,7 +21,7 @@
   .container-fluid.boxclassetitle
     .pull-left
       %td.center{width: "20px"}
-        %a.btn.btn-primary{href: "{% url 'professor:lesson_test_from_scan_detail' lesson.pk test.pk %}"}
+        %a.btn.btn-primary{href: "{% url 'professor:lesson_test_from_scan_detail' lesson.pk test.pk %}", id:"previous"}
           Retour au test
   .ligneorange
 
@@ -47,6 +43,7 @@
             %li.sld
               {% load static %}
               %img.img-responsive{src : "{% static name.reference_name %} "}
+            %br
             %li.sld
               -if lesson.students.count
                 %select{name : "students"}
@@ -61,6 +58,7 @@
             %li.sld
               {% load static %}
               %img.img-responsive{src : "{% static name.reference_name %} "}
+            %br
             %li.sld
               -if lesson.students.count
                 %select{name : "students"}
@@ -74,8 +72,8 @@
 
         .pull-left
           %td.center{width: "20px"}
-
-      %button.btn.btn-primary{type: "submit"}
+      %br
+      %button.btn.btn-primary{type: "submit", id: "match"}
         Associer les élèves
 
   .ligneorange

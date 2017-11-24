@@ -30,3 +30,8 @@ pandas==0.20.3
 xlrd==1.1.0
 sympy==1.1.1
 unittest2==1.1.0
+ghostscript
+PyPDF2
+pdfminer
+reportlab
+

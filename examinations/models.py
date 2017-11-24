@@ -564,7 +564,6 @@ class TestFromClass(BaseTest):
         Its purpose is to encode the results online.
 
     """
-
     def get_skills_with_encoded_values(self):
         result = []
 
@@ -608,19 +607,9 @@ class TestFromScan(BaseTest):
         Its purpose is to encode the results online.
 
     """
-    content = JSONField()
-    def get_skills_with_encoded_values(self):
-        result = []
+    content = JSONField(default="")
+    reference = models.CharField(max_length=50, default="")
 
-        students = self.lesson.students.all()
-
-        skills = self.skills.all()
-        encoded_values = {(x.student, x.skill): x for x in
-                          self.testskillfromscan_set.all().select_related("skill", "student").order_by("id")}
-        for student in students:
-            result.append((student, [(skill, encoded_values.get((student, skill))) for skill in skills]))
-
-        return result
 
 class TestSkillFromScan(models.Model):
     """[FR] Compétence de test hors-ligne
@@ -657,12 +646,12 @@ class TestAnswerFromScan(models.Model):
     question = models.ForeignKey("TestQuestionFromScan")
     """A Skill tested by the offline Test"""
     created_at = models.DateTimeField(auto_now_add=True)
-    student = models.ForeignKey("users.Student")
+    student = models.ForeignKey("users.Student",null=True)
     """The student that passed the offline Test"""
     """The offline test date of creation"""
     reference = models.CharField(max_length=50)
     reference_name = models.CharField(max_length=50)
-    is_correct = models.BooleanField()
+    is_correct = models.NullBooleanField(null=True)
     annotation = models.CharField(max_length=150)
 
 class TestQuestionFromScan(models.Model):

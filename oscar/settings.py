@@ -8,6 +8,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+from os import environ
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -115,8 +116,10 @@ DATABASES = {
         'PASSWORD': 'oscar',
         'HOST': '127.0.0.1',
         'PORT': '5432',
-    }
+    },
 }
+
+
 
 # https://docs.djangoproject.com/en/1.10/topics/logging/
 
@@ -170,6 +173,8 @@ SCAN_ROOT = os.path.join(BASE_DIR, "exercices/tests")
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
+
+
 BOOTSTRAP3 = {
     "css_url": "/static/css/bootstrap.min.css",
 }
@@ -203,3 +208,4 @@ EMAIL_HOST_USER ="euredukaoscar.noreply@gmail.com"
 EMAIL_HOST_PASSWORD ="7A=em=nBt@+r3MFq"
 
 EMAIL_USE_TLS = True
+
