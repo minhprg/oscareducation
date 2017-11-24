@@ -31,26 +31,32 @@ class List(View):
 class TrainingSession(View):
 
     def get(self, request):
-    	expressions = AlgebraicExercice.objects.filter(level=1)
-    	number = expressions.count()
 
-    	i=0
-    	tab = []
-    	while i!=10 :
-    		myrandom = choice(range(0, number-1))
-    		while myrandom in tab:
-    			myrandom = choice(range(0, number-1))
-    		tab.append(myrandom)
-    		i+=1
-    	print tab
+	expressions = AlgebraicExercice.objects.filter(level=1)
 
-    	i=0
-    	TabExpressions = []
-    	for expression in expressions:
-    		if i in tab:
-    			print i
-    			TabExpressions.append(expression)
-    		i+=1
+	number = expressions.count()
+
+	i=0
+	tab = []
+	while i!=number and i<10 :
+		print "test4"
+		myrandom = choice(range(0, number))
+		while myrandom in tab:
+			print tab
+			myrandom = choice(range(0, number))
+			print myrandom
+		tab.append(myrandom)
+		i+=1
+	print tab
+
+	i=0
+	TabExpressions = []
+	for expression in expressions:
+		if i in tab:
+			print i
+			TabExpressions.append(expression)
+		i+=1
+
 
         context = {
             'expressions': TabExpressions
@@ -80,22 +86,22 @@ class TrainingSession(View):
         return expr, solution
 
     def post(self, request):
-
         if request.content_type != "application/json":
             return HttpResponse(status=415)
 
         try:
 
             expr, solution = self._parse(json.loads(request.body))
-            created = datetime.now()
-            db_expr = AlgebraicExercice(
-                expression=str(expr),
-                expression_type=expr._db_type,
-                created=created,
-                updated=created,
-                solution=str(expr.solution),
-                level=1
-            )
+            print expr
+            print solution
+            #AlgebraicExercice.objects.all().delete()
+            expressions = AlgebraicExercice.objects.filter(expression=expr)
+
+            if str(expressions[0].solution)==str(solution) :
+                return JsonResponse({
+                    'status': True,
+                    'message': "Ok-solution"
+                }, status=200)
 
             return JsonResponse({
                 'status': True,
