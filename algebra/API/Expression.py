@@ -82,6 +82,13 @@ class Expression(View):
             solution=str(e_json["solution"]),
             level=e_json["level"]
         )
+
+        expression_exist = AM.objects.filter(expression=e_json["expression"])
+        if len(expression_exist) > 0:
+            return JsonResponse({
+                'message': "Expression already registered"
+            }, status=422)
+
         db_expression.save()
 
         return JsonResponse({

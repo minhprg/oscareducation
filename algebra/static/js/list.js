@@ -19,14 +19,20 @@ function makeForm( link, empty=false )
     let $form = $(`
       <form id='js-expr-form-${id}' class='expression-form' onsubmit='event.preventDefault(); submitForm(this);'>
           <div class='form-group'>
-              <label for'expression'>Expression</label>
-              <input type='text' name='expression' class='form-control'
-               value='${expression.expression}' required>
+            <label>Expression</label>
+            <span>
+              <textarea class="keyboard"></textarea>
+              <span class='mathquill' data-keyboard-type= "math-advanced">${expression.expression}</span>
+               <input name='expression' class="form-control hidden-math-form" required></input>
+            </span>
           </div>
           <div class='form-group'>
               <label for'solution'>Solution</label>
-              <input type='text' name='solution' class='form-control'
-               value='${expression.solution}' required>
+              <span>
+                <textarea class="keyboard"></textarea>
+                <span class='mathquill' data-keyboard-type= "math-advanced">${expression.solution}</span>
+                 <input name='solution' class="form-control hidden-math-form" required></input>
+              </span>
           </div>
           <div class='form-group'>
               <label for'solution'>Type</label>
@@ -48,7 +54,23 @@ function makeForm( link, empty=false )
 
     $("#expression-form form").remove();
     $("#expression-form #expression-form-placeholder").remove();
-    $("#expression-form").prepend($form);
+    $("#expression-form").append($form);
+
+    // mathquill keyboard
+    renderMathquil($(".mathquill"), function(MQ, index, mq) {
+      var input = $($(mq).parent().find("input")[0]);
+      var mathquill = MQ.MathField(mq, {
+        handlers: {
+          edit: function() {
+            input.val(mathquill.text());
+          }
+        }
+      });
+
+      var keyboard = $($(mq).parent().children()[0]);
+
+      return [mathquill, keyboard]
+    });
 }
 
 function submitForm( form )
