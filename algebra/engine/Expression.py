@@ -135,6 +135,12 @@ class Expression(object):
         e = e.replace('--', '+')
         e = e.replace('++', '+')
 
+        e = e.replace('cdot', '*')
+        sqrt_index = e.find("sqrt")
+        if sqrt_index!=-1:
+            sqrt_stri = e[0:sqrt_index]+e[sqrt_index+4]+"**0.5"+e[sqrt_index+5:]
+            e = sqrt_stri
+
         sym = reg.compile('[a-zA-Z(]')
         op = reg.compile('[-+*^/%=)(]') # add operators here
         targets = []

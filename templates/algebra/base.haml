@@ -1,6 +1,7 @@
 -extends "algebra/layout.haml"
+
 -block content
-  .well#algebra-content
+  .row
     %ul.nav.nav-tabs
       %li
         %a{ :href => "{% url 'algebra:list' %}", :title => "Lister exercice" }
@@ -15,5 +16,8 @@
       %li
         %a{ :href => "{% url 'algebra:training_session_student' %}", :title => "Training session" }
           Training session
+
+  #algebra-content.container-fluid
     -block algebra_content
+
 -block javascript
