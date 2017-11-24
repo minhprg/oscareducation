@@ -31,7 +31,7 @@ class List(View):
 class TrainingSession(View):
 
     def get(self, request):
-	print "test3"
+
 	expressions = AlgebraicExercice.objects.filter(level=1)
 
 	number = expressions.count()
@@ -56,6 +56,7 @@ class TrainingSession(View):
 			print i
 			TabExpressions.append(expression)
 		i+=1
+
 
         context = {
             'expressions': TabExpressions
