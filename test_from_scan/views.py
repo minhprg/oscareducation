@@ -511,8 +511,8 @@ def lesson_test_from_scan_fill(request, lesson_pk, pk):
         return HttpResponseRedirect(reverse('professor:lesson_test_from_scan_detail', args=(lesson.pk, test_from_scan.pk)))
     skills_student = test_from_scan.get_skills_with_encoded_values()
     if len(skills_student) == 0:
-        messages.error(request, "Aucun étudiant à évaluer, il faut d'abbord associer le nom de l'étudiant et corriger ses réponses.")
-        return HttpResponseRedirect('/professor/lesson/' + str(lesson_pk) + '/test/from-scan/' + str(pk) + '/')
+        messages.error(request, "Associez les étudiants aux tests avant de pouvoir encoder.")
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     return render(request, "professor/lesson/test/from-scan/fill.haml", {
         "lesson": lesson,
         "test_from_scan": test_from_scan,

@@ -36,6 +36,12 @@
   .ligneorangefine
 
   .boxclasse.container-fluid
+    -if messages
+      -for message in messages
+        -if message.tags == 'error'
+          %h5{style:"color:red"}=message
+        -else
+          %h5{style:"color:green"}=message
     %b
       %u
         Légende :
