@@ -97,12 +97,10 @@ def lesson_test_from_scan_add(request, pk):
                     return HttpResponseRedirect('/professor/lesson/' + str(pk) + '/test/from-scan/add/')
         else :
             messages.error(request, "Aucune compétence sélectionnée.")
-            print("PASSE ICI")
             return HttpResponseRedirect('/professor/lesson/' + str(pk) + '/test/from-scan/add/')
 
 
         try:
-            print("PASSE PAS ICI")
             scan.save()
         except Exception as e:
             messages.error(request, "Une erreur s'est produite durant la création.")
