@@ -77,28 +77,32 @@ def lesson_test_from_scan_add(request, pk):
     if request.method == "POST":
         form = request.POST.items()
 
-        title = request.POST.get('titre')
-
-        scan = TestFromScan.objects.create(
-            lesson = lesson,
-            name = title,
-        )
-
         skills_string = request.POST.get('skills-scan')
         if(skills_string != ""):
+
+            title = request.POST.get('titre')
+
+            scan = TestFromScan.objects.create(
+                lesson=lesson,
+                name=title,
+            )
+
             skills = skills_string.split(",")
             for skill_id in skills:
                 s = Skill.objects.get(code=skill_id)
                 if(s is not None):
                     scan.skills.add(s)
                 else :
-                    messages.error(request, "Aucune compétence sélectionnée.")
+                    messages.error(request, "Compétence inexistante.")
                     return HttpResponseRedirect('/professor/lesson/' + str(pk) + '/test/from-scan/add/')
         else :
             messages.error(request, "Aucune compétence sélectionnée.")
+            print("PASSE ICI")
             return HttpResponseRedirect('/professor/lesson/' + str(pk) + '/test/from-scan/add/')
 
+
         try:
+            print("PASSE PAS ICI")
             scan.save()
         except Exception as e:
             messages.error(request, "Une erreur s'est produite durant la création.")
