@@ -8,10 +8,11 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 import yaml
+from django.db.models import Count
 import yamlordereddictloader
 import json
 import re
-
+from django.shortcuts import render, get_object_or_404, resolve_url
 
 class Context(models.Model):
     """[FR] Contexte, Exercice
@@ -614,15 +615,29 @@ class TestFromScan(BaseTest):
 
     def get_skills_with_encoded_values(self):
         result = []
-
+        nb_questions = TestQuestionFromScan.objects.filter(test_id=self.pk).count()
         students = self.lesson.students.all()
+        print("ALO")
+        print(len(students))
         skills = self.skills.all()
+        students2 = TestAnswerFromScan.objects.values('student_id') \
+            .filter(test_id=self.pk, is_correct__isnull=False).order_by('student_id').annotate(
+            nb_answer=Count('student_id'))
         encoded_values = {(x.student, x.skill): x for x in
                           self.testskillfromscan_set.all().select_related("skill", "student").order_by("id")}
+        for student in students2:
+            print(student)
+
         for student in students:
-            result.append((student, [(skill, encoded_values.get((student, skill))) for skill in skills]))
+            for student2 in students2:
+                if(student2["student_id"] == student.id):
+                    if(student2["nb_answer"] == nb_questions):
+                        result.append((student, [(skill, encoded_values.get((student, skill))) for skill in skills]))
 
         return result
+
+
+
 
 
 class TestSkillFromScan(models.Model):

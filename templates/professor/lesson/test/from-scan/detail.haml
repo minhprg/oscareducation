@@ -47,6 +47,9 @@
             %a.btn.btn-primary{href: "{% url 'professor:lesson_test_list' lesson.pk %}", id:"previous"}
               Retour aux tests
         .pull-right
+            %td.center{width: "20px"}
+                %a.btn.btn-primary{href: "{% url 'professor:lesson_test_from_scan_fill' lesson.pk test.pk %}"}
+                    Encoder
           %td.center{width: "20px"}
             %a.btn.btn-primary{href: "{% url 'professor:lesson_test_from_scan_match' lesson.pk test.pk %}", id: "match"}
               Associer les élèves

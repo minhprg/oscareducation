@@ -88,21 +88,15 @@ def lesson_test_from_scan_add(request, pk):
         if(skills_string != ""):
             skills = skills_string.split(",")
             for skill_id in skills:
-                print("heuu")
-                print(skill_id)
                 s = Skill.objects.get(code=skill_id)
                 if(s is not None):
-                    scan.skills.add()
+                    scan.skills.add(s)
                 else :
                     messages.error(request, "Aucune compétence sélectionnée.")
                     return HttpResponseRedirect('/professor/lesson/' + str(pk) + '/test/from-scan/add/')
         else :
             messages.error(request, "Aucune compétence sélectionnée.")
             return HttpResponseRedirect('/professor/lesson/' + str(pk) + '/test/from-scan/add/')
-
-
-        """for student in lesson.students.all():
-            scan.add_student(student)"""
 
         try:
             scan.save()
@@ -453,8 +447,7 @@ def lesson_test_from_scan_fill(request, lesson_pk, pk):
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
     test_from_scan = get_object_or_404(TestFromScan, pk=pk)
 
-    print(test_from_scan)
-    print(test_from_scan.skills.all)
+
     if request.method == "POST":
         second_run = []
 
@@ -516,8 +509,12 @@ def lesson_test_from_scan_fill(request, lesson_pk, pk):
                 student_skill.save()
 
         return HttpResponseRedirect(reverse('professor:lesson_test_from_scan_detail', args=(lesson.pk, test_from_scan.pk)))
-
+    skills_student = test_from_scan.get_skills_with_encoded_values()
+    if len(skills_student) == 0:
+        messages.error(request, "Aucun étudiant à évaluer, il faut d'abbord associer le nom de l'étudiant et corriger ses réponses.")
+        return HttpResponseRedirect('/professor/lesson/' + str(lesson_pk) + '/test/from-scan/' + str(pk) + '/')
     return render(request, "professor/lesson/test/from-scan/fill.haml", {
         "lesson": lesson,
-        "test_from_class": test_from_scan,
+        "test_from_scan": test_from_scan,
+        "skills_student" : skills_student,
     })

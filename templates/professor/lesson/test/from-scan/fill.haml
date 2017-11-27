@@ -14,24 +14,29 @@
 -block content
   %h3
     Sélectionner les compétences résultantes de l'évaluation libre
-    %i= test_from_class.name
+    %i= test_from_scan.name
   %hr
-
+    -if messages
+      -for message in messages
+        -if message.tags == 'error'
+          %p{style:"color:red"}=message
+        -else
+          %p{style:"color:green"}=message
   %form{method: "post", action: ""}
     -csrf_token
     %table.table.table-striped.table-bordered
       %col{width: "120px"}
-      -for skill in test_from_class.skills.all
+      -for skill in test_from_scan.skills.all
         %col{width: "1"}
       %tr
         %th Élèves
-        -for skill in test_from_class.skills.all
+        -for skill in test_from_scan.skills.all
           %th
             .center
               =skill.code
               %br
               =skill.name
-      -for student, skills in test_from_class.get_skills_with_encoded_values
+      -for student, skills in skills_student
         %tr
           %td= student
           -for skill, encoded_value in skills
@@ -67,7 +72,7 @@
 
     %button.btn.btn-primary{type: "submit"}
       Valider
-    %a.btn.btn-default{href: "{% url 'professor:lesson_test_from_class_detail' lesson.pk test_from_class.pk %}"}
+    %a.btn.btn-default{href: "{% url 'professor:lesson_test_from_scan_detail' lesson.pk test_from_scan.pk %}"}
       Encoder plus tard
 
 -block javascript
