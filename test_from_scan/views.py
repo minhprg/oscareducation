@@ -268,7 +268,7 @@ def lesson_test_from_scan_correct_by_student(request, lesson_pk, test_pk, pk):
 @user_is_professor
 def lesson_test_from_scan_detail(request, lesson_pk, pk):
     is_exist = TestAnswerFromScan.objects.filter(test_id=pk).count()
-    nb_not_match = TestAnswerFromScan.objects.filter(student_id__isnull=True).count()
+    nb_not_match = TestAnswerFromScan.objects.filter(student_id__isnull=True,test_id=pk).count()
 
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
     test = get_object_or_404(TestFromScan, pk=pk)

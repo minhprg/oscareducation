@@ -574,6 +574,8 @@ def lesson_test_list(request, pk):
 
         if hasattr(test, 'testfromscan'):
             answers = TestAnswerFromScan.objects.all().filter(test_id=test.testfromscan.id).distinct('student_id')
+            nb_not_match = TestAnswerFromScan.objects.filter(student_id__isnull=True,test_id=test.testfromscan.id).count()
+            print(str(nb_not_match)+"   "+str(test.testfromscan.id))
             tmp = 0
             for answer in answers:
 
@@ -581,7 +583,7 @@ def lesson_test_list(request, pk):
                     tmp += 1
             if tmp == len(answers) and len(answers) > 0:
                 test.testfromscan.progress = "Encodé"
-            elif (tmp == 0 and len(answers) == 0):
+            elif ((tmp == 0 and len(answers) == 0 )or nb_not_match > 0):
                 test.testfromscan.progress = "Pas encore encodé"
             else:
                 test.testfromscan.progress = str(tmp)+"/"+str(len(answers))+" élève(s) corrigé(s)"

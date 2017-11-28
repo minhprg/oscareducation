@@ -140,8 +140,8 @@
 
 
               %td.align-right
-                  %a{href: "{% url 'professor:lesson_test_from_scan_fill' lesson.pk basetest.pk %}"}
-                    %img.icon{src: "{% static 'img/icons/encode.png' %}", data-toggle: "tooltip", data-placement: "top", title: "Encoder"}
+                %a{href: "{% url 'professor:lesson_test_from_scan_fill' lesson.pk basetest.pk %}"}
+                  %img.icon{src: "{% static 'img/icons/encode.png' %}", data-toggle: "tooltip", data-placement: "top", title: "Encoder"}
                 -if not basetest.testfromscan.testskillfromscan_set.exists
                 %a{href: "{% url 'professor:lesson_test_from_scan_download' lesson.pk basetest.pk %}", target:"_blank"}
                   %i.fa.fa-floppy-o
