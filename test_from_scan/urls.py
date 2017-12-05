@@ -18,5 +18,8 @@ urlpatterns = [
     url(r'^lesson/(?P<lesson_pk>\d+)/test/from-scan/(?P<pk>\d+)/modify/$',
         user_is_professor(TestFromScanDetailView.as_view(template_name="professor/lesson/test/from-scan/exercices.haml")),
         name='lesson_test_from_scan_modify'),
+    url(r'^lesson/(?P<lesson_pk>\d+)/test/from-scan/(?P<pk>\d+)/import/$', views.lesson_test_from_scan_import, name='lesson_test_from_scan_import'),
+    url(r'^lesson/lesson_next_page/(?P<pk>\d+)$', views.lesson_next_page, name='lesson_next_page'),
+    url(r'^lesson/lesson_validate_page/(?P<pk>\d+)$', views.lesson_validate_page, name='lesson_validate_page'),
 
 ]

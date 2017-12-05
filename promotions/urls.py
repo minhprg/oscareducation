@@ -89,6 +89,7 @@ urlpatterns = [
     url(r'^professor_test_add_skill/$', views.professor_test_add_skill, name='professor_test_add_skill'),
     url(r'^professor_test_delete_skill/$', views.professor_test_delete_skill, name='professor_test_delete_skill'),
 
+
     # SCAN
     #url(r'^lesson/(?P<lesson_pk>\d+)/test/from-scan/(?P<pk>\d+)/$', views.lesson_test_scan_detail, name='lesson_test_from_scan_detail'),
 

@@ -1642,14 +1642,14 @@ def exercice_test(request, pk):
     exercice = get_object_or_404(Context, pk=pk)
 
     if request.method == "GET":
-        return render(request, "professor/exercice/test.haml", {
+        return render(request, "professor/exercice/import.haml", {
             "exercice": exercice,
             "object": exercice,
         })
 
     assert request.method == "POST"
 
-    return render(request, "professor/exercice/test.haml", {
+    return render(request, "professor/exercice/import.haml", {
         "exercice": exercice,
         "object": exercice,
         "checked_answers": exercice.check_answers(request.POST),

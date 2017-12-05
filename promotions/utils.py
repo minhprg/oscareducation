@@ -82,10 +82,10 @@ styles = getSampleStyleSheet()
 Title = "Mon test"
 def generate_pdf(list,id):
 
-    if not os.path.isdir(settings.STATIC_ROOT +"/tests/pdf"):
-        os.makedirs(settings.STATIC_ROOT +"/tests/pdf")
 
-    doc = SimpleDocTemplate(settings.STATIC_ROOT+"/tests/pdf/"+str(id)+".pdf")
+
+
+    doc = SimpleDocTemplate(settings.STATIC_ROOT+"/tests/"+str(id)+"/"+str(id)+".pdf")
 
     Story = [Spacer(1,2*inch)]
     styles = stylesheet()
@@ -93,7 +93,7 @@ def generate_pdf(list,id):
 
     # Add 10 questions with boxes below
     for i in list:
-        if not i[0] in "skills-scan" and not i[0] in "csrfmiddlewaretoken" and not i[0] in "titre":
+        if not i[0] in "skills-scan" and not i[0] in "csrfmiddlewaretoken" and not i[0] in "titre" and not i[0] in "custom":
             tmp = int(i[0])+1
             bogustext = (str(tmp)+". %s" %  i[1])
             p = Paragraph(bogustext, styles['default'])
@@ -196,9 +196,9 @@ def myLaterPages(canvas, doc):
     canvas.drawString(inch, 0.75 * inch, "Page %d " % (doc.page))
     canvas.restoreState()
 
-def generate_coordinates(file):
+def generate_coordinates(file,id):
     # Open a PDF file.
-    fp = open(settings.STATIC_ROOT+"/tests/pdf/"+file, 'rb')
+    fp = open(settings.STATIC_ROOT+"/tests/"+str(id)+"/"+file, 'rb')
     parser = PDFParser(fp)
     document = PDFDocument(parser)
     if not document.is_extractable:
@@ -252,6 +252,17 @@ def pt_to_px(dpi,coord,i=0):
         return ((int(coord)*dpi)/72)
     else:
         return ((842*dpi)/72)-((int(coord)*dpi)/72)
+
+
+def px_to_pt(dpi,coord,i=0):
+
+    if i == 0:
+        return((int(coord)*72)/dpi)
+    else:
+        y = (842-(int(coord)*72)/dpi)
+        if (y<0):
+            y=0
+        return y
 
 
 

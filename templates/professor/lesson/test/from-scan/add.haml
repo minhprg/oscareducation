@@ -97,6 +97,11 @@
                 </div>
                 </div>
         .col-md-12
+          %fieldset
+            %label
+              %input{type: "checkbox", value: 1, name: "custom"}
+              Importer un modèle de test
+
           .pull-right
             %button.btn.btn-primary{type: "submit", id:"addScan"}
               Valider

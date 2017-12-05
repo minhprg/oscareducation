@@ -68,11 +68,11 @@ class UploadingCopiesTest(TestCase):
         idtest = -1
         filename = generate_pdf(l,idtest)
 
-        self.assertTrue(os.path.isfile(settings.STATIC_ROOT+"/tests/pdf/"+filename))
-        self.assertTrue(os.path.getsize(settings.STATIC_ROOT+"/tests/pdf/"+filename) > 0)
+        self.assertTrue(os.path.isfile(settings.STATIC_ROOT+"/tests/"+str(idtest)+"/"+filename))
+        self.assertTrue(os.path.getsize(settings.STATIC_ROOT+"/tests/"+str(idtest)+"/"+filename) > 0)
 
         #generate_coordinates
-        content = generate_coordinates(filename)
+        content = generate_coordinates(filename,idtest)
         self.assertTrue(type(content) is dict)
         self.assertTrue(len(content) == 2)
         self.assertTrue(len(content[1][0]) == 6 and len(content[1][1]) == 6)
@@ -151,6 +151,7 @@ class ScanTestCase(StaticLiveServerTestCase):
             time.sleep(1)
 
         selenium.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(2)
         selenium.find_element_by_name('addQuestion').click()
 
         selenium.find_element_by_name('titre').send_keys('Titre test')

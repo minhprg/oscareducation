@@ -16,12 +16,14 @@ from django.contrib import messages
 import os, tempfile, zipfile
 from promotions.models import Lesson, Students
 from users.models import Student
-from promotions.utils import user_is_professor, insertion_sort_file, all_different, generate_pdf, generate_coordinates, pt_to_px, pdf2png
+from promotions.utils import user_is_professor, insertion_sort_file, all_different, generate_pdf, generate_coordinates, pt_to_px, px_to_pt
 from .forms import ImportCopyForm
 from django.utils.encoding import smart_str
 from wsgiref.util import FileWrapper
 from PyPDF2 import PdfFileWriter, PdfFileReader
 from django.core.files.storage import default_storage
+import glob
+from django.http import JsonResponse
 
 
 
@@ -50,7 +52,6 @@ def lesson_test_from_scan_match(request, lesson_pk, pk):
             question_count = 0
             for student in form:
                 for answer in range(i, len(answers)):
-                    print(student)
                     TestAnswerFromScan.objects.filter(pk=answers[answer].id).update(student_id=student)
                     i+=1
                     question_count +=1
@@ -82,6 +83,7 @@ def lesson_test_from_scan_add(request, pk):
 
             title = request.POST.get('titre')
 
+
             scan = TestFromScan.objects.create(
                 lesson=lesson,
                 name=title,
@@ -106,11 +108,19 @@ def lesson_test_from_scan_add(request, pk):
             messages.error(request, "Une erreur s'est produite durant la création.")
             return HttpResponseRedirect('/professor/lesson/'+str(pk)+'/test/from-scan/add/')
 
-        form = sorted(form, key=lambda tup: tup[0])
+        if not os.path.isdir(settings.STATIC_ROOT +"/tests/"+str(scan.id)):
+            os.makedirs(settings.STATIC_ROOT +"/tests/"+str(scan.id))
 
-        file = generate_pdf(form,scan.id)
+        if request.POST.get('custom') is None:
 
-        content = generate_coordinates(file)
+            form = sorted(form, key=lambda tup: tup[0])
+
+            file = generate_pdf(form,scan.id)
+
+            content = generate_coordinates(file,scan.id)
+        else:
+            file = ""
+            content = {}
 
         try:
 
@@ -120,7 +130,7 @@ def lesson_test_from_scan_add(request, pk):
             return HttpResponseRedirect('/professor/lesson/'+str(pk)+'/test/from-scan/add/')
 
         for i in form:
-            if not i[0] in "skills-scan" and not i[0] in "csrfmiddlewaretoken" and not i[0] in "titre":
+            if not i[0] in "skills-scan" and not i[0] in "csrfmiddlewaretoken" and not i[0] in "titre" and not i[0] in "custom":
                 question = TestQuestionFromScan(question_num=int(i[0])+1, contexte=i[1], test_id=scan.id)
                 try:
                     question.save()
@@ -128,8 +138,10 @@ def lesson_test_from_scan_add(request, pk):
                     messages.error(request, "Une erreur s'est produite durant la création.")
                     return HttpResponseRedirect('/professor/lesson/'+str(pk)+'/test/from-scan/add/')
 
-
-        return HttpResponseRedirect('/professor/lesson/'+str(pk)+'/test/')
+        if request.POST.get('custom') is None:
+            return HttpResponseRedirect('/professor/lesson/'+str(pk)+'/test/')
+        else:
+            return HttpResponseRedirect('/professor/lesson/'+str(pk)+'/test/from-scan/'+str(scan.id)+'/import')
 
     return render(request, "professor/lesson/test/from-scan/add.haml", {
         "lesson": lesson,
@@ -182,7 +194,7 @@ def lesson_test_from_scan_download(request, lesson_pk, pk):
     t = get_object_or_404(TestFromScan, pk=pk)
 
     if not t.reference is None:
-        filename = settings.STATIC_ROOT+"/tests/pdf/"+str(pk)+".pdf" # Select your file here.
+        filename = settings.STATIC_ROOT+"/tests/"+str(pk)+"/"+str(pk)+".pdf" # Select your file here.
         wrapper = FileWrapper(file(filename))
         response = HttpResponse(wrapper, content_type='application/pdf')
         response['Content-Disposition'] = "filename="+test.name+".pdf"
@@ -230,9 +242,6 @@ def lesson_test_from_scan_correct_by_student(request, lesson_pk, test_pk, pk):
         else:
             form = request.POST.items()
 
-            print(form)
-            for tmp in form:
-                print(tmp)
 
             t = {}
             c = {}
@@ -274,15 +283,16 @@ def lesson_test_from_scan_detail(request, lesson_pk, pk):
     test = get_object_or_404(TestFromScan, pk=pk)
 
 
+    questions = TestQuestionFromScan.objects.all().filter(test_id=pk).order_by('question_num')
+    students = TestAnswerFromScan.objects.all().filter(test_id=pk).distinct('student_id').order_by('student_id','-is_correct')
 
-
-    if (not 'sort_question' in request.session) or (request.session['sort_question'] is None or request.session['sort_question'] == -1):
+    if (not 'sort_question' in request.session) or (request.session['sort_question'] is None or request.session['sort_question'] == -1) or request.session['sort_question'] > len(questions):
         request.session['sort_question'] = -1;
         answers = TestAnswerFromScan.objects.all().filter(test_id=pk).order_by('id')
     else:
         answers = TestAnswerFromScan.objects.all().filter(test_id=pk, question_id=request.session['sort_question']).order_by('id')
-    questions = TestQuestionFromScan.objects.all().filter(test_id=pk).order_by('question_num')
-    students = TestAnswerFromScan.objects.all().filter(test_id=pk).distinct('student_id').order_by('student_id','-is_correct')
+
+
 
 
     for st in students:
@@ -296,7 +306,6 @@ def lesson_test_from_scan_detail(request, lesson_pk, pk):
         elif 'copy' in request.FILES:
 
             form = ImportCopyForm(request.POST, request.FILES)
-            print(form.is_valid())
             if form.is_valid():
 
                 copy = request.FILES.getlist('copy', False)
@@ -309,7 +318,10 @@ def lesson_test_from_scan_detail(request, lesson_pk, pk):
 
                 i=1
                 count_question = 0
-                cont = json.loads(test.content)
+                if isinstance(test.content, unicode):
+                    cont = json.loads(test.content)
+                else:
+                    cont = test.content
                 count_page = 1
                 count = 0
                 format = ["png","PNG","jpg","jpeg","JPG","JPEG"]
@@ -362,11 +374,10 @@ def lesson_test_from_scan_detail(request, lesson_pk, pk):
                     elif split[1] == "pdf":
 
                         if not os.path.isdir(settings.STATIC_ROOT + "/tests/tmp"):
-                            print(settings.STATIC_ROOT + "/tests/tmp")
                             os.makedirs(settings.STATIC_ROOT + "/tests/tmp")
 
                         # number of page per test
-                        pages_per_test = PdfFileReader(settings.STATIC_ROOT +"/tests/pdf/"+pk+".pdf").getNumPages();
+                        pages_per_test = PdfFileReader(settings.STATIC_ROOT +"/tests/"+pk+"/"+pk+".pdf").getNumPages();
 
                         # Read the pdf file
                         reader = PdfFileReader(c, 'r')
@@ -374,6 +385,8 @@ def lesson_test_from_scan_detail(request, lesson_pk, pk):
                         default_storage.save(pk+".pdf", c)
 
                         all_pages = reader.getNumPages()
+
+
 
                         if all_pages == 1:
                             dir = settings.STATIC_ROOT+"/tests/tmp/"+pk+"-0.jpg"
@@ -423,6 +436,13 @@ def lesson_test_from_scan_detail(request, lesson_pk, pk):
                                 img2.save(settings.STATIC_ROOT +"/tests/"+ pk + "/crop" + str(count) + ".png")
                                 count_question +=1
                                 count+=1
+                        tmp_delete = os.listdir(settings.STATIC_ROOT+"/tests/tmp/")
+
+                        for file in tmp_delete:
+                            f = file.split("-")
+                            if f[0] == pk:
+                                os.remove(settings.STATIC_ROOT+"/tests/tmp/"+file)
+
 
 
                     else:
@@ -520,3 +540,150 @@ def lesson_test_from_scan_fill(request, lesson_pk, pk):
         "test_from_scan": test_from_scan,
         "skills_student" : skills_student,
     })
+
+
+@user_is_professor
+def lesson_test_from_scan_import(request, lesson_pk, pk):
+
+    tmp = os.listdir(settings.STATIC_ROOT+"/tests/"+pk+"/")
+
+    if len(tmp) > 0:
+        tmp.remove(pk+'.pdf')
+        for file in tmp:
+            f = file.split(".")
+            if f[1] == "png":
+                tmp.remove(file)
+        tmp.sort()
+        page = "/tests/"+pk+"/"+tmp[request.session['page_test']]
+    else:
+        page = "0"
+
+    if (not 'page_test' in request.session) or (request.session['page_test'] is None) or (request.session['page_test'] > len(tmp)-1):
+        request.session['page_test'] = 0;
+
+    if request.method == "POST":
+
+        if 'copy' in request.FILES:
+            form = ImportCopyForm(request.POST, request.FILES)
+
+            if form.is_valid():
+
+                copy = request.FILES.getlist('copy', False)
+
+                insertion_sort_file(copy)
+
+                for c in copy:
+
+                    split = str(c).split(".")
+                    if split[1] == "pdf":
+                        default_storage.save(pk+".pdf", c)
+                        os.rename(settings.MEDIA_ROOT+"/"+pk+".pdf", settings.STATIC_ROOT+"/tests/"+pk+"/"+pk+".pdf")
+
+                        TestFromScan.objects.filter(pk=pk).update(reference=pk+".pdf")
+
+
+                        # Read the pdf file
+                        reader = PdfFileReader(c, 'r')
+
+                        all_pages = reader.getNumPages()
+
+                        if all_pages == 1:
+                            dir = settings.STATIC_ROOT+"/tests/"+pk+"/"+pk+"-0.jpg"
+                        else:
+                            dir = settings.STATIC_ROOT+"/tests/"+pk+"/"+pk+".jpg"
+
+                        os.system("convert -density 150 %s %s"%(settings.STATIC_ROOT+"/tests/"+pk+"/"+pk+".pdf",dir))
+            return HttpResponseRedirect('/professor/lesson/'+str(lesson_pk)+'/test/from-scan/'+str(pk)+'/import')
+
+
+    return render(request, "professor/lesson/test/from-scan/import.haml", {
+        "size":len(tmp),
+        "page": page,
+        "test_id":pk,
+        "page_number": request.session['page_test'],
+        "lesson_id":lesson_pk
+    })
+
+
+@user_is_professor
+def lesson_next_page(request,pk):
+
+    request.session['page_test']+=1
+
+
+    tmp = os.listdir(settings.STATIC_ROOT+"/tests/"+pk+"/")
+    result = []
+
+    for file in tmp:
+        f = file.split(".")
+        if f[1] != "png" and f[1] != "pdf":
+            result.append(file)
+    result.sort()
+
+    if (not 'page_test' in request.session) or (request.session['page_test'] is None) or (request.session['page_test'] > len(result)-1):
+        request.session['page_test'] = 0;
+
+    data = {
+
+        "page": "/static/tests/"+pk+"/"+result[request.session['page_test']]
+    }
+    return JsonResponse(data)
+
+
+@user_is_professor
+def lesson_validate_page(request,pk):
+
+    username = request.GET.keys()
+
+    jsone = json.loads(json.dumps(username))
+
+    areas = json.loads(jsone[0])
+    min = 10000
+    index = -1
+    #Put the name in front of the array
+    for t in areas:
+        if "y1" in t and t["y1"] < min:
+            min = t["y1"]
+            index = areas.index(t)
+        if "x" in t:
+            dpi = int(round(t["x"]/(21*0.3937008)))
+
+    temp = areas[0]
+    areas[0] = areas[index]
+    areas[index] = temp
+
+    #Update content
+
+    test = TestFromScan.objects.filter(pk=pk).first()
+
+    if test:
+        content = test.content
+
+        if str(request.session['page_test']+1) not in content:
+            if isinstance(content, unicode):
+                content = json.loads(content)
+            content[str(request.session['page_test']+1)] = []
+        x = []
+        y = []
+        for coord in areas:
+
+            if not "x" in coord:
+                x.append(px_to_pt(dpi,coord["x1"]))
+                x.append(px_to_pt(dpi,coord["x2"]))
+                y.append(px_to_pt(dpi,coord["y1"],1))
+                y.append(px_to_pt(dpi,coord["y2"],1))
+
+
+
+        del content[str(request.session['page_test']+1)][:]
+        content[str(request.session['page_test']+1)].append(x)
+        content[str(request.session['page_test']+1)].append(y)
+
+
+
+        TestFromScan.objects.filter(pk=pk).update(content=content)
+
+
+    data = {}
+    return JsonResponse(data)
+
