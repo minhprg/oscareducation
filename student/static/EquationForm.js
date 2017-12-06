@@ -1,12 +1,15 @@
+//used to store the lists used for answering the questions
 var myDic = {};
 var xhr = new XMLHttpRequest();
 
+//process the http answers
 function processRequest(e){
     console.log("test");
     if (xhr.readyState == 4 && xhr.status == 200){
         //var response = JSON.parse(xhr.responseText);
         console.log(xhr.responseText)
         var lis = xhr.responseText.split(":")
+        //the answer is in form Valid:type:id:step
         if(lis[0] == "1"){
             if(lis[1] == "algebraicSystem"){
                 if(myDic[lis[2]].length >= 10){
@@ -39,6 +42,7 @@ function processRequest(e){
 
     }
 }
+//send the http request
 function handlePythonCall(equation, id, type){
 
 
@@ -49,16 +53,14 @@ function handlePythonCall(equation, id, type){
     xhr.onreadystatechange = processRequest;
 
 }
+//submit
 function submit2(id, type){
     if( !(id in myDic)){
        myDic[id] = [];
     }
     var text = document.getElementById("text".concat(id.toString())).value;
     if(text != ""){
-        //myDic[id].push(text);
-        //listToAnswer(id);
         handlePythonCall(text, id, type)
-        //document.getElementById("text".concat(id.toString())).value = "";
     }
     else {
         document.getElementById("text".concat(id.toString())).focus();
@@ -66,6 +68,7 @@ function submit2(id, type){
 
 
 }
+//translate the lists of step to string to let the user preview.
 function listToAnswer(id){
     document.getElementById("pre".concat(id.toString())).innerHTML = myDic[id];
     var txt = ""
@@ -74,6 +77,7 @@ function listToAnswer(id){
     }
     document.getElementById(id.toString()).value = txt;
 }
+//clear the last step
 function clearLastStep(id){
     if( id in myDic){
        if(myDic[id].length != 0) {
@@ -82,6 +86,7 @@ function clearLastStep(id){
        }
     }
 }
+//clear the last step for system
 function clearLastStepSystem(id){
     if( id in myDic){
        if(myDic[id].length != 0) {
@@ -91,6 +96,7 @@ function clearLastStepSystem(id){
     }
 }
 
+//handle input. Used to prevent submitting the form when hitting enter
 function myInputHandler(event, id, type){
     	if(event.which == 13 | event.keyCode == 13) {
             event.preventDefault();
@@ -100,6 +106,7 @@ function myInputHandler(event, id, type){
         }
         return true;
 }
+//handle input. Used to prevent submitting the form when hitting enter and to switch the focus
 function myInputHandlerSystem(event, id){
     	if(event.which == 13 | event.keyCode == 13) {
             event.preventDefault();
@@ -109,6 +116,7 @@ function myInputHandlerSystem(event, id){
         }
         return true;
 }
+//submit system
 function submitSystem(id){
     if( !(id in myDic)){
        myDic[id] = [];
@@ -133,7 +141,7 @@ function submitSystem(id){
 
     }
 }
-
+//used to display the answer to the user
 function listToAnswerSystem(id){
     document.getElementById("pre".concat(id.toString())).innerHTML = myDic[id];
     var txt = ""

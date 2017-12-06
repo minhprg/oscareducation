@@ -225,15 +225,18 @@ class Question(models.Model):
             return -1
 
         elif evaluation_type.startswith("algebraic"):
-            # all algebraic exercise starts with that and are corrected using the factory method.
+            # handle algebraic exercises
             handler = InputHandler(evaluation_type)
             list_of_answer_steps = response
+            # if there is no steps FAIL
             if list_of_answer_steps is None or len(list_of_answer_steps) == 0:
                 return 0
+            # steps are encoded in a list. If type is system, the element in the list are tuple containing the 2 eq
             if "System" in evaluation_type:
                 (eq1, letter) = handler.parse([unicode(x) for x in raw_correct_answers["answers"]["equations"]])
             else:
                 (eq1, letter) = handler.parse(unicode(raw_correct_answers["answers"]["equations"]))
+
             eq_to_solve = algebraic_factory(evaluation_type, eq1, letter)  # equation that needs to be solved
             for index, step in enumerate(list_of_answer_steps):
 
@@ -247,10 +250,13 @@ class Question(models.Model):
                     answer_from_student = algebraic_factory(evaluation_type, eq2, letter)
                     test_solution = eq_to_solve.isEquivalant(answer_from_student)  # return (bool,str)
 
+                    # test_solution is tuple with (Equivalent, Hint), Equivalent being boolean and Hint a string
+                    # test if the step is the last step. If yes, and test_solution[0] is True the answer is correct
                     if test_solution[0] and test_solution[1] is None and index == len(list_of_answer_steps) -1 :
                         return 1
                     if not test_solution[0]:
                         return 0
+                # in case of exception, the answer is not well formed. Shouldn't happen
                 except Exception as e:
                     return 0
             return 0

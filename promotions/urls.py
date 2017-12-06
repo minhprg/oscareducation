@@ -86,7 +86,7 @@ urlpatterns = [
     url(r'^professor_test_delete_question/$', views.professor_test_delete_question, name='professor_test_delete_question'),
     url(r'^professor_test_add_skill/$', views.professor_test_add_skill, name='professor_test_add_skill'),
     url(r'^professor_test_delete_skill/$', views.professor_test_delete_skill, name='professor_test_delete_skill'),
-
+    # used to pass the parameter of the equation/inequation/expression generation
     url(r'^equationGeneration/(?P<id>\d+)/(?P<type>.+)/(?P<varleft>.+)/(?P<varright>.+)/(?P<coeffmini>.+)/(?P<coeffmaxi>.+)/(?P<solmini>.+)/(?P<solmaxi>.+)/(?P<varvar>.+)/(?P<frac>.+)/(?P<solint>.+)/(?P<more>.+)/', views.professor_generate, name='professor_generate')
 
 ]
