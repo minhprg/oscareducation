@@ -436,7 +436,7 @@ class Expression:
             hint = "Aide : attention a la priorite des operations! D'abord les () puis x ou / et + ou -"
             return (False, hint)
 
-
+#
 def parser(equation):
     equation = equation.strip("+")
     equation = equation.replace("=+","=")
@@ -447,7 +447,13 @@ def parser(equation):
     equation = equation.replace("+-","-")
     return unicode(equation)
 
-
+#method that generates an equation
+#VarRight, VarLeft is for the presence or not of the variable on rigth or left of the symbol "="
+#minValueVar, maxValueVar is for the min and max value of the coefficient of the variable
+#minValueSol, maxValueSol define a range for the solution
+#nameVar is the representation of the nameVar
+#division is true if there are fractions
+#isSolInt if the Solution is an integer
 def makeEquation(varRight=False, varLeft=True, minValueVar=-10, maxValueVar=10, minValueSol=-10, maxValueSol=10, nameVar='y', division=False, isSolInt=True):
     equation = ''
     handler = InputHandler("algebraicEquation")
@@ -514,7 +520,7 @@ def makeEquation(varRight=False, varLeft=True, minValueVar=-10, maxValueVar=10, 
             equation = ""
         else:
             equation = ""
-
+#convert the solution And to string
 def getSolutionFromAND(AND):
     #print (AND)
     solution = ""
@@ -553,6 +559,15 @@ def getSolutionFromAND(AND):
 
     #print(solution)
     return solution
+
+#method that generates an Inequation
+#VarRight, VarLeft is for the presence or not of the variable on rigth or left of the symbol "="
+#minValueVar, maxValueVar is for the min and max value of the coefficient of the variable
+#minValueSol, maxValueSol define a range for the solution
+#nameVar is the representation of the nameVar
+#division is true if there are fractions
+#isSolInt is true if the Solution must be an integer
+#signeEquation determines the symbol of equivalence ( '<', '>', '<=','>=')
 
 def makeInequation(varRight=False, varLeft=True, minValueVar=-10, maxValueVar=10, minValueSol=-10, maxValueSol=10, nameVar='y', division=False, isSolInt=True, signeEquation=None):
     equation = ''
@@ -625,6 +640,7 @@ def makeInequation(varRight=False, varLeft=True, minValueVar=-10, maxValueVar=10
         else:
             equation = ""
 
+#method that generates an equation with 2 variables
 def makeEquation2Var(var1Right, var1Left, var2Right, var2Left, minValueVar, maxValueVar, nameVar1, nameVar2, division):
     equation = ''
 
@@ -699,6 +715,12 @@ def makeEquation2Var(var1Right, var1Left, var2Right, var2Left, minValueVar, maxV
     equation = parser(equation)
     return equation
 
+#method that generate an system
+#VarRight, VarLeft is for the presence or not of the variable on rigth or left of the symbol "="
+#minValueVar, maxValueVar is for the min and max value of the coefficient of the variable
+#minValueSol, maxValueSol define a range for the solution
+#nameVar is the representation of the nameVar
+#division is true if there are fractions
 def makeSys(var1Right1=False, var1Left1=True, var2Right1=False, var2Left1=True, var1Right2=True, var1Left2=False, var2Right2=True, var2Left2=False, minValueVar=-10, maxValueVar=10, minValueSol=-10, maxValueSol=10, nameVar1='y', nameVar2='x', division=False, isSolInt=True):
     while(True):
         handler = InputHandler("algebraicSystem")
@@ -716,6 +738,11 @@ def makeSys(var1Right1=False, var1Left1=True, var2Right1=False, var2Left1=True, 
             if (not isSolInt):
                 return (equation1,equation2)
 
+#method that generate an expression
+#nbrTerm determines the number of termes
+#minSol, maxSol define a range for the solution
+# multiplication, exponent, division, parenthesis are booleans. True means the presence of this operation is possible in the expression. 
+# False means the abscence of the operation.   
 def makeExpression(nbrTerm=3, maxValue=10, minSol=0, maxSol=20, multiplication=False, exponent=False, division=False, parenthesis=False, isSolInt=True):
     nbrTerm -= 1
     signe = ['+','-','+','+','-','-']    # 3 fois plus de chance d'avoir un + ou un -
