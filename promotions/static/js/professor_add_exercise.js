@@ -1,7 +1,9 @@
 
 var xhr = new XMLHttpRequest();
-var maxId = 0
 
+//update the generation of the exercice id
+//the problem right now is that the id doesn't change as the temple use ng-repeat.
+//we need to find a way
 function updateAutoGeneration(id){
 
     if(document.getElementById("typebox")){
@@ -60,6 +62,7 @@ function updateAutoGeneration(id){
    }
 
 }
+//send an html request to the web site.
 function sendRequest(id, string){
     xhr.open('GET', "/professor/equationGeneration/"+encodeURIComponent(id.toString())+"/"+string,true);
     xhr.send(null);
@@ -67,10 +70,12 @@ function sendRequest(id, string){
     xhr.addEventListener("readystateechange", processRequest, false);
     xhr.onreadystatechange = processRequest;
 }
+//process the request
 function processRequest(e) {
     if (xhr.readyState == 4 && xhr.status == 200) {
         //var response = JSON.parse(xhr.responseText);
         spl = xhr.responseText.split(":");
+        //the response is in form [id, type, equation]
         if(spl[1] == "algebraicSystem"){
             document.getElementById("generatedEquation1".concat(spl[0])).value = spl[2].split(";")[0];
             document.getElementById("generatedEquation2".concat(spl[0])).value = spl[2].split(";")[1];

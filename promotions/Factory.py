@@ -22,19 +22,25 @@ def factory(type,question,letter):
     if type == "algebraicSystem": return System(question,letter)
     if type == "algebraicExpression":return Expression(question)
 
+"""
+Class that creates an equation. 
+"""
 
 class Equation: #(Exercice):
+    #constructeur
     def __init__(self, equa, lettre):
         self.equa = equa
         self.lettre = lettre
         self.x = Symbol(lettre)
         self.solution = solve(self.equa,self.x)
-
-    def isEquivalant(self, other): # self est l'equation precedente
+    #isEquivalant checks if two expressions are Equivalant
+    def isEquivalant(self, other): # self is the previous equation
 
         leftOther, rightOther, coeffLeftOther, coeffRightOther = other.analyse()
         leftPrevious, rightPrevious, coeffLeftPrevious, coeffRightPrevious = self.analyse()
+	#Hint = none means that the equation is solved
         hint = None
+	#We seek an hint to give
         if(other.solution == self.solution):
             if(not(str(leftOther).lstrip("-").replace("/","").isdigit()) and coeffLeftOther[0] == 0):
                 hint = 'Aide : simplifie a gauche'
@@ -80,13 +86,13 @@ class Equation: #(Exercice):
 
             return (False,hint)
 
-
+    #This method check the solution of an equation
     def isSolution(self, solution): # self: equation de base, solution: derniere equation
         if (self.isEquivalant(solution)[1] is None):
             return True
         else:
             return False
-
+    #Return infos of the equation
     def analyse(self):
         left = ''
         right = ''
@@ -125,16 +131,19 @@ class Equation: #(Exercice):
         else:
             coeffRight = [0, coeffRight]
         return left, right, coeffLeft, coeffRight
-
+"""
+Class that creates an inequation. 
+"""
 
 class Inequation: #(Exercice):
+    #construction
     def __init__(self, equation, lettre):
         self.x = Symbol(lettre)
         self.lettre = lettre
         self.equa = equation # top kek
         self.equation = eval(equation,transformations=(st+(imp,)))
         self.solution = solveIn([[self.equation]], self.x)
-
+    #isEquivalant checks if two expressions are Equivalant
     def isEquivalant(self, other):
 
         leftOther, rightOther, coeffLeftOther, coeffRightOther, conditionOther = other.analyse()
@@ -192,7 +201,7 @@ class Inequation: #(Exercice):
                 return (False, "Aide : le signe d'equivalence n'est pas dans la bon sens")
             return (False, hint)
 
-
+    #Check the solution
     def isSolution(self, solution): #string solution
         nbr = ''
         boolNbr = 0
@@ -200,7 +209,7 @@ class Inequation: #(Exercice):
         boolLettre = 0
         boolCondition = 0
         i = 0
-        while(i<len(solution)): # ca marche tg
+        while(i<len(solution)): #tete de gondole 
             if((solution[i].isdigit() or solution[i]=="/" or solution[i]=="-") and boolNbr==0):
                 nbr = nbr+solution[i]
             elif(solution[i].islower() and boolLettre==0):
@@ -217,7 +226,7 @@ class Inequation: #(Exercice):
                 return False
             i = i+1
         return solveIn([[eval(solution,transformations=(st+(imp,)))]],self.x) == self.solution
-
+    #Return info about the structure of the inequation
     def analyse(self):
         left = ''
         right = ''
@@ -250,9 +259,12 @@ class Inequation: #(Exercice):
 
         return left, right, coeffLeft, coeffRight, condition
 
-
+"""
+Class that creates a system
+"""
 
 class System: #(Exercice):
+    #constructeur
     def __init__(self, sys, var):
         self.equa = sys
         self.sys = [eval(x,transformations=(st+(imp,))) for x in sys]
@@ -263,8 +275,8 @@ class System: #(Exercice):
         i = 0
         while(i<len(var)):
             self.variables.append(var[i])
-            i = i+1
-
+            i = i+1 
+    #check if two systems are equivalant
     def isEquivalant(self, other):
 
         leftOther, rightOther, coeffLeftOther, coeffRightOther = other.analyse()
@@ -341,7 +353,7 @@ class System: #(Exercice):
                         return (False, hint)
 
             return (False, hint)
-
+    #Check the solution of a system
     def isSolution(self, solution): #int solution
         if(len(solution) != len(list(self.solution)[0])):
             return False
@@ -349,7 +361,7 @@ class System: #(Exercice):
             if(not(s in solution)):
                 return False
         return True
-
+    #Return the info about the system
     def analyse(self):
         left = ['']*len(self.sys)
         right = ['']*len(self.sys)
@@ -403,7 +415,9 @@ class System: #(Exercice):
 
         return left, right, coeffLeft, coeffRight
 
-
+"""
+Class that creates an expression
+"""
 class Expression:
     def __init__(self, equa):
         self.equa = equa
@@ -422,7 +436,7 @@ class Expression:
             hint = "Aide : attention a la priorite des operations! D'abord les () puis x ou / et + ou -"
             return (False, hint)
 
-
+#
 def parser(equation):
     equation = equation.strip("+")
     equation = equation.replace("=+","=")
@@ -433,7 +447,13 @@ def parser(equation):
     equation = equation.replace("+-","-")
     return unicode(equation)
 
-
+#method that generates an equation
+#VarRight, VarLeft is for the presence or not of the variable on rigth or left of the symbol "="
+#minValueVar, maxValueVar is for the min and max value of the coefficient of the variable
+#minValueSol, maxValueSol define a range for the solution
+#nameVar is the representation of the nameVar
+#division is true if there are fractions
+#isSolInt if the Solution is an integer
 def makeEquation(varRight=False, varLeft=True, minValueVar=-10, maxValueVar=10, minValueSol=-10, maxValueSol=10, nameVar='y', division=False, isSolInt=True):
     equation = ''
     handler = InputHandler("algebraicEquation")
@@ -500,7 +520,7 @@ def makeEquation(varRight=False, varLeft=True, minValueVar=-10, maxValueVar=10, 
             equation = ""
         else:
             equation = ""
-
+#convert the solution And to string
 def getSolutionFromAND(AND):
     #print (AND)
     solution = ""
@@ -539,6 +559,15 @@ def getSolutionFromAND(AND):
 
     #print(solution)
     return solution
+
+#method that generates an Inequation
+#VarRight, VarLeft is for the presence or not of the variable on rigth or left of the symbol "="
+#minValueVar, maxValueVar is for the min and max value of the coefficient of the variable
+#minValueSol, maxValueSol define a range for the solution
+#nameVar is the representation of the nameVar
+#division is true if there are fractions
+#isSolInt is true if the Solution must be an integer
+#signeEquation determines the symbol of equivalence ( '<', '>', '<=','>=')
 
 def makeInequation(varRight=False, varLeft=True, minValueVar=-10, maxValueVar=10, minValueSol=-10, maxValueSol=10, nameVar='y', division=False, isSolInt=True, signeEquation=None):
     equation = ''
@@ -611,6 +640,7 @@ def makeInequation(varRight=False, varLeft=True, minValueVar=-10, maxValueVar=10
         else:
             equation = ""
 
+#method that generates an equation with 2 variables
 def makeEquation2Var(var1Right, var1Left, var2Right, var2Left, minValueVar, maxValueVar, nameVar1, nameVar2, division):
     equation = ''
 
@@ -685,6 +715,12 @@ def makeEquation2Var(var1Right, var1Left, var2Right, var2Left, minValueVar, maxV
     equation = parser(equation)
     return equation
 
+#method that generate an system
+#VarRight, VarLeft is for the presence or not of the variable on rigth or left of the symbol "="
+#minValueVar, maxValueVar is for the min and max value of the coefficient of the variable
+#minValueSol, maxValueSol define a range for the solution
+#nameVar is the representation of the nameVar
+#division is true if there are fractions
 def makeSys(var1Right1=False, var1Left1=True, var2Right1=False, var2Left1=True, var1Right2=True, var1Left2=False, var2Right2=True, var2Left2=False, minValueVar=-10, maxValueVar=10, minValueSol=-10, maxValueSol=10, nameVar1='y', nameVar2='x', division=False, isSolInt=True):
     while(True):
         handler = InputHandler("algebraicSystem")
@@ -702,6 +738,11 @@ def makeSys(var1Right1=False, var1Left1=True, var2Right1=False, var2Left1=True, 
             if (not isSolInt):
                 return (equation1,equation2)
 
+#method that generate an expression
+#nbrTerm determines the number of termes
+#minSol, maxSol define a range for the solution
+# multiplication, exponent, division, parenthesis are booleans. True means the presence of this operation is possible in the expression. 
+# False means the abscence of the operation.   
 def makeExpression(nbrTerm=3, maxValue=10, minSol=0, maxSol=20, multiplication=False, exponent=False, division=False, parenthesis=False, isSolInt=True):
     nbrTerm -= 1
     signe = ['+','-','+','+','-','-']    # 3 fois plus de chance d'avoir un + ou un -
@@ -753,67 +794,4 @@ def makeExpression(nbrTerm=3, maxValue=10, minSol=0, maxSol=20, multiplication=F
             return expression
 
 
-# tests Equation
-#handler = InputHandler.InputHandler()
-#eq1 = u'4*a-8 = 2*a +16'
-#Equation1.analyse()
-#Equation1 = Equation(handler.parse(eq1),'a')
 
-#Equation1 = None
-#print "Rentrez l'equation a resoudre"
-#print Equation1.isSolution(-1)
-"""for line in iter(sys.stdin.readline,''):
-    try:
-        if Equation1 == None:
-            string = handler.parse(unicode(line.strip(),"utf-8"))
-            print string
-            Equation1 = Equation(string,"a")
-            Equation1.analyse()
-            print "Vous pouvez maintenant entrer les etapes de resolution"
-       #print line
-        else:
-            string = handler.parse(unicode(line.strip(),"utf-8"))
-            Equation2 = Equation(string,'a')
-            temp = Equation1.isEquivalant(Equation2)
-            print temp
-            if temp[0] and temp[1] is None:
-                break
-    except Exception as e:
-        traceback.print_exc()
-        print "L'expression de l'equation n'est pas bonne (parse error)"""
-
-
-# tests Inequation
-#Inequation1 = Inequation('4*a-1/4>0', 'a')
-#Inequation2 = Inequation('4*a>-1/4','a')
-#print Inequation1.isSolution('a>1/16')
-#print Inequation1.isEquivalant(Inequation2)
-
-
-#tests System
-#System1 = System(['5*x-(2+3*y)','2*x+y-(x)'], "x,y") # 2x=2 y+x=0
-#print System1.isSolution([-1, 1]) # x=-1 y=1 ou l'inverse
-#System2 = System(['x-(2/8)','-2/8-(y)'], "x,y") # x=1 x=-y
-#print System1.isEquivalant(System2)
-
-
-#tests Expression
-#Expression1 = Expression('(3+5)*2')
-#Expression2 = Expression('(8)*2')
-#print Expression1.isEquivalant(Expression2)
-
-#test makeEquation
-#print(makeEquation(varRight=False, varLeft=True, minValueVar=-10, maxValueVar=10, minValueSol=0, maxValueSol=5, nameVar='s', division=True, isSolInt=True))
-
-#test makeInequation
-#print(makeInequation(varRight=True, varLeft=False, minValueVar=-10, maxValueVar=10, minValueSol=0, maxValueSol=20, nameVar='x', division=False, isSolInt=False))
-
-#test makeSys
-#print(makeSys(var1Right1=True, var1Left1=False, var2Right1=False, var2Left1=True, var1Right2=False, var1Left2=True, var2Right2=True, var2Left2=True, minValueVar=-10, maxValueVar=10, minValueSol=-10, maxValueSol=10, nameVar1='y', nameVar2='x', division=True, isSolInt=True))
-
-#test makeExpression
-#print(makeExpression(nbrTerm=4, maxValue=10, minSol=0, maxSol=100, multiplication=True, exponent=True, division=False, parenthesis=True, isSolInt=False))
-
-#exp = factory("algebraicExpression", u"5*8","a")
-#print(type(exp.solution))
-#print(str(exp.solution))

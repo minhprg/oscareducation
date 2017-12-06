@@ -68,6 +68,7 @@ def validate_exercice_yaml_structure(exercice):
             if number_of_true == 0:
                 return(u"une question de type checkbox doit avoir au moins une réponse de correcte, or la question '%s' n'a pas de réponse correcte possible" % (question)).encode("Utf-8")
         elif data["type"] in ("algebraicEquation","algebraicInequation", "algebraicSystem", "algebraicExpression"):
+            # parse input with inputHandler
             ih = InputHandler.InputHandler(data["type"])
             if isinstance(data["answers"]["equations"], list):
                 ans = data["answers"]["equations"]
@@ -78,7 +79,16 @@ def validate_exercice_yaml_structure(exercice):
 
 
             except Exception:
-                return u"Une réponse de type algebraic doit être écrite sous la forme de 'a*x + b = c'"
+                #if exception happen, the data was not well formed
+                if data["type"] == "algebraicEquation":
+                    return u"Une réponse de type algebraic doit être écrite sous la forme de 'a*x + b = c + d*x'"
+                elif data["type"] == "algebraicInequation":
+                    return u"Une réponse de type algebraic doit être écrite sous la forme de 'a*x + b <,>,<=,>= c + d*x'"
+                elif data["type"] == "algebraicSystem":
+                    return u"Une réponse de type algebraic doit être écrite sous la forme de 'a*x + e*y + b = c + d*x + f*y'"
+                elif data["type"] == "algebraicExpression":
+                    return u"l'expression est mal formée. Utilisez * pour la multiplication"
+
 
 
         elif data["type"] in ("text", "math", "math-simple", "math-advanced"):

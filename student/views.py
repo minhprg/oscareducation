@@ -67,7 +67,6 @@ def pass_test(request, pk):
             "test_student": test_student,
             "pool_form": pool_form,
         })
-
     # the order_by here is used to make the order of the exercices deterministics
     # so each student will have the exercices in the same order
     next_not_answered_test_exercice = TestExercice.objects.filter(test=test_student.test, exercice__isnull=False, testable_online=True).exclude(answer__in=test_student.answer_set.all()).order_by('created_at').first()
@@ -151,6 +150,8 @@ def validate_exercice(request, test_student, test_exercice):
                 raw_answer[number]["response"] = [request.POST[str(number)]]
 
             elif data["type"].startswith("algebraic"):
+                # the answers are given as strings : step:step:step:step
+                # if the ex is a system it is given as : eq1;eq2:eq1;eq2
                 if(data["type"]!="algebraicSystem"):
                     raw_answer[number]["response"] = request.POST.get(str(number) , "").lstrip(":").split(":")
                 else:
@@ -522,12 +523,12 @@ def skill_pedagogic_ressources(request, type, slug):
 
 @user_is_student
 def verifyEquation(request,id,type, equa):
-    print(id)
-    print(type)
+    """ this views verify an equation given in a request"""
+    # the equation is given with / replaced with &
     equation = equa.replace("&","/")
-    print(equa)
     ih = InputHandler(type)
 
+    # the 2 equation from a system is separated with a ;
     if "System" in type:
         equationToParse = equation.split(";")
     else:
@@ -541,5 +542,6 @@ def verifyEquation(request,id,type, equa):
         parsed = 1
         ans = HttpResponse(str(parsed)+":"+str(type)+":"+str(id)+":"+str(equation))
 
+    # answer to the the web browser
     return ans
 
