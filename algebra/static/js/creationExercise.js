@@ -1,9 +1,11 @@
+"use strict";
 $(document).ready(function(){
   //gestion de l'aspect "radio" des boutons
   $(".radio-side").click(function(){
     $(".radio-side").removeClass("btn-primary");
     $(this).addClass("btn-primary");
   });
+
   //appels pour écrire
   $("#addTermWithVariable").click(function(){
     writeSide("#termWithVariable");
@@ -14,6 +16,7 @@ $(document).ready(function(){
   $("#addOperator").click(function(){
     writeSide("#operator");
   });
+
   //gestion du submit form
   $('form').submit(function(event) {
     var exerciceToSend,exerciceType;
@@ -34,7 +37,6 @@ $(document).ready(function(){
       solution: $("#solution").val() ,
       level: $("#exercice_level").val(),
     };
-    console.log(JSON.stringify(exerciceToSend)+$("#signe").val());
 
     var request=$.ajax({
       url: '/algebra/exercice/creation',
@@ -64,6 +66,23 @@ $(document).ready(function(){
     // stop action submit
     event.preventDefault();
   });
+
+    // mathquill keyboard
+    renderMathquil($(".mathquill"), function(MQ, index, mq) {
+      var input = $($(mq).parent().find("input")[0]);
+      var mathquill = MQ.MathField(mq, {
+        handlers: {
+          edit: function() {
+            input.val(mathquill.text());
+          }
+        }
+      });
+
+      var keyboard = $($(mq).parent().children()[0]);
+
+      return [mathquill, keyboard]
+    });
+    //end of document.ready
 });
 
   //gestion de l'ecriture d'un coté ou d'un autre

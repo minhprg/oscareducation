@@ -1,12 +1,15 @@
-from . import Expression, Equation
+"""TODO"""
 
-from sympy import symbols
+from sympy import solve_poly_system, Poly
+
+from . import Expression, ExpressionError, ExpressionSystem
 
 # ============================================================================
 # ============================= Equation System ==============================
 # ============================================================================
-    
-class EquationSystem(Expression):
+
+@Expression.register
+class EquationSystem(ExpressionSystem):
     """
     Equation system representation, takes an array of expressions with
     different unknowns and resolves the system.
@@ -16,16 +19,18 @@ class EquationSystem(Expression):
 
     _db_type = "ES"
 
-    def __init__(self, expr, sym = 'x y'):
-        self.equation1 = Equation(expr[0])
-        self.equation2 = Equation(expr[1])
-        self.x, self.y = symbols(sym)
-        self._solution = self.resolve
+    def __init__(self, expressions):
+        ExpressionSystem.__init__(self, expressions, ['='])
 
-    # TO DO
     def resolve(self):
-        pass
+        expressions = []
+
+        for i in range(0, len(self._left_operands)):
+            lo = Poly(self._left_operands[i], self._symbols)
+            ro = Poly(self._right_operands[i], self._symbols)
+            expressions.append(lo - ro)
+        solutions = solve_poly_system(expressions, self._symbols)
+
+        return [list(x) for x in zip(*solutions)]
 
 # ============================================================================
-
-Expression.register(EquationSystem)

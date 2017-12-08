@@ -25,7 +25,7 @@ DEBUG = True
 DEBUG_PROPAGATE_EXCEPTIONS = False
 
 
-ALLOWED_HOSTS = ["127.0.0.1", "0.0.0.0", "localhost"]
+ALLOWED_HOSTS = ["127.0.0.1", "0.0.0.0", "localhost", "oscar.findot.me", u'testserver']
 
 LOGIN_REDIRECT_URL = "/"
 
