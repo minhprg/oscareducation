@@ -31,7 +31,7 @@ from django.http import JsonResponse
 @user_is_professor
 def lesson_test_from_scan_match(request, lesson_pk, pk):
     is_exist = TestAnswerFromScan.objects.filter(test_id=pk).count()
-    nb_not_match = TestAnswerFromScan.objects.filter(student_id__isnull=True).count()
+
     if is_exist == 0:
         messages.error(request, "Importez un test avant de pouvoir associer vos élèves")
         return HttpResponseRedirect('/professor/lesson/' + str(lesson_pk) + '/test/from-scan/' + str(pk) + '/')

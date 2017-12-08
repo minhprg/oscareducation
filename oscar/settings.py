@@ -8,6 +8,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+
 from os import environ
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -208,4 +209,6 @@ EMAIL_HOST_USER ="euredukaoscar.noreply@gmail.com"
 EMAIL_HOST_PASSWORD ="7A=em=nBt@+r3MFq"
 
 EMAIL_USE_TLS = True
+
+
 
