@@ -46,7 +46,8 @@ from .utils import generate_random_password, user_is_professor, force_encoding
 import csv
 from django.http import JsonResponse
 from promotions.InputHandler import InputHandler
-from promotions.Factory import factory
+from promotions.Factory import factory, makeEquation, makeExpression, makeSys, makeInequation
+
 
 
 @user_is_professor
@@ -557,6 +558,34 @@ def professor_test_delete_skill(request):
         'skill_id': skill_id,
     }
     return JsonResponse(data)
+
+def professor_generate(request, id, type, varleft, varright, coeffmini, coeffmaxi, solmini, solmaxi, varvar, frac, solint, more ):
+    print(id)
+    print(type)
+    print(varleft)
+    print(varright)
+    print(coeffmini)
+    print(coeffmaxi)
+    print(solmini)
+    print(solmaxi)
+    print(varvar)
+    print(frac)
+    print(solint)
+    print("More + "+str(more))
+    if type == "algebraicSystem":
+        #(var1Right1=False, var1Left1=True, var2Right1=False, var2Left1=True, var1Right2=True, var1Left2=False, var2Right2=True, var2Left2=False, minValueVar=-10, maxValueVar=10, minValueSol=-10, maxValueSol=10, nameVar1='y', nameVar2='x', division=False, isSolInt=True):
+        equation = makeSys( True, True, True, True, True, True, True, True, int(coeffmini), int(coeffmaxi), int(solmini), int(solmaxi), varvar, more, frac == "true", solint == "true")
+        return HttpResponse(id+":"+type+":"+(";".join(equation)))
+    elif type == "algebraicEquation":
+        equation = makeEquation(varright == "true", varleft == "true", int(coeffmini), int(coeffmaxi), int(solmini), int(solmaxi), varvar, frac == "true", solint == "true")
+        return HttpResponse(id+":"+type+":"+equation.replace("**", "^"))
+    elif type == "algebraicInequation":
+        equation = makeInequation(varright == "true", varleft == "true", int(coeffmini), int(coeffmaxi), int(solmini), int(solmaxi), varvar, frac == "true", solint == "true")
+        return HttpResponse(id+":"+type+":"+equation.replace("**", "^"))
+    elif type == "algebraicExpression":
+        # def makeExpression(nbrTerm=3, maxValue=10, minSol=0, maxSol=20, multiplication=False, exponent=False, division=False, parenthesis=False, isSolInt=True):
+        equation = makeExpression(int(coeffmini), int(coeffmaxi), int(solmini), int(solmaxi), varleft == 'true', varright == 'true' ,frac == "true", more == "true", solint == "true")
+        return HttpResponse(id+":"+"type"+":"+equation.replace("**", "^"))
 
 
 @user_is_professor
@@ -1574,7 +1603,7 @@ def exercice_validation_form_submit(request, pk=None):
 
                     }
 
-                else:
+                elif question["type"] == "algebraicEquation":
                     ih = InputHandler(question["type"])
                     eq,letter = ih.parse(unicode(question["eq1"]))
                     equation = factory(question["type"],eq,letter)
@@ -1587,6 +1616,34 @@ def exercice_validation_form_submit(request, pk=None):
                                     "equations":question["eq1"],
 
                     }}
+                elif question["type"] == "algebraicExpression":
+                    ih = InputHandler(question["type"])
+                    exp = ih.parse(unicode(question["eq1"]))
+                    expression = factory(question["type"], exp[0], "a")
+                    sol = expression.solution
+                    new_question_answers = {
+                        "type": question["type"],
+                        "answers": {"sol":str(sol),
+                                    "equations":question["eq1"],
+                    }}
+
+                elif question["type"] == "algebraicInequation":
+                    ih = InputHandler(question["type"])
+                    eq,letter = ih.parse(unicode(question["eq1"]))
+                    equation = factory(question["type"],eq,letter)
+                    sol = equation.solution
+                    for elem in str(sol).split("&"):
+                        if "oo" not in elem:
+                            sol = elem
+
+                    sol = sol.replace("(", "").replace(")", "")
+                    new_question_answers = {
+                        "type": question["type"],
+                        "answers": {"sol":sol,
+                                    "equations":question["eq1"],
+
+                    }}
+
 
             else:
                 answers = CommentedMap()
@@ -1908,3 +1965,4 @@ def enseign_trans(request):
     data["code_r"] = CodeR.objects.all().order_by('id')
     data["section"] = Section.objects.all()
     return render(request, "professor/skill/new-list-trans.haml", data)
+
