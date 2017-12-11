@@ -1,3 +1,4 @@
+
 function validateExerciceController($scope, $http, $sce, $timeout, $location) {
     $scope.uploadFile = function(files) {
         var reader = new FileReader();
@@ -274,4 +275,9 @@ function validateExerciceController($scope, $http, $sce, $timeout, $location) {
     $scope.exerciceIsValid = false;
 
     checkIfEditingExercice();
+
 }
+
+
+
+

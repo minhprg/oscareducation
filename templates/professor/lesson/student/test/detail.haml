@@ -191,6 +191,38 @@
                                             %ul
                                               -for j in question.get_answers
                                                 %li= j
+                                      -elif type == "algebraicEquation" or type == "algebraicInequation" or type == "algebraicExpression"
+                                        %tr
+                                          %td.right-border{width: "50%"}
+                                            -for j in student_answer
+                                              \\(
+                                              =j
+                                              \\)
+                                              %br
+                                          %td{width: "50%"}
+                                            %ul
+                                              \\(
+                                              =question.get_answers.sol
+                                              \\)
+
+                                      -elif type == "algebraicSystem"
+                                        %tr
+                                          %td.right-border{width: "50%"}
+                                            -for j in student_answer
+
+                                              -for y in j
+                                                \\(
+                                                =y
+                                                \\)
+                                              %br
+                                          %td{width: "50%"}
+                                            %ul
+
+                                              \\(
+                                              =question.get_answers.sol
+                                              \\)
+                                              %br
+
                                       -elif type == "math" or type == "math-simple" or type == "math-advanced"
                                         %tr
                                           %td.right-border{width: "50%"}

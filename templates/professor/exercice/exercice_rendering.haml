@@ -21,6 +21,16 @@
               %label
                 %input{type: "radio", value: "{{ forloop.counter0 }}", name: "{{ name }}", autocomplete: "off"}
                 =option
+      -elif question.type == "algebraicEquation" or question.type == "algebraicInequation" or question.type == "algebraicExpression"
+        %br
+        =question.answers.equations
+        %br
+      -elif question.type == "algebraicSystem"
+        %br
+        -for equation in question.answers.equations
+          =equation
+          %br
+
       -elif question.type == "checkbox"
         -with name=forloop.counter0
           -for option in question.answers

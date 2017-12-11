@@ -159,5 +159,118 @@ class TestInputHandler(unittest.TestCase):
         handler3 = InputHandler("algebraicSystem")
         self.assertTrue(handler3.parse((u'2x+y=5',u'3y=8^2'))==([u'2x+y-(5)', u'3y-(8**2)'], u'x,y'))
 
+
+class TestMakeEquation(unittest.TestCase):
+    def test_make(self):
+        handler = InputHandler("algebraicEquation")
+        for _ in range(10):
+            equa = makeEquation(varRight=False, varLeft=True, minValueVar=-10, maxValueVar=10, minValueSol=0, maxValueSol=5,nameVar='s', division=True, isSolInt=True)
+            equationTest = Equation(handler.parse(unicode(equa, "utf-8"))[0], 's')
+            self.assertTrue(len(equationTest.solution) == 1)
+            self.assertTrue(equationTest.solution[0] >= 0)
+            self.assertTrue(equationTest.solution[0] <= 5)
+            self.assertTrue(str(equationTest.solution[0]).lstrip("-").isdigit()) #isSolInt
+            left, right, coeffLeft, coeffRight = equationTest.analyse()
+            self.assertTrue(coeffLeft[0] <= 10 and coeffLeft[0] >= -10 and coeffLeft[1] != 0)
+            self.assertTrue(coeffLeft[1] <= 10 and coeffLeft[1] >= -10 and coeffLeft[1] != 0)
+            self.assertTrue(coeffRight[0] == 0)
+            self.assertTrue(coeffRight[1] <= 10 and coeffRight[1] >= -10 and coeffRight[1] != 0)
+        for _ in range(10):
+            equa = makeEquation(varRight=True, varLeft=True, minValueVar=-4, maxValueVar=3, minValueSol=-9, maxValueSol=8,nameVar='s', division=True, isSolInt=True)
+            equationTest = Equation(handler.parse(unicode(equa, "utf-8"))[0], 's')
+            self.assertTrue(len(equationTest.solution) == 1)
+            self.assertTrue(equationTest.solution[0] >= -9)
+            self.assertTrue(equationTest.solution[0] <= 8)
+            self.assertTrue(str(equationTest.solution[0]).lstrip("-").isdigit()) #isSolInt
+            left, right, coeffLeft, coeffRight = equationTest.analyse()
+            self.assertTrue(coeffLeft[0] <= 3 and coeffLeft[0] >= -4 and coeffLeft[1] != 0)
+            self.assertTrue(coeffLeft[1] <= 3 and coeffLeft[1] >= -4 and coeffLeft[1] != 0)
+            self.assertTrue(coeffRight[1] <= 3 and coeffRight[1] >= -4 and coeffRight[1] != 0)
+            self.assertTrue(coeffRight[1] <= 3 and coeffRight[1] >= -4 and coeffRight[1] != 0)
+        for _ in range(10):
+            equa = makeEquation(varRight=True, varLeft=False, minValueVar=-4, maxValueVar=3, minValueSol=-9, maxValueSol=8,nameVar='s', division=True, isSolInt=True)
+            equationTest = Equation(handler.parse(unicode(equa, "utf-8"))[0], 's')
+            self.assertTrue(len(equationTest.solution) == 1)
+            self.assertTrue(equationTest.solution[0] >= -9)
+            self.assertTrue(equationTest.solution[0] <= 8)
+            self.assertTrue(str(equationTest.solution[0]).lstrip("-").isdigit()) #isSolInt
+            left, right, coeffLeft, coeffRight = equationTest.analyse()
+            self.assertTrue(coeffLeft[0] == 0)
+            self.assertTrue(coeffLeft[1] <= 3 and coeffLeft[1] >= -4 and coeffLeft[1] != 0)
+            self.assertTrue(coeffRight[1] <= 3 and coeffRight[1] >= -4 and coeffRight[1] != 0)
+            self.assertTrue(coeffRight[1] <= 3 and coeffRight[1] >= -4 and coeffRight[1] != 0)
+
+
+class TestMakeInequation(unittest.TestCase):
+    def test_make(self):
+        handler = InputHandler("algebraicInequation")
+        for _ in range(10):
+            equa = makeInequation(varRight=False, varLeft=True, minValueVar=0, maxValueVar=5, minValueSol=-10, maxValueSol=10, nameVar='s', division=False, isSolInt=True, signeEquation=None)
+            equationTest = Inequation(handler.parse(unicode(equa, "utf-8"))[0], 's')
+            solution = getSolutionFromAND(str(equationTest.solution))
+            self.assertTrue(equationTest.solution != False and equationTest.solution != True)
+            self.assertTrue(eval(solution) >= -10 and eval(solution) <= 10)
+            self.assertTrue(solution.lstrip("-").isdigit())
+            left, right, coeffLeft, coeffRight,condition = equationTest.analyse()
+            self.assertTrue(coeffLeft[0] <= 10 and coeffLeft[0] >= -10 and coeffLeft[1] != 0)
+            self.assertTrue(coeffLeft[1] <= 10 and coeffLeft[1] >= -10 and coeffLeft[1] != 0)
+            self.assertTrue(coeffRight[0] == 0)
+            self.assertTrue(coeffRight[1] <= 10 and coeffRight[1] >= -10 and coeffRight[1] != 0)
+        for _ in range(10):
+            equa = makeInequation(varRight=True, varLeft=True, minValueVar=-4, maxValueVar=3, minValueSol=-9, maxValueSol=8,nameVar='s', division=True, isSolInt=True, signeEquation='>=')
+            equationTest = Inequation(handler.parse(unicode(equa, "utf-8"))[0], 's')
+            solution = getSolutionFromAND(str(equationTest.solution))
+            self.assertTrue(equationTest.solution != False and equationTest.solution != True)
+            self.assertTrue(eval(solution) >= -9 and eval(solution) <= 8)
+            self.assertTrue(solution.lstrip("-").isdigit())
+            left, right, coeffLeft, coeffRight, condition = equationTest.analyse()
+            self.assertTrue(condition == '>=')
+            self.assertTrue(coeffLeft[0] <= 3 and coeffLeft[0] >= -4 and coeffLeft[1] != 0)
+            self.assertTrue(coeffLeft[1] <= 3 and coeffLeft[1] >= -4 and coeffLeft[1] != 0)
+            self.assertTrue(coeffRight[1] <= 3 and coeffRight[1] >= -4 and coeffRight[1] != 0)
+            self.assertTrue(coeffRight[1] <= 3 and coeffRight[1] >= -4 and coeffRight[1] != 0)
+        for _ in range(10):
+            equa = makeInequation(varRight=True, varLeft=False, minValueVar=-4, maxValueVar=3, minValueSol=-9, maxValueSol=8,nameVar='s', division=True, isSolInt=True, signeEquation=None)
+            equationTest = Inequation(handler.parse(unicode(equa, "utf-8"))[0], 's')
+            solution = getSolutionFromAND(str(equationTest.solution))
+            self.assertTrue(equationTest.solution != False and equationTest.solution != True)
+            self.assertTrue(eval(solution) >= -9 and eval(solution) <= 8)
+            self.assertTrue(solution.lstrip("-").isdigit())
+            left, right, coeffLeft, coeffRight, condition = equationTest.analyse()
+            self.assertTrue(coeffLeft[0] == 0)
+            self.assertTrue(coeffLeft[1] <= 3 and coeffLeft[1] >= -4 and coeffLeft[1] != 0)
+            self.assertTrue(coeffRight[1] <= 3 and coeffRight[1] >= -4 and coeffRight[1] != 0)
+            self.assertTrue(coeffRight[1] <= 3 and coeffRight[1] >= -4 and coeffRight[1] != 0)
+
+class TestMakeSys(unittest.TestCase):
+    def test_make(self):
+        handler = InputHandler("algebraicSystem")
+        for _ in range(5):
+            (equation1,equation2) = makeSys(var1Right1=True, var1Left1=False, var2Right1=False, var2Left1=True, var1Right2=False, var1Left2=True, var2Right2=True, var2Left2=True, minValueVar=-10, maxValueVar=10, minValueSol=-10, maxValueSol=10, nameVar1='y', nameVar2='x', division=True, isSolInt=True)
+            systemTest = System(handler.parse((unicode(equation1, "utf-8"),(unicode(equation2, "utf-8"))))[0], "y,x")
+            self.assertTrue(len(list(systemTest.solution)) != 0)
+            self.assertTrue(list(systemTest.solution)[0][0] >= -10 and list(systemTest.solution)[0][0] <= 10
+                            and list(systemTest.solution)[0][1] >= -10 and list(systemTest.solution)[0][1] <= 10)
+            self.assertTrue(str(list(systemTest.solution)[0][0]).lstrip("-").isdigit() and str(list(systemTest.solution)[0][1]).lstrip("-").isdigit())
+            left, right, coeffLeft, coeffRight = systemTest.analyse()
+            self.assertTrue(coeffLeft[0][1] == 0)
+            self.assertTrue(coeffRight[1][1] == 0)
+            self.assertTrue(coeffRight[0][0] == 0)
+            self.assertTrue(coeffRight[0][1] <= 10 and coeffRight[0][1] >= -10 and coeffRight[0][1] != 0)
+            self.assertTrue(coeffLeft[0][0] <= 10 and coeffLeft[0][0] >= -10 and coeffLeft[0][0] != 0)
+            self.assertTrue(coeffLeft[1][1] <= 10 and coeffLeft[1][1] >= -10 and coeffLeft[1][1] != 0)
+            self.assertTrue(coeffRight[1][0] <= 10 and coeffRight[1][0] >= -10 and coeffRight[1][0] != 0)
+            self.assertTrue(coeffLeft[1][0] <= 10 and coeffLeft[1][0] >= -10 and coeffLeft[1][0] != 0)
+
+
+class TestMakeExpression(unittest.TestCase):
+    def test_make(self):
+        handler = InputHandler("algebraicExpression")
+        for _ in range(5):
+            expression = makeExpression(nbrTerm=4, maxValue=10, minSol=0, maxSol=100, multiplication=True, exponent=False, division=False, parenthesis=True, isSolInt=True)
+            handler.parse(unicode(expression, "utf-8"))
+            self.assertTrue(str(eval(expression)).lstrip('-').isdigit())
+            self.assertTrue(eval(expression)<=100 and eval(expression)>=0)
+
 if __name__ == '__main__':
     unittest.main()

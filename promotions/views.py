@@ -57,14 +57,17 @@ from resources.models import KhanAcademy, Sesamath, Resource
 from examinations.models import Test, TestStudent, BaseTest, TestExercice, Context, List_question, Question, Answer, \
     TestFromClass,  TestAnswerFromScan
 from users.models import Student
-from examinations.validate import validate_exercice_yaml_structure
 
+from .forms import ImportCopyForm
 from .models import Lesson, Stage
 from .forms import LessonForm, StudentAddForm, SyntheseForm, KhanAcademyForm, StudentUpdateForm, LessonUpdateForm, \
     TestUpdateForm, SesamathForm, ResourceForm, CSVForm
 from .utils import generate_random_password, user_is_professor, force_encoding
 import csv
 from django.http import JsonResponse
+
+from promotions.InputHandler import InputHandler
+from promotions.Factory import factory, makeEquation, makeExpression, makeSys, makeInequation
 
 
 
@@ -576,6 +579,34 @@ def professor_test_delete_skill(request):
         'skill_id': skill_id,
     }
     return JsonResponse(data)
+
+def professor_generate(request, id, type, varleft, varright, coeffmini, coeffmaxi, solmini, solmaxi, varvar, frac, solint, more ):
+    print(id)
+    print(type)
+    print(varleft)
+    print(varright)
+    print(coeffmini)
+    print(coeffmaxi)
+    print(solmini)
+    print(solmaxi)
+    print(varvar)
+    print(frac)
+    print(solint)
+    print("More + "+str(more))
+    if type == "algebraicSystem":
+        #(var1Right1=False, var1Left1=True, var2Right1=False, var2Left1=True, var1Right2=True, var1Left2=False, var2Right2=True, var2Left2=False, minValueVar=-10, maxValueVar=10, minValueSol=-10, maxValueSol=10, nameVar1='y', nameVar2='x', division=False, isSolInt=True):
+        equation = makeSys( True, True, True, True, True, True, True, True, int(coeffmini), int(coeffmaxi), int(solmini), int(solmaxi), varvar, more, frac == "true", solint == "true")
+        return HttpResponse(id+":"+type+":"+(";".join(equation)))
+    elif type == "algebraicEquation":
+        equation = makeEquation(varright == "true", varleft == "true", int(coeffmini), int(coeffmaxi), int(solmini), int(solmaxi), varvar, frac == "true", solint == "true")
+        return HttpResponse(id+":"+type+":"+equation.replace("**", "^"))
+    elif type == "algebraicInequation":
+        equation = makeInequation(varright == "true", varleft == "true", int(coeffmini), int(coeffmaxi), int(solmini), int(solmaxi), varvar, frac == "true", solint == "true")
+        return HttpResponse(id+":"+type+":"+equation.replace("**", "^"))
+    elif type == "algebraicExpression":
+        # def makeExpression(nbrTerm=3, maxValue=10, minSol=0, maxSol=20, multiplication=False, exponent=False, division=False, parenthesis=False, isSolInt=True):
+        equation = makeExpression(int(coeffmini), int(coeffmaxi), int(solmini), int(solmaxi), varleft == 'true', varright == 'true' ,frac == "true", more == "true", solint == "true")
+        return HttpResponse(id+":"+"type"+":"+equation.replace("**", "^"))
 
 
 @user_is_professor
@@ -1445,6 +1476,17 @@ def exercice_validation_form_validate_exercice(request):
                 "type": question["type"],
                 "answers": "",
             }
+        elif question["type"].startswith("algebraic"):
+            if "System" in question["type"]:
+                 questions[question["instructions"]] = {
+                    "type": question["type"],
+                    "answers": {"sol":"","equations":[question["eq1"], question["eq2"]]},
+                }
+            else:
+                questions[question["instructions"]] = {
+                    "type": question["type"],
+                    "answers": {"sol":"", "equations":question["eq1"]},
+                }
 
         else:
             answers = OrderedDict()
@@ -1586,6 +1628,64 @@ def exercice_validation_form_submit(request, pk=None):
                     "type": question["type"],
                     "answers": "",
                 }
+            elif question["type"].startswith("algebraic"):
+                if "System" in question["type"]:
+                    ih = InputHandler(question["type"])
+                    eq,letter = ih.parse((unicode(question["eq1"]),unicode(question["eq2"])))
+                    equation = factory(question["type"],eq,letter)
+                    sol = equation.solution
+                    solText = ""
+                    for elem in sol:
+                        for index, val in enumerate(elem):
+                            solText += letter.split(",")[index]+"="+str(val)+(", " if index == 0 else "")
+                    new_question_answers = {
+                        "type": question["type"],
+                        "answers": {"sol":solText,
+                                    "equations":[question["eq1"], question["eq2"]]},
+
+                    }
+
+                elif question["type"] == "algebraicEquation":
+                    ih = InputHandler(question["type"])
+                    eq,letter = ih.parse(unicode(question["eq1"]))
+                    equation = factory(question["type"],eq,letter)
+                    sol = equation.solution
+                    for elem in sol:
+                        sol = letter+"="+str(elem)
+                    new_question_answers = {
+                        "type": question["type"],
+                        "answers": {"sol":sol,
+                                    "equations":question["eq1"],
+
+                    }}
+                elif question["type"] == "algebraicExpression":
+                    ih = InputHandler(question["type"])
+                    exp = ih.parse(unicode(question["eq1"]))
+                    expression = factory(question["type"], exp[0], "a")
+                    sol = expression.solution
+                    new_question_answers = {
+                        "type": question["type"],
+                        "answers": {"sol":str(sol),
+                                    "equations":question["eq1"],
+                    }}
+
+                elif question["type"] == "algebraicInequation":
+                    ih = InputHandler(question["type"])
+                    eq,letter = ih.parse(unicode(question["eq1"]))
+                    equation = factory(question["type"],eq,letter)
+                    sol = equation.solution
+                    for elem in str(sol).split("&"):
+                        if "oo" not in elem:
+                            sol = elem
+
+                    sol = sol.replace("(", "").replace(")", "")
+                    new_question_answers = {
+                        "type": question["type"],
+                        "answers": {"sol":sol,
+                                    "equations":question["eq1"],
+
+                    }}
+
 
             else:
                 answers = CommentedMap()
@@ -1721,8 +1821,6 @@ def exercice_update_json(request, pk):
         if question_type == "graph":
             answers = question.get_answer()["answers"]
         elif question_type == "professor":
-            answers = ""
-        elif isinstance(question.get_answer()["answers"], list):
             answers = [{"text": key, "correct": True} for key in question.get_answer()["answers"]]
         else:  # assuming dict
             answers = [{"text": key, "correct": value} for key, value in question.get_answer()["answers"].items()]
@@ -1911,3 +2009,4 @@ def enseign_trans(request):
     data["code_r"] = CodeR.objects.all().order_by('id')
     data["section"] = Section.objects.all()
     return render(request, "professor/skill/new-list-trans.haml", data)
+

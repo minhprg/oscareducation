@@ -1,4 +1,6 @@
 # encoding: utf-8
+import promotions.InputHandler as InputHandler
+import promotions.Factory as Factory
 
 import promotions.InputHandler as InputHandler
 
@@ -27,8 +29,8 @@ def validate_exercice_yaml_structure(exercice):
         if "type" not in data:
             return (u"chaque question doit avoir un type, or la question '%s' n'a pas de type" % (question)).encode("Utf-8")
 
-        if data["type"] not in ("radio", "text", "checkbox", "math", "math-simple", "math-advanced", "graph", "professor"):
-            return (u"la question '%s' possède un type invalide: '%s'\nLes types valides sont : 'text', 'checkbox', 'math', 'math-simple', 'math-advanced', 'graph' et 'radio' " % (question, data["type"])).encode("Utf-8")
+        if data["type"] not in ("radio", "text", "checkbox", "math", "math-simple", "math-advanced", "graph", "professor","algebraicEquation","algebraicInequation","algebraicSystem", "algebraicExpression"):
+            return (u"la question '%s' possède un type invalide: '%s'\nLes types valides sont : 'text', 'checkbox', 'math', 'math-simple', 'math-advanced','algebraicEquation', 'algebraicInequation', 'algebraicSystem', 'algebraicExpression', 'graph' et 'radio' " % (question, data["type"])).encode("Utf-8")
 
         if "answers" not in data:
             return (u"chaque question doit avoir une section 'answers' contenant les réponses, or la question '%s' ne contient pas cette section" % (question)).encode("Utf-8")
@@ -67,6 +69,29 @@ def validate_exercice_yaml_structure(exercice):
 
             if number_of_true == 0:
                 return(u"une question de type checkbox doit avoir au moins une réponse de correcte, or la question '%s' n'a pas de réponse correcte possible" % (question)).encode("Utf-8")
+        elif data["type"] in ("algebraicEquation","algebraicInequation", "algebraicSystem", "algebraicExpression"):
+            # parse input with inputHandler
+            ih = InputHandler.InputHandler(data["type"])
+            if isinstance(data["answers"]["equations"], list):
+                ans = data["answers"]["equations"]
+            else:
+                ans = unicode(data["answers"]["equations"])
+            try:
+                ih.parse(ans)
+
+
+            except Exception:
+                #if exception happen, the data was not well formed
+                if data["type"] == "algebraicEquation":
+                    return u"Une réponse de type algebraic doit être écrite sous la forme de 'a*x + b = c + d*x'"
+                elif data["type"] == "algebraicInequation":
+                    return u"Une réponse de type algebraic doit être écrite sous la forme de 'a*x + b <,>,<=,>= c + d*x'"
+                elif data["type"] == "algebraicSystem":
+                    return u"Une réponse de type algebraic doit être écrite sous la forme de 'a*x + e*y + b = c + d*x + f*y'"
+                elif data["type"] == "algebraicExpression":
+                    return u"l'expression est mal formée. Utilisez * pour la multiplication"
+
+
 
         elif data["type"] in ("text", "math", "math-simple", "math-advanced"):
             if not isinstance(data["answers"], list):
