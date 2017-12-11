@@ -117,6 +117,7 @@ def lesson_test_from_class_add_json(request):
         raise PermissionDenied()
 
     with transaction.atomic():
+
         test = TestFromClass.objects.create(
             lesson=lesson,
             name=data["name"],

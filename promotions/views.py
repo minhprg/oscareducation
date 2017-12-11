@@ -33,7 +33,7 @@ from django.views.decorators.http import require_POST
 from ruamel.yaml.comments import CommentedMap
 
 from examinations.models import Test, TestStudent, BaseTest, TestExercice, Context, List_question, Question, Answer, \
-    TestFromClass
+    TestFromClass, TestAnswerFromScan
 from examinations.validate import validate_exercice_yaml_structure
 from resources.models import KhanAcademy, Sesamath, Resource
 from skills.models import Skill, StudentSkill, CodeR, Section, Relations, CodeR_relations
@@ -568,9 +568,28 @@ def lesson_test_list(request, pk):
 
     lesson = get_object_or_404(Lesson, pk=pk)
 
+    temp = lesson.basetest_set.order_by('-created_at')
+
+    for test in temp:
+
+        if hasattr(test, 'testfromscan'):
+            answers = TestAnswerFromScan.objects.all().filter(test_id=test.testfromscan.id).distinct('student_id')
+            nb_not_match = TestAnswerFromScan.objects.filter(student_id__isnull=True,test_id=test.testfromscan.id).count()
+            print(str(nb_not_match)+"   "+str(test.testfromscan.id))
+            tmp = 0
+            for answer in answers:
+
+                if TestAnswerFromScan.objects.all().filter(test_id=test.testfromscan.id,student_id=answer.student_id, is_correct__isnull=True).count() == 0:
+                    tmp += 1
+            if tmp == len(answers) and len(answers) > 0:
+                test.testfromscan.progress = "Encodé"
+            elif ((tmp == 0 and len(answers) == 0 )or nb_not_match > 0):
+                test.testfromscan.progress = "Pas encore encodé"
+            else:
+                test.testfromscan.progress = str(tmp)+"/"+str(len(answers))+" élève(s) corrigé(s)"
     return render(request, "professor/lesson/test/list.haml", {
         "lesson": lesson,
-        "all_tests": lesson.basetest_set.order_by('-created_at'),
+        "all_tests": temp,
     })
 
 
@@ -1623,14 +1642,14 @@ def exercice_test(request, pk):
     exercice = get_object_or_404(Context, pk=pk)
 
     if request.method == "GET":
-        return render(request, "professor/exercice/test.haml", {
+        return render(request, "professor/exercice/import.haml", {
             "exercice": exercice,
             "object": exercice,
         })
 
     assert request.method == "POST"
 
-    return render(request, "professor/exercice/test.haml", {
+    return render(request, "professor/exercice/import.haml", {
         "exercice": exercice,
         "object": exercice,
         "checked_answers": exercice.check_answers(request.POST),

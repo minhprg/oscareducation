@@ -1,0 +1,199 @@
+-extends "base.haml"
+-load bootstrap3
+-load static
+-load compress
+
+
+-block breadcrumb
+  %ol.breadcrumb
+    %li
+      Oscar
+    %li
+      %a{href: ""}
+        Classe
+    %li.active
+      Évaluation libre
+
+  %h3 Évaluation libre
+  %hr
+
+    .row
+      .col-lg-4
+      .col-lg-4
+        .ligneorangefine
+        .container-fluid.boxclassetitle
+          %td.center{width: "20px"}
+            %form.form{action: "", method: "post", name: "copy", enctype: "multipart/form-data"}
+              -csrf_token
+              %input{type: "file", name: "copy", multiple : "multiple", id : "upload_file"}
+              %br/
+              %button.btn.btn-primary{type: "submit", id: "import"}
+                Importer des copies
+        .ligneorangefine
+        .ligneorangefine
+        -if size > 0
+          .boxclasse.container-fluid
+            %ul.heatmap-list{id:"myList"}
+              %li.sld
+              {% load static %}
+                %center
+                  %img.bord.img-responsive{id:"example", name:"first_img", src: "{% static page %}"}
+          .boxclasse.container-fluid
+            .pull-left
+              %button.btn.btn-primary{type: "button", id: "next_page"}
+                Page suivante
+              %button.btn.btn-primary{type: "button", id: "validate"}
+                Valider la page
+            .pull-right
+              %a.btn.btn-primary{href: "{% url 'professor:lesson_test_list' lesson_id %}", id:"previous"}
+                Terminer et retourner aux tests
+
+            %br
+            %br
+            %p{id:"output"}
+          .ligneorange
+
+
+
+
+-block javascript
+  -compress js
+    %script{type: "text/javascript", src: "{% static 'js/jquery.selectareas.min.js' %}"}
+  :css
+    .bord{
+      border-style: solid;
+      border-width: 3px;
+      border-color: black;
+
+    }
+  :javascript
+
+    tmp = ""
+    $(document).ready(function () {
+
+    $('img#example').selectAreas({
+      minSize: [10, 10],
+      onChanged: debugQtyAreas,
+
+      areas: [
+        {
+          x: 10,
+          y: 20,
+          width: 60,
+          height: 100,
+        }
+      ]
+    });
+
+    $('#btnNews').click(function () {
+      var areaOption1 = {
+        x: Math.floor((Math.random() * 200)),
+        y: Math.floor((Math.random() * 200)),
+        width: Math.floor((Math.random() * 100)) + 50,
+        height: Math.floor((Math.random() * 100)) + 20,
+      }, areaOption2 = {
+        x: areaOption1.x + areaOption1.width + 10,
+        y: areaOption1.y + areaOption1.height - 20,
+        width: 50,
+        height: 20,
+      };
+      output("Add a new area: " + areaToString(areaOption1) + " and " + areaToString(areaOption2))
+      $('img#example').selectAreas('add', [areaOption1, areaOption2]);
+    });
+    });
+
+    function areaToString (area) {
+      return (typeof area.id === "undefined" ? "" : (area.id + ": ")) + area.x + ':' + area.y  + ' ' + area.width + 'x' + area.height + '<br />'
+    }
+
+    function output (text) {
+      $('#output').html(text);
+    }
+
+			// Log the quantity of selections
+    function debugQtyAreas (event, id, areas) {
+      tmp = []
+
+      for (var i = 0; i < areas.length; i++) {
+
+
+        item = {};
+        item["x1"] = areas[i].x;
+        item["y1"] = areas[i].y;
+        item["x2"] = areas[i].x + areas[i].width;
+        item["y2"] = areas[i].y + areas[i].height;
+
+        tmp.push(item);
+      }
+      console.log(tmp);
+    };
+
+			// Display areas coordinates in a div
+    function displayAreas (areas) {
+      var text = "";
+      $.each(areas, function (id, area) {
+        text += areaToString(area);
+      });
+      output(text);
+    };
+
+    $("#next_page").click(function () {
+
+      $.ajax({
+        url: "/professor/lesson/lesson_next_page/{{test_id}}",
+        data: "",
+        dataType: 'json',
+        success: function (data) {
+          $('#example').attr('src',data.page);
+        }
+      });
+      output(tmp)
+      tmp = []
+
+      var areaOption1 = {
+        x: 10,
+        y: 20,
+        width: 60,
+        height: 100,
+      };
+      $('img#example').selectAreas('reset');
+      $('img#example').selectAreas('destroy');
+      $('img#example').selectAreas({
+          minSize: [10, 10],
+          onChanged : debugQtyAreas,
+
+      });
+
+
+      $('.actionOff').attr("disabled", "disabled");
+      $('.actionOn').removeAttr("disabled");
+
+    });
+
+    $("#validate").click(function () {
+
+      var img = document.getElementById('example');
+      item = {};
+      item["x"] = img.clientWidth;
+      tmp.push(item);
+
+      $.ajax({
+        url: "/professor/lesson/lesson_validate_page/{{test_id}}",
+        data: JSON.stringify(tmp),
+        dataType: 'application/json',
+        success: function (data) {
+          $('#example').attr('src',data.page);
+        }
+      });
+    });
+
+
+
+
+
+
+
+
+
+
+

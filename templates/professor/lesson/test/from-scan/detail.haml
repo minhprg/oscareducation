@@ -26,8 +26,8 @@
           .panel-body
             %table.table
               %thead
-                %th Éleves
-                %th États
+                %th Élèves
+                %th Progression
               -for st in lesson.students.all
                 %tr
                   -for student in students
@@ -35,12 +35,8 @@
                       %td
                         %a{href: "{% url 'professor:lesson_test_from_scan_correct_by_student' lesson.pk test.pk st.id %}"}
                           {{st}}
-                      -if student.is_correct != None
-                        %td
-                          %span.status.alert.alert-success Corrigé
-                      -else
-                        %td
-                          %span.status.alert.alert-info Non corrigé
+                      %td
+                        {{student.pourcentage}} corrigée(s)
     -else
       .col-lg-2
 
@@ -48,11 +44,14 @@
       .container-fluid.boxclassetitle
         .pull-left
           %td.center{width: "20px"}
-            %a.btn.btn-primary{href: "{% url 'professor:lesson_test_list' lesson.pk %}"}
+            %a.btn.btn-primary{href: "{% url 'professor:lesson_test_list' lesson.pk %}", id:"previous"}
               Retour aux tests
         .pull-right
           %td.center{width: "20px"}
-            %a.btn.btn-primary{href: "{% url 'professor:lesson_test_from_scan_match' lesson.pk test.pk %}"}
+            %a.btn.btn-primary{href: "{% url 'professor:lesson_test_from_scan_fill' lesson.pk test.pk %}"}
+              Encoder
+          %td.center{width: "20px"}
+            %a.btn.btn-primary{href: "{% url 'professor:lesson_test_from_scan_match' lesson.pk test.pk %}", id: "match"}
               Associer les élèves
 
       .ligneorangefine
@@ -60,9 +59,9 @@
         %td.center{width: "20px"}
           %form.form{action: "", method: "post", name: "copy", enctype: "multipart/form-data"}
             -csrf_token
-            %input{type: "file", name: "copy", multiple : "multiple"}
+            %input{type: "file", name: "copy", multiple : "multiple", id : "upload_file"}
             %br/
-            %button.btn.btn-primary{type: "submit"}
+            %button.btn.btn-primary{type: "submit", id: "import"}
               Importer des copies
       .ligneorangefine
 
@@ -95,7 +94,7 @@
           %br
           %form.form{action: "", method: "post", name: "questions", enctype: "multipart/form-data"}
             -csrf_token
-            %select{name : "questions"}
+            %select{name : "questions", id : "select_q"}
               %option{value: "-1", id: "-1", selected:"selected"}
                 Toutes les questions
               -for question in questions
@@ -106,7 +105,7 @@
                   %option{value: "{{ question.id }}", id: "{{ question.id }}"}
                     Question {{ question.question_num }}
 
-            %button.btn.btn-primary{type: "submit"}
+            %button.btn.btn-primary{type: "submit", id: "sort_q"}
               Trier
 
           %h5 Réponses des étudiants
@@ -127,7 +126,7 @@
                       [
                       =student
                       ]
-                %a{href: "{% url 'professor:lesson_test_from_scan_correct_one' lesson.id test.pk answer.pk  %}"}
+                %a{href: "{% url 'professor:lesson_test_from_scan_correct_one' lesson.id test.pk answer.pk  %}", id:"img"}
                   -if answer.is_correct
                     %img.code.green.img-responsive{src : "{% static answer.reference %} "}
                   -elif answer.is_correct == None

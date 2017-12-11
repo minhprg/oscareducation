@@ -1,71 +1,17 @@
 -extends "algebra/base.haml"
+
 -block bootstrap3_title
   Algebra list
--block breadcrumb
-  %br
-  %br
-  %ol.breadcrumb
-    %li
-      %a{ :href => "{% url 'home' %}", :title => "Home" }
-        Home
-    %li.active
-      Algebra
+
 -block algebra_content
-  %table.table
-    %thead
-      %tr
-        %th Index
-        %th Date creation
-        %th Preview
-        %th Level
-        %th Solution
-        %th Type
-        %th Hide
-        %th Edit
-        %th Delete
-    %tbody
-      - for expression in expressions
-        %tr
-          %td #{expression.id}
-          %td #{expression.updated}
-          %td #{expression.expression}
-          %td
-            %input{:placeholder => "#{expression.level}", :type => "text"}
-          %td #{expression.solution}
-          %td #{expression.expression_type}
-          %td
-            %input{:checked => "checked", :type => "checkbox", :value => "on"}
-          %td
-            %a.btn.btn-primary{:href => ""} Edit
-          %td
-            %a.btn.btn-primary.btn-danger{:href => ""} Delete
-      %tr
-        %td 2
-        %td 11/10/2017
-        %td 4X - 5 > -3X + 9
-        %td
-          %input{:placeholder => "3", :type => "text"}/
-        %td 2
-        %td Inequation
-        %td
-          %input{:type => "checkbox", :value => "on"}/
-        %td
-          %a.btn.btn-primary{:href => ""} Edit
-        %td
-          %a.btn.btn-primary.btn-danger{:href => ""} Delete
-      %tr
-        %td 3
-        %td 12/10/2017
-        %td 20X + 2 = 22
-        %td
-          %input{:placeholder => "2", :type => "text"}/
-        %td 1
-        %td Equation
-        %td
-          %input{:checked => "checked", :type => "checkbox", :value => "on"}/
-        %td
-          %a.btn.btn-primary{:href => ""} Edit
-        %td
-          %a.btn.btn-primary.btn-danger{:href => ""} Delete
-  -# -for i in number
-  -#   %p=i
+  .row
+    .col-md-3
+      #expression-list-header Expressions
+      #expression-list.list-group
+        %a#expression-list-new.list-group-item{:onclick => "makeForm(this, true)"} New expression
+    .col-md-9
+      #expression-form
+        #expression-form-placeholder
+          .glyphicon.glyphicon-star
+          %div
+            Pick an expression
