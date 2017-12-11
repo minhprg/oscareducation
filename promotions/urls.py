@@ -35,6 +35,7 @@ urlpatterns = [
     url(r'^lesson/(?P<lesson_pk>\d+)/test/(?P<pk>\d+)/delete/$', user_is_professor(BaseTestDelete.as_view()), name='lesson_test_delete'),
 
 
+
     # TODO: professor can only see his tests
     url(r'^', include('test_online.urls')),
     url(r'^', include('test_from_class.urls')),
@@ -90,8 +91,5 @@ urlpatterns = [
     url(r'^professor_test_delete_skill/$', views.professor_test_delete_skill, name='professor_test_delete_skill'),
     # used to pass the parameter of the equation/inequation/expression generation
     url(r'^equationGeneration/(?P<id>\d+)/(?P<type>.+)/(?P<varleft>.+)/(?P<varright>.+)/(?P<coeffmini>.+)/(?P<coeffmaxi>.+)/(?P<solmini>.+)/(?P<solmaxi>.+)/(?P<varvar>.+)/(?P<frac>.+)/(?P<solint>.+)/(?P<more>.+)/', views.professor_generate, name='professor_generate')
-
-    # SCAN
-    #url(r'^lesson/(?P<lesson_pk>\d+)/test/from-scan/(?P<pk>\d+)/$', views.lesson_test_scan_detail, name='lesson_test_from_scan_detail'),
 
 ]

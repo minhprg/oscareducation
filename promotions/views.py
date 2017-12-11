@@ -1,43 +1,63 @@
 # encoding: utf-8
 
-import json
-from collections import namedtuple
+
+
 import os
-import random
 import sys
-import time
+import json
 import traceback
-from base64 import b64decode
-from collections import OrderedDict
+import base64
+import random
+from django.core.files.storage import default_storage
+import time
+from django.core.files.base import ContentFile
+from urlparse import urljoin
 from itertools import izip
 
-import pandas as pd
-import ruamel.yaml
 import yaml
+import ruamel.yaml
+import mechanize
 import yamlordereddictloader
+import pandas as pd
+
+from ruamel.yaml.comments import CommentedMap
+
+from base64 import b64decode
+from collections import OrderedDict
+
 from django.conf import settings
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.core.exceptions import PermissionDenied
+from django.shortcuts import render, get_object_or_404, resolve_url
+from django.core.urlresolvers import reverse
+
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.models import User
 from django.contrib.auth.views import redirect_to_login
+from django.views.decorators.http import require_POST
 from django.core.exceptions import PermissionDenied
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.urlresolvers import reverse
-from django.db import transaction
-from django.db.models import Count, Q
+
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
-from django.http import JsonResponse
+
 from django.shortcuts import render, get_object_or_404, resolve_url
-from django.views.decorators.http import require_POST
+
 from ruamel.yaml.comments import CommentedMap
 
-from examinations.models import Test, TestStudent, BaseTest, TestExercice, Context, List_question, Question, Answer, \
-    TestFromClass
-from examinations.validate import validate_exercice_yaml_structure
-from resources.models import KhanAcademy, Sesamath, Resource
+
+
+from django.db import transaction
+from django.db.models import Count, Q
+
 from skills.models import Skill, StudentSkill, CodeR, Section, Relations, CodeR_relations
+from resources.models import KhanAcademy, Sesamath, Resource
+from examinations.models import Test, TestStudent, BaseTest, TestExercice, Context, List_question, Question, Answer, \
+    TestFromClass,  TestAnswerFromScan
 from users.models import Student
+
 from .forms import ImportCopyForm
 from .models import Lesson, Stage
 from .forms import LessonForm, StudentAddForm, SyntheseForm, KhanAcademyForm, StudentUpdateForm, LessonUpdateForm, \
@@ -45,6 +65,7 @@ from .forms import LessonForm, StudentAddForm, SyntheseForm, KhanAcademyForm, St
 from .utils import generate_random_password, user_is_professor, force_encoding
 import csv
 from django.http import JsonResponse
+
 from promotions.InputHandler import InputHandler
 from promotions.Factory import factory, makeEquation, makeExpression, makeSys, makeInequation
 
@@ -600,10 +621,30 @@ def lesson_test_list(request, pk):
 
     lesson = get_object_or_404(Lesson, pk=pk)
 
+    temp = lesson.basetest_set.order_by('-created_at')
+
+    for test in temp:
+
+        if hasattr(test, 'testfromscan'):
+            answers = TestAnswerFromScan.objects.all().filter(test_id=test.testfromscan.id).distinct('student_id')
+            nb_not_match = TestAnswerFromScan.objects.filter(student_id__isnull=True,test_id=test.testfromscan.id).count()
+            print(str(nb_not_match)+"   "+str(test.testfromscan.id))
+            tmp = 0
+            for answer in answers:
+
+                if TestAnswerFromScan.objects.all().filter(test_id=test.testfromscan.id,student_id=answer.student_id, is_correct__isnull=True).count() == 0:
+                    tmp += 1
+            if tmp == len(answers) and len(answers) > 0:
+                test.testfromscan.progress = "Encodé"
+            elif ((tmp == 0 and len(answers) == 0 )or nb_not_match > 0):
+                test.testfromscan.progress = "Pas encore encodé"
+            else:
+                test.testfromscan.progress = str(tmp)+"/"+str(len(answers))+" élève(s) corrigé(s)"
     return render(request, "professor/lesson/test/list.haml", {
         "lesson": lesson,
-        "all_tests": lesson.basetest_set.order_by('-created_at'),
+        "all_tests": temp,
     })
+
 
 
 
@@ -644,6 +685,7 @@ def lesson_test_update(request, lesson_pk, pk):
             return HttpResponseRedirect(reverse("professor:lesson_test_online_detail", args=(lesson.pk, test.pk,)))
         else:
             return HttpResponseRedirect(reverse("professor:lesson_test_from_class_detail", args=(lesson.pk, test.pk,)))
+
     return render(request, "professor/lesson/test/update.haml", {
         "lesson": lesson,
         "test": test,
@@ -1724,6 +1766,7 @@ def exercice_test(request, pk):
     exercice = get_object_or_404(Context, pk=pk)
 
     if request.method == "GET":
+
         return render(request, "professor/exercice/test.haml", {
             "exercice": exercice,
             "object": exercice,
@@ -1732,6 +1775,7 @@ def exercice_test(request, pk):
     assert request.method == "POST"
 
     return render(request, "professor/exercice/test.haml", {
+
         "exercice": exercice,
         "object": exercice,
         "checked_answers": exercice.check_answers(request.POST),

@@ -159,6 +159,7 @@ class TestInputHandler(unittest.TestCase):
         handler3 = InputHandler("algebraicSystem")
         self.assertTrue(handler3.parse((u'2x+y=5',u'3y=8^2'))==([u'2x+y-(5)', u'3y-(8**2)'], u'x,y'))
 
+
 class TestMakeEquation(unittest.TestCase):
     def test_make(self):
         handler = InputHandler("algebraicEquation")
@@ -270,8 +271,6 @@ class TestMakeExpression(unittest.TestCase):
             handler.parse(unicode(expression, "utf-8"))
             self.assertTrue(str(eval(expression)).lstrip('-').isdigit())
             self.assertTrue(eval(expression)<=100 and eval(expression)>=0)
-
-
 
 if __name__ == '__main__':
     unittest.main()

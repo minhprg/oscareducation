@@ -3,9 +3,11 @@
 class InputHandler:
     def __init__(self, type): #type = 0, 1, 2, 3, 4, 5
         self.type = type
+
     """This function will parse any exercise (equation, inequation, system and expessions).
        An input handler object can only parse one type of exercises so you have to create 4
        different handlers to parse all the exercises."""
+
     def parse(self, inputString):
         if self.type == "algebraicEquation":
             return self.parseEq(inputString)
@@ -13,6 +15,7 @@ class InputHandler:
             return self.parseIneq(inputString)
         elif self.type == "algebraicSystem":
             return self.parseSys(inputString) #tuple of strings
+
         elif self.type == "algebraicExpression":
             return self.parseExp(inputString)
         else:
@@ -62,6 +65,7 @@ class InputHandler:
                     bool1 = False
 
                 if listChar2[0].isalnum() or listChar2[0] == "(" or listChar2[0] == "-": # same here for the second part
+
                     bool2 = self.checkParseError(listChar2)
                 else:
                     bool2 = False
@@ -71,6 +75,7 @@ class InputHandler:
         else:
             bool1 = False
             bool2 = False
+
         variables = self.findVariables(inputString) # returns all the alpha character
         if bool1 and bool2 and len(variables)==1: # if only one variable and correctly parsed, then it's fine
             inputString = s[0]+"-("+s[1]+")" # the format for sympy requires no equal in the equation
@@ -83,6 +88,7 @@ class InputHandler:
             inputString = s[0] + "-(" + s[1] + ")"
             inputString = inputString.replace("^", "**")
             return (inputString, variables)
+
         elif self.type == "algebraicSystem":
             raise ValueError("Les equations ne sont pas bien ecrites!")
         else:
@@ -95,6 +101,7 @@ class InputHandler:
             if elem.isalpha() and elem not in variables:
                 variables.append(elem)
         return variables
+
 
     """Same as parseEq but for inequation
        Here we need to return the inequation as such to keep the sign (<, >, <= or >=)"""
@@ -109,6 +116,7 @@ class InputHandler:
         variables = self.findVariables(inputString)
         if bool and len(variables)==1:
             inputString = inputString.replace("^", "**")
+
             return (inputString, variables[0]) # return inequation and variable
         elif (len(variables) > 1 or len(variables) == 0) and bool:
             raise ValueError("Trop de variables!")
@@ -138,6 +146,7 @@ class InputHandler:
                     return self.checkParseError(listChar, nbPar)
                 else:
                     return False
+
             elif listChar[0].isalpha(): # if first is a letter
                 if listChar[1] == "+" or listChar[1] == "-" or listChar[1] == "*" or listChar[1] == "/" or listChar[1] == "^":
                     del listChar[0]
@@ -148,6 +157,7 @@ class InputHandler:
                 else:
                     return False
             elif listChar[0] == "+" or listChar[0] == "-" or listChar[0] == "*"  or listChar[0] == "/" or listChar[0] == "^":
+
                 # if first is a math sign
                 if listChar[1].isalnum(): # if second is a letter or numeric
                     del listChar[0]
@@ -157,6 +167,7 @@ class InputHandler:
                     return self.checkParseError(listChar,nbPar)
                 else:
                     return False
+
             elif listChar[0] == "(": # if first is open parenthesis (and so on for the other elif
                 if listChar[1].isalnum() or listChar[1] == "(" or listChar[1] == "-":
                     del listChar[0]
@@ -171,6 +182,7 @@ class InputHandler:
                     return False
             else:
                 return False
+
         elif len(listChar) == 0 and nbPar == 0: # if list empty, all characters ok and if parenthesis well formed
             return True
         else: # if there is only one character left
@@ -222,7 +234,9 @@ class InputHandler:
                     return self.checkParseErrorIneq(listChar, nbPar)
                 elif listChar[1] == "(":
                     del listChar[0]
+
                     return self.checkParseErrorIneq(listChar, nbPar)
+
                 else:
                     return False
             elif listChar[0] == "(":
@@ -234,6 +248,7 @@ class InputHandler:
             elif listChar[0] == ")":
                 if listChar[1] == "+" or listChar[1] == "-" or listChar[1] == "*" or listChar[1] == "/" or listChar[1] == "<" or listChar[1] == ">" or listChar[1] == "^" or listChar[1] == ")":
                     del listChar[0]
+
                     return self.checkParseErrorIneq(listChar, nbPar-1)
                 else:
                     return False
@@ -266,6 +281,7 @@ class InputHandler:
                 return True
             else:
                 return False
+
 
     """Once again, this is the same as checkParseError but for expressions"""
     def checkParseErrorExp(self,listChar, nbPar = 0):
@@ -319,3 +335,4 @@ class InputHandler:
                 return True
             else:
                 return False
+

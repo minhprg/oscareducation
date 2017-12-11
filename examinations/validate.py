@@ -2,6 +2,8 @@
 import promotions.InputHandler as InputHandler
 import promotions.Factory as Factory
 
+import promotions.InputHandler as InputHandler
+
 
 def validate_exercice_yaml_structure(exercice):
     """Defines if an exercice is valid, with correct

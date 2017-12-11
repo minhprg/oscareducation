@@ -8,6 +8,10 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 import yaml
+
+from django.db.models import Count
+from django.shortcuts import render, get_object_or_404, resolve_url
+
 import yamlordereddictloader
 import json
 import re
@@ -641,6 +645,7 @@ class TestSkillFromClass(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     """The offline test date of creation"""
 
+
 class TestFromScan(BaseTest):
     """[FR] Test hors-ligne
 
@@ -648,19 +653,35 @@ class TestFromScan(BaseTest):
         Its purpose is to encode the results online.
 
     """
-    content = JSONField()
+    content = JSONField(default="")
+    reference = models.CharField(max_length=50, default="")
+
     def get_skills_with_encoded_values(self):
         result = []
-
+        nb_questions = TestQuestionFromScan.objects.filter(test_id=self.pk).count()
         students = self.lesson.students.all()
-
+        print("ALO")
+        print(len(students))
         skills = self.skills.all()
+        students2 = TestAnswerFromScan.objects.values('student_id') \
+            .filter(test_id=self.pk, is_correct__isnull=False).order_by('student_id').annotate(
+            nb_answer=Count('student_id'))
         encoded_values = {(x.student, x.skill): x for x in
                           self.testskillfromscan_set.all().select_related("skill", "student").order_by("id")}
+        for student in students2:
+            print(student)
+
         for student in students:
-            result.append((student, [(skill, encoded_values.get((student, skill))) for skill in skills]))
+            for student2 in students2:
+                if(student2["student_id"] == student.id):
+                    if(student2["nb_answer"] == nb_questions):
+                        result.append((student, [(skill, encoded_values.get((student, skill))) for skill in skills]))
 
         return result
+
+
+
+
 
 class TestSkillFromScan(models.Model):
     """[FR] Compétence de test hors-ligne
@@ -697,12 +718,12 @@ class TestAnswerFromScan(models.Model):
     question = models.ForeignKey("TestQuestionFromScan")
     """A Skill tested by the offline Test"""
     created_at = models.DateTimeField(auto_now_add=True)
-    student = models.ForeignKey("users.Student")
+    student = models.ForeignKey("users.Student",null=True)
     """The student that passed the offline Test"""
     """The offline test date of creation"""
     reference = models.CharField(max_length=50)
     reference_name = models.CharField(max_length=50)
-    is_correct = models.BooleanField()
+    is_correct = models.NullBooleanField(null=True)
     annotation = models.CharField(max_length=150)
 
 class TestQuestionFromScan(models.Model):

@@ -50,6 +50,7 @@ class PageLoadTest(TestCase):
         self.c.login(username="professor", password="1234")
 
     def test_static_pages_load(self):
+
         self.assertEqual(self.c.get(reverse("professor:dashboard")).status_code, 200)
 
 class EquationTest(TestCase):

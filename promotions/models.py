@@ -70,3 +70,4 @@ class Students(models.Model):
 
 
     student = models.ForeignKey("users.Student")
+
