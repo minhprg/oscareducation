@@ -16,7 +16,7 @@
             %li \({{answer}}\)
             -if user.is_superuser
               Code latex: <code>{{ answer }}</code> (visible que par les admins)
-    -elif answer.type == "algebraicEquation" or question.type == "algebraicInequation"
+    -elif answer.type == "algebraicEquation" or answer.type == "algebraicInequation" or answer.type == "algebraicExpression"
       %br
       =answer.answers.equations
       %p Solution:

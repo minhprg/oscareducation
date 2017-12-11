@@ -1,11 +1,12 @@
 -extends "base.haml"
+-load lesson_tags
 -load static
 -load compress
 
 -block head
   -compress js
     %script{type: "text/javascript", src: "{% static 'js/professor_validate_exercice.js' %}"}
-
+    %script{type:"text/javascript", src:"{% static 'js/professor_add_exercise.js' %}"}
 -block breadcrumb
   %ol.breadcrumb
     %li
@@ -84,12 +85,13 @@
               .form-group
                 %label.control-label.col-sm-2 Type de la question
                 .col-sm-10
-                  %select.form-control{ng-model: "question.type", ng-required: "true", ng-change: "onChangeQuestionType(topIndex, question)"}
+                  %select.form-control{ng-model: "question.type", ng-required: "true", id:"typebox", ng-change: "onChangeQuestionType(topIndex, question)"}
                     %option{value: ""}
                     %option{value: "text"} Réponse textuelle exacte
                     %option{value: "algebraicEquation"} Equations algrébriques
                     %option{value: "algebraicInequation"} Inéquations algrébriques
                     %option{value: "algebraicSystem"} Systèmes algrébriques
+                    %option{value: "algebraicExpression"} Expressions algébriques
                     %option{value: "math-simple"} Réponse mathématique simple
                     %option{value: "math-advanced"} Réponse mathématique avancée
                     %option{value: "radio"} Une seule réponse unique possible parmi toutes (radio)
@@ -106,17 +108,84 @@
                   %input.form-control{type: "text", ng-model: "question.indication", ng-required: "false"}
             %ul.list-group
 
-              %li.list-group-item{ng-if:"question.type == \"algebraicEquation\" || question.type == \"algebraicInequation\" "}
+              %li.list-group-item{ng-if:"question.type == \"algebraicEquation\" || question.type == \"algebraicInequation\" || question.type == \"algebraicExpression\" "}
+
+                %label.col-sm-4.control-label Générer automatiquement:
+                .col-sm-1
+                  %input.form-control{type:"checkbox", name:"autogen", value:"Automatic generation", ng-model: "question.autogen"}
+                  %br
+
                 .form-horizontal
-                  .form-group
-                    %label.col-sm-2.control-label{ng-if: "question.type == \"algebraicEquation\""} Equation:
-                    %label.col-sm-2.control-label{ng-if: "question.type == \"algebraicInequation\""} Inéquation:
+                  .form-group{ng-if: "!question.autogen"}
+
                     .col-sm-9
-                    %input.form-control{type: "text", ng-model: "question.eq1", ng-required: "true"}
+                      %label.col-sm-2.control-label{ng-if: "question.type == \"algebraicEquation\""} Equation:
+                      %label.col-sm-2.control-label{ng-if: "question.type == \"algebraicInequation\""} Inéquation:
+                      %label.col-sm-2.control-label{ng-if: "question.type == \"algebraicExpression\""} Expression:
+                      %input.form-control{type: "text", ng-model: "question.eq1", ng-required: "true"}
+                  .form-group{ng-if: "question.autogen"}
+
+                    -with y="0"|stringformat:"s"
+                      .col-sm-9
+                        -with idG="vl"|add:y
+                          %label.col-sm-7.control-label{ng-if:"question.type != \"algebraicExpression\""} variable à gauche ?
+                          %label.col-sm-7.control-label{ng-if:"question.type == \"algebraicExpression\""} multiplications ?
+                          %input.form-control{type:"checkbox", name:"Variable à gauche ?", id:idG,  value:"checked", checked:"checked"}
+                      .col-sm-9
+                        -with idG="vr"|add:y
+                          %label.col-sm-7.control-label{ng-if:"question.type != \"algebraicExpression\""} variable à droite ?
+                          %label.col-sm-7.control-label{ng-if:"question.type == \"algebraicExpression\""} exposants ?
+                          %input.form-control{type:"checkbox", name:"Variable à droite ?", id:idG , value:"checked"}
+
+                      .col-sm-9
+                        -with idG="cmini"|add:y
+                          %label.col-sm-7.control-label{ng-if:"question.type != \"algebraicExpression\""} coefficient minimum ?
+                          %label.col-sm-7.control-label{ng-if:"question.type == \"algebraicExpression\""} nombre de termes ?
+                          %input.form-control{type:"number", name:"coefficient minimum ?", value:"0", id:idG}
+                      .col-sm-9
+                        %label.col-sm-7.control-label{ng-if:"question.type != \"algebraicExpression\""} coefficient maximum ?
+                        %label.col-sm-7.control-label{ng-if:"question.type == \"algebraicExpression\""} nombre maximum ?
+                        -with idG="cmaxi"|add:y
+                          %input.form-control{type:"number", name:"coefficient maximum ?", value:"10", id:idG}
+                      .col-sm-9
+                        %label.col-sm-7.control-label solution minimum ?
+                        -with idG="smini"|add:y
+                          %input.form-control{type:"number", name:"solution minimum ?", value:"-10", id:idG}
+                      .col-sm-9
+                        %label.col-sm-7.control-label solution maximum ?
+                        -with idG="smaxi"|add:y
+                          %input.form-control{type:"number", name:"solution maximum ?", value:"10", id:idG}
+                      .col-sm-9
+                        -with idG="var"|add:y
+                          %label.col-sm-7.control-label{ng-if: "question.type != \"algebraicExpression\""} nom de la variable ?
+                          %input.form-control{type:"text", name:"nom de la variable ?", id:idG , value:"x", maxlength:"1" ,  ng-if: "question.type != \"algebraicExpression\""}
+                      .col-sm-9{ng-if: "question.type == \"algebraicExpression\""}
+                        %label.col-sm-7.control-label parenthèses ?
+                        -with idG="more"|add:y
+                          %input.form-control{type:"checkbox", name:"parenthèses", id:idG,  value:"checked"}
+                      .col-sm-9
+                        %label.col-sm-7.control-label fraction ?
+                        -with idG="frac"|add:y
+                          %input.form-control{type:"checkbox", name:"fraction ?", id:idG,  value:"checked"}
+                      .col-sm-9
+                        %label.col-sm-7.control-label solution entière ?
+                        -with idG="sint"|add:y
+                          %input.form-control{type:"checkbox", name:"solution entière ?", id:idG,  value:"checked", checked:"checked"}
+                      .col-sm-9
+                        -with idG="buttongen"|add:y
+                          %input{type:"button", name:"generate", value:"Générer" , id:idG, onclick:"updateAutoGeneration(0)"}
+                      .col-sm-9
+                        -with idG="generatedEquation"|add:y
+                          %input.form-control{type: "text",id:idG , ng-model: "question.eq1", ng-required: "true"}
+
 
               %li.list-group-item{ng-if:"question.type == \"algebraicSystem\" "}
+                %label.col-sm-4.control-label Générer automatiquement:
+                .col-sm-1
+                  %input.form-control{type:"checkbox", name:"autogen", value:"Automatic generation", ng-model: "question.autogen"}
+                  %br
                 .form-horizontal
-                  .form-group
+                  .form-group{ng-if: "!question.autogen"}
                     %label.col-sm-2.control-label Equation 1:
                     .col-sm-9
                     %input.form-control{type: "text", ng-model: "question.eq1", ng-required: "true"}
@@ -124,8 +193,54 @@
                     %label.col-sm-2.control-label Equation 2:
                     .col-sm-9
                     %input.form-control{type: "text", ng-model: "question.eq2", ng-required: "true"}
+                  .form-group{ng-if: "question.autogen"}
 
-              %li.list-group-item{ng-if: "question.type != \"professor\" && question.type != \"algebraicEquation\" && question.type != \"algebraicInequation\" && question.type != \"algebraicSystem\" ", ng-repeat: "answer in question.answers", ng-init: "answerIndex = $index.toString()"}
+                    -with y="0"|stringformat:"s"
+
+                      .col-sm-9
+                        -with idG="cmini"|add:y
+                          %label.col-sm-7.control-label coefficient minimum ?
+                          %input.form-control{type:"number", name:"coefficient minimum ?", value:"0", id:idG}
+                      .col-sm-9
+                        %label.col-sm-7.control-label coefficient maximum ?
+                        -with idG="cmaxi"|add:y
+                          %input.form-control{type:"number", name:"coefficient maximum ?", value:"10", id:idG}
+                      .col-sm-9
+                        %label.col-sm-7.control-label solution minimum ?
+                        -with idG="smini"|add:y
+                          %input.form-control{type:"number", name:"solution minimum ?", value:"-10", id:idG}
+                      .col-sm-9
+                        %label.col-sm-7.control-label solution maximum ?
+                        -with idG="smaxi"|add:y
+                          %input.form-control{type:"number", name:"solution maximum ?", value:"10", id:idG}
+                      .col-sm-9
+                        -with idG="var"|add:y
+                          %label.col-sm-7.control-label nom de la variable 1 ?
+                          %input.form-control{type:"text", name:"nom de la variable ?", id:idG , value:"x", maxlength:"1" }
+                      .col-sm-9
+                        %label.col-sm-7.control-label nom de la variable 2 ?
+                        -with idG="more"|add:y
+                          %input.form-control{type:"text", name:"nom de la variable ?", id:idG , value:"y", maxlength:"1" }
+                      .col-sm-9
+                        %label.col-sm-7.control-label fraction ?
+                        -with idG="frac"|add:y
+                          %input.form-control{type:"checkbox", name:"fraction ?", id:idG,  value:"checked"}
+                      .col-sm-9
+                        %label.col-sm-7.control-label solution entière ?
+                        -with idG="sint"|add:y
+                          %input.form-control{type:"checkbox", name:"solution entière ?", id:idG,  value:"checked", checked:"checked"}
+                      .col-sm-9
+                        -with idG="buttongen"|add:y
+                          %input{type:"button", name:"generate", value:"Générer" , id:idG, onclick:"updateAutoGeneration(0)"}
+                      .col-sm-9
+                        -with idG="generatedEquation1"|add:y
+                          %input.form-control{type: "text",id:idG , ng-model: "question.eq1", ng-required: "true"}
+                      .col-sm-9
+                        -with idG="generatedEquation2"|add:y
+                          %input.form-control{type: "text",id:idG , ng-model: "question.eq2", ng-required: "true"}
+
+
+              %li.list-group-item{ng-if: "question.type != \"professor\" && question.type != \"algebraicEquation\" && question.type != \"algebraicInequation\" && question.type != \"algebraicSystem\" && question.type != \"algebraicExpression\" ", ng-repeat: "answer in question.answers", ng-init: "answerIndex = $index.toString()"}
                 .form-horizontal{ng-if: "question.type != \"graph\"  "}
                   .form-group
                     %label.col-sm-2.control-label Réponse possible :

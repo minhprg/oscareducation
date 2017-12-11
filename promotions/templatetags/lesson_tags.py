@@ -1,9 +1,14 @@
 from django import template
 from skills.models import StudentSkill, Section, Skill
 from promotions.models import Stage
+import random
 
 
 register = template.Library()
+
+@register.assignment_tag
+def random_int():
+    return random.randint(0, 10000000)
 
 @register.simple_tag(takes_context=True)
 def get_students_skills(context, of_keyword, student, at_keyword, stage, as_keyword, target_name):

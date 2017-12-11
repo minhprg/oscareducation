@@ -6,7 +6,7 @@ from datetime import datetime
 
 from django.shortcuts import render, get_object_or_404
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.views.decorators.http import require_POST
 from django.db import transaction
@@ -18,6 +18,7 @@ from skills.models import StudentSkill, Skill, Section, CodeR, Relations, CodeR_
 from end_test_poll.models import StudentPoll
 from end_test_poll.forms import StudentPollForm
 from resources.models import KhanAcademy, Sesamath, Resource
+from promotions.InputHandler import InputHandler
 
 
 from utils import user_is_student
@@ -66,11 +67,11 @@ def pass_test(request, pk):
             "test_student": test_student,
             "pool_form": pool_form,
         })
-
     # the order_by here is used to make the order of the exercices deterministics
     # so each student will have the exercices in the same order
     next_not_answered_test_exercice = TestExercice.objects.filter(test=test_student.test, exercice__isnull=False, testable_online=True).exclude(answer__in=test_student.answer_set.all()).order_by('created_at').first()
 
+    print request
     if request.method == "POST":
         # There is normally no way for a student to answer another exercice
         return validate_exercice(request, test_student, next_not_answered_test_exercice)
@@ -92,6 +93,7 @@ def pass_test(request, pk):
 
     return render(request, "examinations/take_exercice.haml", {
         "test_exercice": next_not_answered_test_exercice,
+
     })
 
 
@@ -148,7 +150,13 @@ def validate_exercice(request, test_student, test_exercice):
                 raw_answer[number]["response"] = [request.POST[str(number)]]
 
             elif data["type"].startswith("algebraic"):
-                raw_answer[number]["response"] = [request.POST[str(number)]]
+                # the answers are given as strings : step:step:step:step
+                # if the ex is a system it is given as : eq1;eq2:eq1;eq2
+                if(data["type"]!="algebraicSystem"):
+                    raw_answer[number]["response"] = request.POST.get(str(number) , "").lstrip(":").split(":")
+                else:
+                    raw_answer[number]["response"] = [tuple([unicode(y) for y in x.split(";")]) for x in request.POST.get(str(number) , "").lstrip(":").split(":")]
+                    print raw_answer
 
             elif data["type"] == "graph":
                 graph_list = list()
@@ -512,3 +520,28 @@ def skill_pedagogic_ressources(request, type, slug):
         "sori_coder_lesson_resource_khanacademy": sori_coder_lesson_resource_khanacademy,
         "sori_coder_exercice_resource_sesamath": sori_coder_exercice_resource_sesamath,
     })
+
+@user_is_student
+def verifyEquation(request,id,type, equa):
+    """ this views verify an equation given in a request"""
+    # the equation is given with / replaced with &
+    equation = equa.replace("&","/")
+    ih = InputHandler(type)
+
+    # the 2 equation from a system is separated with a ;
+    if "System" in type:
+        equationToParse = equation.split(";")
+    else:
+        equationToParse = equation
+    try:
+        tup = ih.parse(equationToParse)
+    except Exception as e:
+        parsed = 0
+        ans = HttpResponse(str(parsed)+":"+e.message)
+    else:
+        parsed = 1
+        ans = HttpResponse(str(parsed)+":"+str(type)+":"+str(id)+":"+str(equation))
+
+    # answer to the the web browser
+    return ans
+
