@@ -8,11 +8,14 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 import yaml
+
 from django.db.models import Count
+from django.shortcuts import render, get_object_or_404, resolve_url
+
 import yamlordereddictloader
 import json
 import re
-from django.shortcuts import render, get_object_or_404, resolve_url
+
 
 class Context(models.Model):
     """[FR] Contexte, Exercice
@@ -565,12 +568,11 @@ class TestFromClass(BaseTest):
         Its purpose is to encode the results online.
 
     """
+
     def get_skills_with_encoded_values(self):
         result = []
 
         students = self.lesson.students.all()
-        print("ALO")
-        print(len(students))
         skills = self.skills.all()
         encoded_values = {(x.student, x.skill): x for x in
                           self.testskillfromclass_set.all().select_related("skill", "student").order_by("id")}
@@ -602,6 +604,7 @@ class TestSkillFromClass(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     """The offline test date of creation"""
+
 
 class TestFromScan(BaseTest):
     """[FR] Test hors-ligne

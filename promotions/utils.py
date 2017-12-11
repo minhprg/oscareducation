@@ -22,7 +22,6 @@ from pdfminer.layout import LAParams
 from pdfminer.converter import PDFPageAggregator
 import pdfminer
 import ghostscript
-
 from django.contrib.auth.decorators import user_passes_test
 
 
@@ -274,5 +273,4 @@ def pdf2png(pdf_input_path, png_output_path):
             "-sOutputFile=" + png_output_path,
             pdf_input_path]
     ghostscript.Ghostscript(*args)
-
 

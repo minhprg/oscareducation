@@ -7,6 +7,9 @@ from django.template.defaultfilters import slugify
 from resources.models import KhanAcademy, Sesamath, Resource
 from examinations.models import BaseTest, TestAnswerFromScan
 
+
+
+
 from .models import Lesson
 
 
@@ -67,15 +70,14 @@ class StudentAddForm(forms.Form):
         # hack, django enforce an email usage, let's use @example.com for "I don't have an email"
         return username + "@example.com"
 
-
 def validate_file_extension(value):
     if not value.name.endswith('.xls'):
         raise forms.ValidationError("Only XLS file is accepted")
 
 
+
 class CSVForm(forms.Form):
     csvfile = forms.FileField(validators=[validate_file_extension])
-
 
 class StudentUpdateForm(forms.ModelForm):
     class Meta:
@@ -90,18 +92,19 @@ class TestUpdateForm(forms.ModelForm):
 
 
 def validate_copy_extension(value):
-    if not value.name.endswith('.png') and not value.name.endswith('.jpg') and not value.name.endswith('.pdf'):
+    if not value.name.endswith('.png') and not value.name.endswith('.jpg'):
         raise forms.ValidationError("Only PNG and JPG files are accepted")
 
 
 class ImportCopyForm(forms.Form):
-    copy = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}),
+    copy = forms.ImageField(widget=forms.ClearableFileInput(attrs={'multiple': True}),
                             validators=[validate_copy_extension])
 
 
 
 class KhanAcademyForm(forms.Form):
     # url = forms.URLField()
+
     url = forms.CharField(required=False, label="Nom")
     """
     def clean_url(self):
@@ -127,7 +130,8 @@ class SyntheseForm(forms.Form):
 
 class ResourceForm(forms.ModelForm):
     """ Resource form """
-    kind = forms.ChoiceField(required=True, label="Genre", choices=(
+
+    kind = forms.ChoiceField(required=True, label="Genre",choices=(
         ("practical-application", "Application pratique"),
         ("lesson", "Cours"),
         ("exercice", "Exercices"),
@@ -162,6 +166,7 @@ class ResourceForm(forms.ModelForm):
     link = forms.URLField(required=False, label="Lien")
 
     file = forms.FileField(required=False, label="Fichier")
+
 
     class Meta:
         model = Resource

@@ -8,8 +8,6 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-
-from os import environ
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -25,7 +23,9 @@ DEBUG = True
 DEBUG_PROPAGATE_EXCEPTIONS = False
 
 
-ALLOWED_HOSTS = ["127.0.0.1", "0.0.0.0", "localhost", "oscar.findot.me", u'testserver']
+
+ALLOWED_HOSTS = []
+
 
 LOGIN_REDIRECT_URL = "/"
 
@@ -62,7 +62,6 @@ INSTALLED_APPS = (
     'users',
     'resources',
     'end_test_poll',
-    'algebra',
 
 
 ) + ADDITIONAL_APPS
@@ -122,6 +121,7 @@ DATABASES = {
 
 
 
+
 # https://docs.djangoproject.com/en/1.10/topics/logging/
 
 LOGGING = {
@@ -164,6 +164,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = '/media/'
@@ -173,8 +174,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 SCAN_ROOT = os.path.join(BASE_DIR, "exercices/tests")
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
-
-
 
 BOOTSTRAP3 = {
     "css_url": "/static/css/bootstrap.min.css",
@@ -190,7 +189,9 @@ if "STATIC_ROOT" not in globals():
 
 CRISPY_FAIL_SILENTLY = not DEBUG
 
+
 INTERNAL_IPS = ('127.0.0.1', '0.0.0.0',)
+
 
 # Email settings
 #DEFAULT_FROM_EMAIL = 'noreply@louvainfo.be'
@@ -208,7 +209,6 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER ="euredukaoscar.noreply@gmail.com"
 EMAIL_HOST_PASSWORD ="7A=em=nBt@+r3MFq"
 
+
 EMAIL_USE_TLS = True
-
-
 

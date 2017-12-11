@@ -35,6 +35,7 @@ urlpatterns = [
     url(r'^lesson/(?P<lesson_pk>\d+)/test/(?P<pk>\d+)/delete/$', user_is_professor(BaseTestDelete.as_view()), name='lesson_test_delete'),
 
 
+
     # TODO: professor can only see his tests
     url(r'^', include('test_online.urls')),
     url(r'^', include('test_from_class.urls')),
@@ -88,9 +89,5 @@ urlpatterns = [
     url(r'^professor_test_delete_question/$', views.professor_test_delete_question, name='professor_test_delete_question'),
     url(r'^professor_test_add_skill/$', views.professor_test_add_skill, name='professor_test_add_skill'),
     url(r'^professor_test_delete_skill/$', views.professor_test_delete_skill, name='professor_test_delete_skill'),
-
-
-    # SCAN
-    #url(r'^lesson/(?P<lesson_pk>\d+)/test/from-scan/(?P<pk>\d+)/$', views.lesson_test_scan_detail, name='lesson_test_from_scan_detail'),
 
 ]

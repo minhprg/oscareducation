@@ -1,23 +1,18 @@
 from django.core.urlresolvers import reverse
 from django.views.generic import DetailView, DeleteView
 from django.shortcuts import get_object_or_404
-from django.conf import settings
+
 from .models import Lesson
 from users.models import Student
 from examinations.models import BaseTest
-import os
-import shutil
 
 
 class LessonMixin(object):
-
-
     def get_lesson(self):
         return get_object_or_404(Lesson, pk=self.kwargs["lesson_pk"])
 
     def get_context_data(self, **kwargs):
         context = super(LessonMixin, self).get_context_data(**kwargs)
-
 
         context["lesson"] = self.get_lesson()
 
@@ -54,13 +49,5 @@ class BaseTestDelete(LessonMixin, DeleteView):
     template_name = "professor/lesson/test/delete.haml"
     context_object_name = "test"
 
-
     def get_success_url(self):
-
-        myFile = os.path.isfile(settings.STATIC_ROOT+"/tests/pdf/"+self.kwargs["pk"]+".pdf")
-        myDir = os.path.isdir(settings.STATIC_ROOT+"/tests/"+self.kwargs["pk"])
-        if myDir:
-            shutil.rmtree(settings.STATIC_ROOT+"/tests/"+self.kwargs["pk"], ignore_errors=False, onerror=None)
-        if myFile:
-            os.remove(settings.STATIC_ROOT+"/tests/pdf/"+self.kwargs["pk"]+".pdf")
         return reverse('professor:lesson_test_list', args=(self.get_lesson().pk,))

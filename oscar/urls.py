@@ -13,7 +13,6 @@ urlpatterns = [
     url(r'^stats/', include("stats.urls", namespace="stats")),
     #url(r'^$', views.root_redirection, name="home"),
     url(r'^$', views.home, name="home"),
-    url(r'^algebra/', include('algebra.urls', namespace="algebra")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
